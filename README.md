@@ -1,3 +1,3 @@
 # MemoRise
 
-test
+B106
