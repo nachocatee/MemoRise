@@ -1,0 +1,45 @@
+spring:
+  data:
+#    mongodb:
+#      host: ${MONGODB_HOST}
+#      port: ${MONGODB_PORT}
+#      database: ${MONGODB_DATABASE}
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_batch_fetch_size: 500
+#  servlet:
+#    multipart:
+#      max-file-size: 20MB
+#      max-request-size: 50MB
+  main:
+    allow-bean-definition-overriding: true
+#jwt:
+#  secretKey: testsy
+#  access:
+#    expiration: ${ACCESS_EXPIRATION} # 1??(60?) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
+#    header: Authorization
+#  refresh:
+#    expiration: ${REFRESH_EXPIRATION} #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> ??) * 14(2?))
+#    header: Authorization-refresh
+server:
+  port: 8080
+#cloud:
+#  aws:
+#    s3:
+#      bucket: ${AWS_S3_BUCKET}
+#    credentials:
+#      access-key: ${AWS_ACCESS_KEY}
+#      secret-key: ${AWS_SECRET_KEY}
+#    region:
+#      static: ap-northeast-2
+#      auto: false
+#    stack:
+#      auto: false
