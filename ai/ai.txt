@@ -1,0 +1,43 @@
+conda create --name myenv python=3.9.16
+
+conda install --file C:\Users\SSAFY\Desktop\yolotest\requirements.txt
+pip install -r C:\Users\SSAFY\Desktop\yolotest\requirements.txt
+
+
+
+****가중치 파일****
+siamese_weights
+siamese_resnet101_weights
+siamese_efficientnetb2_weights
+
+
+모델 실행 
+python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese.py
+python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese_vector.py
+python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese_effecientnetb2.py
+python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese_effecientnetb2_seg.py
+python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese_effecientnetb2_rembg.py
+
+python C:\Users\SSAFY\Desktop\yolotest\YOLOv8_SEG.py
+python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_resnet50.py
+
+
+이미지 폴더 이름을 객체 이름으로 내부 사진들을 특성 벡터로 저장하는 파일 실행
+python C:\Users\SSAFY\Desktop\yolotest\createVector.py
+python C:\Users\SSAFY\Desktop\yolotest\createVector_rembg.py
+python C:\Users\SSAFY\Desktop\yolotest\YOLOv8_SEG_createVector.py
+
+
+
+mongodb insert
+
+db.efficientnetb2.insertOne({
+    id: 1,
+    name: "starbucks tumbler2",
+    user: "이준용",
+    vector: []
+});
+
+
+
+
