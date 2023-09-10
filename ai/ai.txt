@@ -1,40 +1,34 @@
+****가상환경 세팅****
+가상환경 python 버전 3.9.16
+1. conda install -c pytorch faiss-gpu -> 에러 발생 시? 아나콘다 다시 깔자!
+
+2. conda install pymongo
+
+3. pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+4. conda install --file C:\Users\SSAFY\Desktop\yolotest\requirements.txt
+
+5. pip install -r C:\Users\SSAFY\Desktop\yolotest\requirements.txt
+
+이후 실행은 되는데 GPU가 아닌 CPU로 실행된다면 3번을 uninstall 후 재설치
 conda create --name myenv python=3.9.16
-
-conda install --file C:\Users\SSAFY\Desktop\yolotest\requirements.txt
-pip install -r C:\Users\SSAFY\Desktop\yolotest\requirements.txt
-
 
 
 ****가중치 파일****
-siamese_weights
-siamese_resnet101_weights
-siamese_efficientnetb2_weights
+siamese_yolo8_weights
 
-
-모델 실행 
-python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese.py
-python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese_vector.py
-python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese_effecientnetb2.py
-python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese_effecientnetb2_seg.py
-python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_Siamese_effecientnetb2_rembg.py
-
+****모델 실행****
 python C:\Users\SSAFY\Desktop\yolotest\YOLOv8_SEG.py
-python C:\Users\SSAFY\Desktop\yolotest\detect_and_track_and_resnet50.py
-
 
 이미지 폴더 이름을 객체 이름으로 내부 사진들을 특성 벡터로 저장하는 파일 실행
-python C:\Users\SSAFY\Desktop\yolotest\createVector.py
-python C:\Users\SSAFY\Desktop\yolotest\createVector_rembg.py
 python C:\Users\SSAFY\Desktop\yolotest\YOLOv8_SEG_createVector.py
 
 
 
-mongodb insert
+****mongodb insert****
 
 db.efficientnetb2.insertOne({
-    id: 1,
     name: "starbucks tumbler2",
-    user: "이준용",
     vector: []
 });
 
