@@ -37,7 +37,6 @@ spring:
             authorization-grant-type: authorization_code
             client-name: kakao
             scope:
-              - profile
               - account_email
 
 #jwt:
