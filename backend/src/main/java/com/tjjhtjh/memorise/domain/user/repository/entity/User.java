@@ -25,18 +25,15 @@ public class User extends BaseEntity {
     private String nickname;
     private String profileImg;
 
-    private String provider;
-
     private int isDeleted;
     private LocalDateTime deletedAt;
 
     @Builder
-    public User(Long userSeq, String email, String nickname, String profileImg, String provider) {
+    public User(Long userSeq, String email, String nickname, String profileImg) {
         this.userSeq = userSeq;
         this.email = email;
         this.nickname = nickname;
         this.profileImg = profileImg;
-        this.provider = provider;
     }
 
     public void update(String nickname, String profileImg) {
