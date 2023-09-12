@@ -48,7 +48,7 @@ spring:
 #    expiration: ${REFRESH_EXPIRATION} #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> ??) * 14(2?))
 #    header: Authorization-refresh
 server:
-  port: 8080
+  port: 8000
 #cloud:
 #  aws:
 #    s3:
