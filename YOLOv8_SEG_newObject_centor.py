@@ -10,13 +10,16 @@ from pymongo import MongoClient
 import faiss
 import timm
 
+
+vector_size=512
+
 # MongoDB에 연결
 client = MongoClient('mongodb://localhost:27017/')
 db = client['test']
-collection = db['yolo8_256']
+collection = db[f'yolo8_{vector_size}']
 
 # FAISS 인덱스 초기화 및 MongoDB 데이터 로드
-dimension = 256
+dimension = vector_size
 index = faiss.IndexFlatL2(dimension)
 faiss_db_ids = []  # DB ID 및 벡터 인덱스를 저장할 리스트
 
@@ -24,7 +27,7 @@ class SiameseNetwork(nn.Module):
     def __init__(self):
         super(SiameseNetwork, self).__init__()
         self.base_network = timm.create_model("tf_efficientnet_b2_ns", pretrained=True)
-        self.fc = nn.Linear(1408, 256)  # EfficientNetB2의 출력 차원을 1408로 수정
+        self.fc = nn.Linear(1408, vector_size)  # EfficientNetB2의 출력 차원을 1408로 수정
 
     def forward_one(self, x):
         x = self.base_network.forward_features(x)  # EfficientNet에서는 forward_features 메서드 사용
@@ -84,8 +87,8 @@ model = YOLO('yolov8x-seg.pt')
 model_siamese = SiameseNetwork().cuda()
 
 # 체크포인트 파일이 존재하면 가중치를 로드합니다.
-if os.path.exists('siamese_yolo8_256_weights.pth'):
-    model_siamese.load_state_dict(torch.load('siamese_yolo8_256_weights.pth'))
+if os.path.exists(f'siamese_yolo8_{vector_size}_weights.pth'):
+    model_siamese.load_state_dict(torch.load(f'siamese_yolo8_{vector_size}_weights.pth'))
 
 model_siamese.eval()  # 평가 모드로 설정
 
@@ -96,10 +99,25 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-# 웹캠 설정
-cap = cv2.VideoCapture(0)
-cap.set(3, 1920)
-cap.set(4, 1080)
+# 웹캠 디바이스의 인덱스 확인
+def find_camera_index():
+    index = 0
+    while True:
+        cap = cv2.VideoCapture(index, cv2.CAP_DSHOW)  # cv2.CAP_DSHOW 플래그는 Windows에서 사용할 수 있습니다.
+        if not cap.isOpened():
+            break
+        cap.release()
+        index += 1
+    return index - 1  # 마지막으로 성공적으로 열린 웹캠의 인덱스를 반환합니다.
+
+# 웹캠 인덱스 찾기
+webcam_index = find_camera_index()
+
+if webcam_index >= 0:
+    # 웹캠이 발견되었을 경우 해당 인덱스로 웹캠 열기
+    cap = cv2.VideoCapture(webcam_index, cv2.CAP_DSHOW)
+    cap.set(3, 1920)  # 너비 설정
+    cap.set(4, 1080)  # 높이 설정
 
 flag=False
 
@@ -216,16 +234,24 @@ while True:
                 faiss_db_ids.append((closest_obj_id, len(closest_obj['vector']) - 1))
 
 
-        cv2.imshow('YOLOv8 Object Detection', frame)
+        # cv2.imshow('YOLOv8 Object Detection', frame)
 
          # 's' 키를 눌러 가중치 저장
         if cv2.waitKey(1) & 0xFF == ord('s'):
-            torch.save(model_siamese.state_dict(), 'siamese_yolo8_256_weights.pth')
+            torch.save(model_siamese.state_dict(), f'siamese_yolo8_{vector_size}_weights.pth')
             print("Weights saved!")
 
         # 'q' 키를 눌러 종료
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
+
+        # index의 사이즈 표시
+        index_size_text = f"등록 중 : {len(faiss_db_ids)/3} %"
+        cv2.putText(frame, index_size_text, (center_x - 60, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+        cv2.imshow('YOLOv8 Object Detection', frame)
+    
 cap.release()
 cv2.destroyAllWindows()
 

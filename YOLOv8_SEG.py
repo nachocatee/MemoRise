@@ -10,13 +10,18 @@ from pymongo import MongoClient
 import faiss
 import timm
 
+# 특성 벡터 차원 조절
+vector_size=512
+# 몇 개의 객체 탐지할지 조절 - 화면 중앙에서 가까운 순으로
+target_size=3
+
 # MongoDB에 연결
 client = MongoClient('mongodb://localhost:27017/')
 db = client['test']
-collection = db['yolo8_256']
+collection = db[f'yolo8_{vector_size}']
 
 # FAISS 인덱스 초기화 및 MongoDB 데이터 로드
-dimension = 256
+dimension = vector_size
 index = faiss.IndexFlatL2(dimension)
 objects_in_db = list(collection.find({}))
 vectors = [vec for obj in objects_in_db for vec in obj['vector']]  # 모든 벡터를 한 리스트에 추가합니다.
@@ -29,7 +34,7 @@ class SiameseNetwork(nn.Module):
     def __init__(self):
         super(SiameseNetwork, self).__init__()
         self.base_network = timm.create_model("tf_efficientnet_b2_ns", pretrained=True)
-        self.fc = nn.Linear(1408, 256)  # EfficientNetB2의 출력 차원을 1408로 수정
+        self.fc = nn.Linear(1408, vector_size)  # EfficientNetB2의 출력 차원을 1408로 수정
 
     def forward_one(self, x):
         x = self.base_network.forward_features(x)  # EfficientNet에서는 forward_features 메서드 사용
@@ -90,8 +95,8 @@ model = YOLO('yolov8x-seg.pt')
 model_siamese = SiameseNetwork().cuda()
 
 # 체크포인트 파일이 존재하면 가중치를 로드합니다.
-if os.path.exists('siamese_yolo8_256_weights.pth'):
-    model_siamese.load_state_dict(torch.load('siamese_yolo8_256_weights.pth'))
+if os.path.exists(f'siamese_yolo8_{vector_size}_weights.pth'):
+    model_siamese.load_state_dict(torch.load(f'siamese_yolo8_{vector_size}_weights.pth'))
 
 model_siamese.eval()  # 평가 모드로 설정
 
@@ -105,17 +110,23 @@ transform = transforms.Compose([
 
 
 # 웹캠 설정
-cap = cv2.VideoCapture(0)
-cap.set(3, 1920)
-cap.set(4, 1080)
+cap = cv2.VideoCapture(1)
+# cap.set(3, 1920)
+# cap.set(4, 1080)
 
 while True:
     ret, frame = cap.read()
     if not ret:
         break
-    frame = cv2.flip(frame, 1)  # 화면 좌우 반전
+    # frame = cv2.flip(frame, 1)  # 화면 좌우 반전
 
     results = model.predict(frame)
+
+    # 화면 중앙 좌표 계산
+    center_x, center_y = frame.shape[1] // 2, frame.shape[0] // 2
+
+    closest_objs = []  # 화면 중앙에서 가장 가까운 객체 저장 리스트
+    closest_distances = []  # 화면 중앙에서 가장 가까운 객체들과의 거리 저장 리스트
 
     for i, r in list(enumerate(results)):
         if r is None:
@@ -132,6 +143,28 @@ while True:
         for obj_idx, obj_mask in enumerate(masks_data):
             obj_mask = obj_mask.cpu().numpy()
 
+            # 객체 중앙 좌표 계산
+            x1, y1, x2, y2, _, _ = boxes_data[obj_idx]
+            obj_center_x = (x1 + x2) / 2
+            obj_center_y = (y1 + y2) / 2
+
+            # 객체와 화면 중앙 사이의 거리 계산
+            distance = np.sqrt((obj_center_x - center_x)**2 + (obj_center_y - center_y)**2)
+
+            # 현재까지 가장 가운데에 위치한 객체인지 확인
+            if len(closest_objs) < target_size:
+                closest_objs.append((obj_idx, obj_mask))
+                closest_distances.append(distance)
+            else:
+                # 현재 객체가 가장 가까운 객체보다 더 가까울 경우, 가장 가까운 객체들 중 가장 먼 객체를 대체
+                max_distance_idx = np.argmax(closest_distances)
+                if distance < closest_distances[max_distance_idx]:
+                    closest_objs[max_distance_idx] = (obj_idx, obj_mask)
+                    closest_distances[max_distance_idx] = distance
+
+        
+
+        for obj_idx, obj_mask in closest_objs:
             # 원시 마스크의 크기를 객체 이미지의 크기에 맞게 조절
             obj_mask = cv2.resize(obj_mask, (orig_img.shape[1], orig_img.shape[0]))
 
@@ -160,12 +193,13 @@ while True:
 
 
             # 유사도가 0.90 이상인 경우에만 라벨 표시
-            if similarity >= 0.90:
+            if similarity >= 0.50:
                 # 바운딩 박스 정보 가져오기
                 x1, y1, x2, y2, _, _ = boxes_data[obj_idx]
 
                 # 라벨 및 유사도 정보
-                label = f"Id: {closest_obj['_id']}, Index: {I[0][0]}, Sim: {similarity:.2f}"
+                # label = f"Id: {closest_obj['_id']}, Index: {I[0][0]}, Sim: {similarity:.2f}"
+                label = f"Index: {I[0][0]}, Sim: {similarity:.2f}"
                 
                 # 라벨을 그리는 위치 조정
                 label_x = int(x1)
@@ -174,8 +208,7 @@ while True:
                 # 라벨 그리기
                 cv2.putText(frame, label, (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)    
 
-                if similarity <= 0.95:
-
+                if 0.80 <= similarity <= 0.95:
                     # 유사도가 0.90 이상인 경우 해당 문서의 "vector" 필드에 새로운 벡터를 추가
                     closest_obj['vector'].append(features_roi_np.tolist()[0])
 
@@ -185,16 +218,13 @@ while True:
                     index.add(np.array(features_roi_np))
                     faiss_db_ids.append((closest_obj_id, len(closest_obj['vector']) - 1))
 
-                    
-
-                
-        
+    
         cv2.imshow('YOLOv8 Object Detection', frame)
 
 
          # 's' 키를 눌러 가중치 저장
         if cv2.waitKey(1) & 0xFF == ord('s'):
-            torch.save(model_siamese.state_dict(), 'siamese_yolo8_256_weights.pth')
+            torch.save(model_siamese.state_dict(), f'siamese_yolo8_{vector_size}_weights.pth')
             print("Weights saved!")
 
         # 'q' 키를 눌러 종료
