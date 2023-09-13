@@ -27,21 +27,9 @@ function App(): JSX.Element {
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar />
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Landing"
-            component={LandingScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Landing" component={LandingScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
         </Stack.Navigator>
       </NavigationContainer>
