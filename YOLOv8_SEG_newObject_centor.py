@@ -9,9 +9,12 @@ import os
 from pymongo import MongoClient
 import faiss
 import timm
-
+from PIL import ImageFont, ImageDraw, Image
 
 vector_size=512
+fontpath = "C:/Users/SSAFY/Desktop/yolotest/fonts/NanumGothic.ttf"
+font = ImageFont.truetype(fontpath, 20)
+
 
 # MongoDB에 연결
 client = MongoClient('mongodb://localhost:27017/')
@@ -99,25 +102,30 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-# 웹캠 디바이스의 인덱스 확인
-def find_camera_index():
-    index = 0
-    while True:
-        cap = cv2.VideoCapture(index, cv2.CAP_DSHOW)  # cv2.CAP_DSHOW 플래그는 Windows에서 사용할 수 있습니다.
-        if not cap.isOpened():
-            break
-        cap.release()
-        index += 1
-    return index - 1  # 마지막으로 성공적으로 열린 웹캠의 인덱스를 반환합니다.
 
-# 웹캠 인덱스 찾기
-webcam_index = find_camera_index()
+# 탐지 중인 객체 마스크 색칠
+def overlay(image, mask, color, alpha, resize=None):
+    """Combines image and its segmentation mask into a single image."""
+    color = color[::-1]
+    colored_mask = np.expand_dims(mask, 0).repeat(3, axis=0)
+    colored_mask = np.moveaxis(colored_mask, 0, -1)
+    masked = np.ma.MaskedArray(image, mask=colored_mask, fill_value=color)
+    image_overlay = masked.filled()
 
-if webcam_index >= 0:
-    # 웹캠이 발견되었을 경우 해당 인덱스로 웹캠 열기
-    cap = cv2.VideoCapture(webcam_index, cv2.CAP_DSHOW)
-    cap.set(3, 1920)  # 너비 설정
-    cap.set(4, 1080)  # 높이 설정
+    if resize is not None:
+        image = cv2.resize(image.transpose(1, 2, 0), resize)
+        image_overlay = cv2.resize(image_overlay.transpose(1, 2, 0), resize)
+
+    image_combined = cv2.addWeighted(image, 1 - alpha, image_overlay, alpha, 0)
+
+    return image_combined
+
+
+
+# 웹캠 설정
+cap = cv2.VideoCapture(1)
+# cap.set(3, 1920)
+# cap.set(4, 1080)
 
 flag=False
 
@@ -137,10 +145,10 @@ while True:
 
     for i, r in list(enumerate(results)):
         if r is None:
-            cv2.imshow('YOLOv8 Object Detection', frame)
+            cv2.imshow('New Object', frame)
             continue
         if r.masks is None:
-            cv2.imshow('YOLOv8 Object Detection', frame)
+            cv2.imshow('New Object', frame)
             continue    
         
         boxes_data = r.boxes.data.tolist()
@@ -187,6 +195,7 @@ while True:
         features_roi_np = features_roi.cpu().detach().numpy()
         features_vector = features_roi_np.tolist()[0]  # 중첩 리스트 제거
 
+
         if flag == False:
             # 데이터베이스에 저장
             db_entry = {
@@ -196,6 +205,7 @@ while True:
             faiss_db_ids.append((result.inserted_id, 0))  # 새로 추가된 객체의 ID 및 벡터 인덱스 저장
             index.add(np.array(features_roi_np))
             flag = True
+            print(features_roi_np)
 
 
         else:
@@ -212,7 +222,8 @@ while True:
             x1, y1, x2, y2, _, _ = boxes_data[obj_idx]
 
             # 라벨 및 유사도 정보
-            label = f"Id: {closest_obj['_id']}, Index: {I[0][0]}, Sim: {similarity:.2f}"
+            # label = f"Id: {closest_obj['_id']}, Index: {I[0][0]}, Sim: {similarity:.2f}"
+            label = f"Id: {closest_obj['_id']}, Sim: {similarity:.2f}"
                     
             # 라벨을 그리는 위치 조정
             label_x = int(x1)
@@ -221,6 +232,10 @@ while True:
             # 라벨 그리기
             cv2.putText(frame, label, (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
+            # Calculate overlay image with mask
+            frame = overlay(orig_img, obj_mask, color=(0, 255, 0), alpha=0.3)
+
+            
 
             # 유사도가 0.50 이상, 0.90 이하인 경우에만 벡터 추가
             if 0.70 <= similarity <= 0.95:
@@ -232,9 +247,13 @@ while True:
                 # faiss 변수 업데이트
                 index.add(np.array(features_roi_np))
                 faiss_db_ids.append((closest_obj_id, len(closest_obj['vector']) - 1))
+                
+
+        # Display the overlay image
+        # cv2.imshow('Overlay', overlay_image)
 
 
-        # cv2.imshow('YOLOv8 Object Detection', frame)
+        # cv2.imshow('New Object', frame)
 
          # 's' 키를 눌러 가중치 저장
         if cv2.waitKey(1) & 0xFF == ord('s'):
@@ -246,11 +265,38 @@ while True:
             break
 
 
-        # index의 사이즈 표시
-        index_size_text = f"등록 중 : {len(faiss_db_ids)/3} %"
-        cv2.putText(frame, index_size_text, (center_x - 60, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+        # # index의 사이즈 표시
+        # index_size_text = f"등록 중 : {len(faiss_db_ids)/3:.1f} %"
 
-        cv2.imshow('YOLOv8 Object Detection', frame)
+        # # cv2.putText(frame, index_size_text, (center_x - 60, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+        # frame = Image.fromarray(frame)
+        # draw = ImageDraw.Draw(frame)
+        # draw.text((center_x - 60, 30), index_size_text, (0,0,255), font=font)
+        # frame = np.array(frame)
+
+        # index의 사이즈 표시
+        progress_percentage = len(faiss_db_ids) / 2  # 이 값은 0과 100 사이여야 합니다.
+        max_bar_width = 200  # 프로그레스 바의 최대 너비를 설정합니다.
+        bar_width = int(max_bar_width * progress_percentage / 100)  # 현재 퍼센트에 따른 프로그레스 바의 너비를 계산합니다.
+        bar_height = 15  # 프로그레스 바의 높이를 설정합니다.
+        start_x = center_x - max_bar_width // 2
+        start_y = 30
+
+        # 배경 바 그리기
+        cv2.rectangle(frame, (start_x, start_y), (start_x + max_bar_width, start_y + bar_height), (255, 255, 255), 2)
+
+        # 진행 상황에 따른 채워진 바 그리기
+        cv2.rectangle(frame, (start_x, start_y), (start_x + bar_width, start_y + bar_height), (255, 106, 76), -1)  # -1은 내부를 채우는 것을 의미합니다.
+
+        # 프로그레스 바 위에 텍스트 그리기
+        progress_text = f"{progress_percentage:.1f} %"
+        text_size = cv2.getTextSize(progress_text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)[0]
+        text_x = center_x - text_size[0] // 2
+        text_y = start_y - 10  # 바의 중앙에 위치하도록 조정합니다.
+        cv2.putText(frame, progress_text, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+        
+        cv2.imshow('New Object', frame)
     
 cap.release()
 cv2.destroyAllWindows()

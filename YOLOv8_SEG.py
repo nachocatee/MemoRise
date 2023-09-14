@@ -108,9 +108,8 @@ transform = transforms.Compose([
 ])
 
 
-
 # 웹캠 설정
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 # cap.set(3, 1920)
 # cap.set(4, 1080)
 
@@ -182,6 +181,7 @@ while True:
 
             features_roi_np = features_roi.cpu().detach().numpy()
 
+
             # 실시간 영상에서 감지된 각 객체에 대해 가장 유사한 벡터를 faiss에서 검색
             D, I = index.search(features_roi_np, k=1)
             closest_obj_id, vector_idx = faiss_db_ids[I[0][0]]  # 벡터의 인덱스도 함께 가져옵니다.
@@ -208,7 +208,7 @@ while True:
                 # 라벨 그리기
                 cv2.putText(frame, label, (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)    
 
-                if 0.80 <= similarity <= 0.95:
+                if 0.95 <= similarity <= 0.95:
                     # 유사도가 0.90 이상인 경우 해당 문서의 "vector" 필드에 새로운 벡터를 추가
                     closest_obj['vector'].append(features_roi_np.tolist()[0])
 
