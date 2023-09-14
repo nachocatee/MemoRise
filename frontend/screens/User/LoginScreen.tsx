@@ -1,5 +1,10 @@
 import { View, Image, StyleSheet, Pressable } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import KakaoLogins, {
+  login,
+  getProfile,
+} from "@react-native-seoul/kakao-login";
+import axios from "axios";
 
 import {
   calculateDynamicHeight,
@@ -7,6 +12,17 @@ import {
 } from "../../constants/dynamicSize";
 
 const LandingScreen = () => {
+  // 카카오 로그인 함수
+  const loginHandler = async () => {
+    return await login()
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <LinearGradient
       //   colors={["#F5F5F5", "red"]}
@@ -25,7 +41,7 @@ const LandingScreen = () => {
             source={require("../../assets/image/logo/logo.png")}
             style={[logoStyle, styles.logo]}
           />
-          <Pressable style={styles.kakao}>
+          <Pressable style={styles.kakao} onPress={loginHandler}>
             <Image
               source={require("../../assets/image/kakao.png")}
               style={kakaoStyle}
