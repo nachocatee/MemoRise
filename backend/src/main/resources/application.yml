@@ -49,6 +49,23 @@ spring:
 #    header: Authorization-refresh
 server:
   port: 8000
+
+#  management.endpoints.web.exposure.include=health, info, prometheus
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 #cloud:
 #  aws:
 #    s3:
