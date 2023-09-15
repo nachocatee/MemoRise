@@ -1,13 +1,10 @@
 import React, { useRef, useEffect } from "react";
-import { View, StyleSheet, Animated, Dimensions } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import { RootStackParamList } from "../../App";
-import {
-  calculateDynamicHeight,
-  calculateDynamicWidth,
-} from "../../constants/dynamicSize";
+import { calculateDynamicWidth } from "../../constants/dynamicSize";
 
 type LandingScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -82,5 +79,5 @@ const styles = StyleSheet.create({
 
 const imageStyle = {
   width: calculateDynamicWidth(312),
-  height: calculateDynamicHeight(312, 57, calculateDynamicWidth(312)),
+  height: calculateDynamicWidth(57),
 };

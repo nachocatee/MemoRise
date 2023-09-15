@@ -7,10 +7,6 @@ const CancelHeaderHighlight = () => {
         source={require("../../assets/image/logo/logo.png")}
         style={styles.logo}
       />
-      <Image
-        source={require("../../assets/icons/cancel.png")}
-        style={styles.cancel}
-      />
     </View>
   );
 };
@@ -27,11 +23,5 @@ const styles = StyleSheet.create({
   logo: {
     width: 189,
     height: 33,
-  },
-  cancel: {
-    width: 22.92,
-    height: 22.92,
-    position: "absolute",
-    right: "7%",
   },
 });

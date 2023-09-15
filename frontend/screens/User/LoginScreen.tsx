@@ -6,10 +6,7 @@ import KakaoLogins, {
 } from "@react-native-seoul/kakao-login";
 import axios from "axios";
 
-import {
-  calculateDynamicHeight,
-  calculateDynamicWidth,
-} from "../../constants/dynamicSize";
+import { calculateDynamicWidth } from "../../constants/dynamicSize";
 
 const LandingScreen = () => {
   // 카카오 로그인 함수
@@ -73,15 +70,15 @@ const styles = StyleSheet.create({
 
 const imageStyle = {
   width: calculateDynamicWidth(320),
-  height: calculateDynamicHeight(320, 333, calculateDynamicWidth(320)),
+  height: calculateDynamicWidth(333),
 };
 
 const logoStyle = {
   width: calculateDynamicWidth(253),
-  height: calculateDynamicHeight(253, 48, calculateDynamicWidth(253)),
+  height: calculateDynamicWidth(48),
 };
 
 const kakaoStyle = {
   width: calculateDynamicWidth(230),
-  height: calculateDynamicHeight(230, 48, calculateDynamicWidth(230)),
+  height: calculateDynamicWidth(48),
 };
