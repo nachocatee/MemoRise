@@ -1,6 +1,6 @@
 import { View, StyleSheet, Image } from "react-native";
 
-const CancelHeaderHighlight = () => {
+const HighlightHeader = () => {
   return (
     <View style={styles.header}>
       <Image
@@ -11,17 +11,16 @@ const CancelHeaderHighlight = () => {
   );
 };
 
-export default CancelHeaderHighlight;
+export default HighlightHeader;
 
 const styles = StyleSheet.create({
   header: {
     height: 97,
     justifyContent: "center",
     alignItems: "center",
-    flexDirection: "row",
   },
   logo: {
     width: 189,
-    height: 33,
+    height: 35,
   },
 });

@@ -8,7 +8,7 @@ import axios from "axios";
 
 import { calculateDynamicWidth } from "../../constants/dynamicSize";
 
-const LandingScreen = () => {
+const LoginScreen = () => {
   // 카카오 로그인 함수
   const loginHandler = async () => {
     return await login()
@@ -50,7 +50,7 @@ const LandingScreen = () => {
   );
 };
 
-export default LandingScreen;
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   rootContainer: {

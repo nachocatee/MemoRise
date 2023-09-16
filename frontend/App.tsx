@@ -14,12 +14,14 @@ import LandingScreen from "./screens/Landing/LandingScreen";
 import LoginScreen from "./screens/User/LoginScreen";
 import SignUpScreen from "./screens/User/SignUpScreen";
 import MainScreen from "./screens/Main/MainScreen";
+import MenuScreen from "./screens/Menu/MenuScreen";
 
 export type RootStackParamList = {
   Landing: undefined;
   Login: undefined;
   SignUp: undefined;
   Main: undefined;
+  Menu: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -34,6 +36,7 @@ function App(): JSX.Element {
           <Stack.Screen name="Landing" component={LandingScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Main" component={MainScreen} />
+          <Stack.Screen name="Menu" component={MenuScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
