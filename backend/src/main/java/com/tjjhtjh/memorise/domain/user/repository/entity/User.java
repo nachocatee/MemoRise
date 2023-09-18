@@ -20,8 +20,7 @@ public class User extends BaseEntity {
 
     private String email;
     private String nickname;
-    private String password;
-    private String profileImg;
+    private String profile;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -30,16 +29,16 @@ public class User extends BaseEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public User(Long userSeq, String email, String nickname, String profileImg) {
-        this.userSeq = userSeq;
+    public User(String email, String nickname, String profile, Role role) {
         this.email = email;
         this.nickname = nickname;
-        this.profileImg = profileImg;
+        this.profile = profile;
+        this.role = role;
     }
 
-    public void update(String nickname, String profileImg) {
+    public void update(String nickname, String profile) {
         this.nickname = nickname;
-        this.profileImg = profileImg;
+        this.profile = profile;
     }
 
     public void delete() {
