@@ -51,14 +51,14 @@ public class JwtAuthenticationProcessingFilter  extends OncePerRequestFilter {
     }
 
     public void saveAuthentication(User user) {
-        String password = user.getPassword();
-        if (password == null) {
-            password = passwordEncoder.encode("randomforoauth");
-        }
+//        String password = user.getPassword();
+//        if (password == null) {
+//            password = passwordEncoder.encode("randomforoauth");
+//        }
 
         UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
-                .password(password)
+//                .password(password)
                 .roles(user.getRole().name())
                 .build();
 
