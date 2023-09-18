@@ -1,25 +1,33 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 
 import Colors from "../../../constants/colors";
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
 
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+
 export const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop: 10,
-    marginHorizontal: 30,
-    flexDirection: "row",
-    justifyContent: "space-between",
+  container: {
+    flex: 1,
     alignItems: "center",
+    marginHorizontal: 30,
+  },
+  titleContainer: {
+    marginTop: calculateDynamicWidth(10),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
   },
   title: {
     fontFamily: "Pretendard-Medium",
     fontSize: calculateDynamicWidth(23),
     color: Colors.text,
   },
-  container: {
+  emptyContainer: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "50%",
+    marginTop: screenHeight / 4,
   },
   group: {
     width: calculateDynamicWidth(46.67),
@@ -39,7 +47,7 @@ export const styles = StyleSheet.create({
     borderRadius: calculateDynamicWidth(10),
     justifyContent: "center",
     elevation: 4,
-    marginTop: "7%",
+    marginTop: calculateDynamicWidth(20),
   },
   btnText: {
     textAlign: "center",
@@ -51,7 +59,31 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.hover,
   },
   contentsContainer: {
+    flex: 1,
     alignItems: "center",
-    marginTop: calculateDynamicWidth(20),
+    marginTop: calculateDynamicWidth(25),
+    justifyContent: "space-between",
+  },
+  text: {
+    fontFamily: "Pretendard-Regular",
+    fontSize: calculateDynamicWidth(18),
+    color: Colors.text,
+  },
+  line: {
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.hover,
+    height: calculateDynamicWidth(20),
+    width: calculateDynamicWidth(330),
+    marginBottom: calculateDynamicWidth(10),
+  },
+  itemContainer: {
+    marginTop: calculateDynamicWidth(10),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: screenWidth - 60,
+  },
+  btnContainer: {
+    marginBottom: "10%",
   },
 });

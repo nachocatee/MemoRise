@@ -1,8 +1,17 @@
 import React from "react";
-import { View, Image, TextInput, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Image,
+  TextInput,
+  StyleSheet,
+  Pressable,
+  Dimensions,
+} from "react-native";
 
 import Colors from "../constants/colors";
 import { calculateDynamicWidth } from "../constants/dynamicSize";
+
+const screenWidth = Dimensions.get("window").width;
 
 const SeachInput = () => {
   return (
@@ -22,7 +31,7 @@ export default SeachInput;
 
 const styles = StyleSheet.create({
   inputContainer: {
-    width: calculateDynamicWidth(306),
+    width: screenWidth - 60,
     height: calculateDynamicWidth(44),
     backgroundColor: "rgba(255, 255, 255, 0.7)",
     borderRadius: calculateDynamicWidth(15),

@@ -46,10 +46,12 @@ const MenuScreen = () => {
         </View>
         {/* 노트 이미지 */}
         <View style={{ marginTop: calculateDynamicWidth(25) }}>
-          <Image
-            source={require("../../assets/image/note.png")}
-            style={styles.note}
-          />
+          <View>
+            <Image
+              source={require("../../assets/image/note.png")}
+              style={styles.note}
+            />
+          </View>
           {/* 메뉴 contents */}
           <View style={styles.menuList}>
             <Pressable

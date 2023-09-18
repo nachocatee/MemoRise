@@ -22,11 +22,11 @@ const MyGroupScreen = () => {
       style={{ flex: 1 }}
     >
       <GoBackHeader />
-      <View>
+      <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>내 그룹</Text>
         </View>
-        <View style={styles.container}>
+        <View style={styles.emptyContainer}>
           <Image
             style={styles.group}
             source={require("../../../assets/icons/group.png")}

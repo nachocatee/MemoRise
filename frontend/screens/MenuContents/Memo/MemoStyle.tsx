@@ -1,7 +1,9 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 
 import Colors from "../../../constants/colors";
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
+
+const screenHeight = Dimensions.get("window").height;
 
 export const styles = StyleSheet.create({
   title: {
@@ -14,7 +16,7 @@ export const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "60%",
+    marginTop: screenHeight / 4,
   },
   icon: {
     width: calculateDynamicWidth(42),

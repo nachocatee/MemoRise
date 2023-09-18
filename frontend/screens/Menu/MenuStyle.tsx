@@ -35,11 +35,15 @@ export const styles = StyleSheet.create({
   note: {
     width: calculateDynamicWidth(320),
     height: calculateDynamicWidth(438),
+    position: "absolute",
+    left: "50%",
+    transform: [
+      // translate를 사용하여 이미지의 중앙을 화면의 중앙으로 이동
+      { translateX: -calculateDynamicWidth(320) / 2 },
+    ],
   },
   menuList: {
-    position: "absolute",
-    top: "18%",
-    left: "11%",
+    marginTop: calculateDynamicWidth(70),
   },
   menuItem: {
     flexDirection: "row",

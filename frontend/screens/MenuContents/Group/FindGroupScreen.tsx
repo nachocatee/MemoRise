@@ -25,7 +25,7 @@ const FindGroupScreen = () => {
       style={{ flex: 1 }}
     >
       <GoBackHeader />
-      <View>
+      <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>그룹 찾기</Text>
           <SmallBtn onPress={MakeGroupHandler}>만들기</SmallBtn>

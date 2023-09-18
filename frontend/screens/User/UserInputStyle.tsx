@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   },
   inputBox: {
     width: calculateDynamicWidth(285),
-    marginTop: 50,
+    marginTop: 30,
   },
   input: {
     borderBottomWidth: 2,
