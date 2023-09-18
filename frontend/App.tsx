@@ -9,6 +9,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { SafeAreaView, StatusBar } from "react-native";
+import { Provider } from "react-redux";
 
 import LandingScreen from "./screens/Landing/LandingScreen";
 import LoginScreen from "./screens/User/LoginScreen";
@@ -21,6 +22,7 @@ import MyMemoScreen from "./screens/MenuContents/Memo/MyMemoScreen";
 import MyGroupScreen from "./screens/MenuContents/Group/MyGroupScreen";
 import FindGroupScreen from "./screens/MenuContents/Group/FindGroupScreen";
 import ModifyInfoScreen from "./screens/User/ModifyInfoScreen";
+import { store } from "./store/stote";
 
 export type RootStackParamList = {
   Landing: undefined;
@@ -42,22 +44,24 @@ function App(): JSX.Element {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar />
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="Landing" component={LandingScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Main" component={MainScreen} />
-          {/* 메뉴 */}
-          <Stack.Screen name="Menu" component={MenuScreen} />
-          <Stack.Screen name="SavedMemo" component={SavedMemoScreen} />
-          <Stack.Screen name="AllMemo" component={AllMemoScreen} />
-          <Stack.Screen name="MyMemo" component={MyMemoScreen} />
-          <Stack.Screen name="MyGroup" component={MyGroupScreen} />
-          <Stack.Screen name="FindGroup" component={FindGroupScreen} />
-          <Stack.Screen name="ModifyInfo" component={ModifyInfoScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="Landing" component={LandingScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Main" component={MainScreen} />
+            {/* 메뉴 */}
+            <Stack.Screen name="Menu" component={MenuScreen} />
+            <Stack.Screen name="SavedMemo" component={SavedMemoScreen} />
+            <Stack.Screen name="AllMemo" component={AllMemoScreen} />
+            <Stack.Screen name="MyMemo" component={MyMemoScreen} />
+            <Stack.Screen name="MyGroup" component={MyGroupScreen} />
+            <Stack.Screen name="FindGroup" component={FindGroupScreen} />
+            <Stack.Screen name="ModifyInfo" component={ModifyInfoScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     </SafeAreaView>
   );
 }
