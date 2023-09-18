@@ -38,15 +38,14 @@ spring:
             client-name: kakao
             scope:
               - account_email
-
-#jwt:
-#  secretKey: testsy
-#  access:
-#    expiration: ${ACCESS_EXPIRATION} # 1??(60?) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
-#    header: Authorization
-#  refresh:
-#    expiration: ${REFRESH_EXPIRATION} #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> ??) * 14(2?))
-#    header: Authorization-refresh
+jwt:
+  secretKey: testsy
+  access:
+    expiration: ${ACCESS_EXPIRATION} # 1??(60?) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
+    header: Authorization
+  refresh:
+    expiration: ${REFRESH_EXPIRATION} #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> ??) * 14(2?))
+    header: Authorization-refresh
 server:
   port: 8000
 
