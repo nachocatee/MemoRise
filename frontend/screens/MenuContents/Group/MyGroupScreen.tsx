@@ -23,7 +23,9 @@ const MyGroupScreen = () => {
     >
       <GoBackHeader />
       <View>
-        <Text style={styles.title}>내 그룹</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>내 그룹</Text>
+        </View>
         <View style={styles.container}>
           <Image
             style={styles.group}

@@ -1,10 +1,21 @@
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { View, Text, Image } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import SmallBtn from "../../../components/Button/SmallBtn";
 
 import GoBackHeader from "../../../components/Header/GoBackHeader";
+import SeachInput from "../../../components/SearchInput";
 import { styles } from "./GroupStyle";
 
+type RootStackParamList = {
+  MakeGroup: undefined;
+};
+
 const FindGroupScreen = () => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const MakeGroupHandler = () => navigation.navigate("MakeGroup");
+
   return (
     <LinearGradient
       // colors={["#F5F5F5", "red"]}
@@ -15,7 +26,13 @@ const FindGroupScreen = () => {
     >
       <GoBackHeader />
       <View>
-        <Text style={styles.title}>그룹 찾기</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>그룹 찾기</Text>
+          <SmallBtn onPress={MakeGroupHandler}>만들기</SmallBtn>
+        </View>
+        <View style={styles.contentsContainer}>
+          <SeachInput />
+        </View>
       </View>
     </LinearGradient>
   );

@@ -23,6 +23,7 @@ import MyGroupScreen from "./screens/MenuContents/Group/MyGroupScreen";
 import FindGroupScreen from "./screens/MenuContents/Group/FindGroupScreen";
 import ModifyInfoScreen from "./screens/User/ModifyInfoScreen";
 import { store } from "./store/stote";
+import MakeGroupScreen from "./screens/MenuContents/Group/MakeGroupScreen";
 
 export type RootStackParamList = {
   Landing: undefined;
@@ -36,6 +37,7 @@ export type RootStackParamList = {
   MyGroup: undefined;
   FindGroup: undefined;
   ModifyInfo: undefined;
+  MakeGroup: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -59,6 +61,7 @@ function App(): JSX.Element {
             <Stack.Screen name="MyGroup" component={MyGroupScreen} />
             <Stack.Screen name="FindGroup" component={FindGroupScreen} />
             <Stack.Screen name="ModifyInfo" component={ModifyInfoScreen} />
+            <Stack.Screen name="MakeGroup" component={MakeGroupScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

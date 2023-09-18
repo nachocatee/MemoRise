@@ -4,12 +4,17 @@ import Colors from "../../../constants/colors";
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
 
 export const styles = StyleSheet.create({
+  titleContainer: {
+    marginTop: 10,
+    marginHorizontal: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   title: {
     fontFamily: "Pretendard-Medium",
     fontSize: calculateDynamicWidth(23),
     color: Colors.text,
-    marginLeft: 30,
-    marginTop: 10,
   },
   container: {
     justifyContent: "center",
@@ -44,5 +49,9 @@ export const styles = StyleSheet.create({
   },
   pressed: {
     backgroundColor: Colors.hover,
+  },
+  contentsContainer: {
+    alignItems: "center",
+    marginTop: calculateDynamicWidth(20),
   },
 });

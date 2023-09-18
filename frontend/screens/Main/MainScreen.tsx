@@ -1,6 +1,6 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import { View } from "react-native";
+import { View, Dimensions, Text } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
 import { RootStackParamList } from "../../App";
@@ -18,6 +18,8 @@ const MainScreen: React.FC<Props> = ({ navigation }) => {
     navigation.navigate("SignUp");
   };
 
+  const screenWidth = Dimensions.get("window").width;
+
   return (
     <LinearGradient
       // colors={["#000000", "red"]}
@@ -29,6 +31,7 @@ const MainScreen: React.FC<Props> = ({ navigation }) => {
       <MainHeader />
       <View>
         <ConfirmBtn onPress={ImsiHandler}>뒤로가기</ConfirmBtn>
+        <Text style={{ color: "#000" }}>{screenWidth}</Text>
       </View>
     </LinearGradient>
   );

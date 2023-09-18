@@ -1,12 +1,16 @@
 import { Dimensions } from "react-native";
 
-type DynamicWidthFunction = (width: number) => number;
+type DynamicWidthFunction = (size: number) => number;
 
-export const calculateDynamicWidth: DynamicWidthFunction = (width) => {
-  const screenWidth = Dimensions.get("window").width;
-  const baseScreenWidth = 360; // 기준 너비
+export const calculateDynamicWidth: DynamicWidthFunction = (size) => {
+  // const screenWidth = Dimensions.get("window").width;
+  const screenHeight = Dimensions.get("window").height;
 
-  const dynamicWidth = (screenWidth / baseScreenWidth) * width;
+  // const baseScreenWidth = 360; // 기준 너비
+  const baseScreenHeight = 800; // 기준 높이
 
-  return dynamicWidth;
+  // const dynamicWidth = (screenWidth / baseScreenWidth) * width;
+  const dynamicSize = (screenHeight / baseScreenHeight) * size;
+
+  return dynamicSize;
 };
