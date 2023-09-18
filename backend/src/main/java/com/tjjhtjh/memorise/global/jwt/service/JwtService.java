@@ -81,7 +81,7 @@ public class JwtService {
         responseData.put("userSeq", user.getUserSeq());
         responseData.put("email", email);
         responseData.put("nickname", user.getNickname());
-        responseData.put("profileImg", user.getProfileImg());
+        responseData.put("profile", user.getProfile());
 
         try {
             String jsonString = mapper.writeValueAsString(responseData);
