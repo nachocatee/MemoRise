@@ -43,8 +43,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(
                 authorize -> authorize
-                        .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/user").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 );
         http.exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint));
