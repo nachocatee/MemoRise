@@ -1,16 +1,32 @@
-import { View, StyleSheet, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { View, StyleSheet, Image, Pressable } from "react-native";
+
+type RootStackParamList = {
+  Main: undefined;
+};
 
 const CancelHeader = () => {
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackParamList, "Main">>();
+
   return (
     <View style={styles.header}>
-      <Image
-        source={require("../../assets/image/logo/logoblack.png")}
-        style={styles.logo}
-      />
-      <Image
-        source={require("../../assets/icons/cancel.png")}
-        style={styles.cancel}
-      />
+      <Pressable onPress={() => navigation.navigate("Main")}>
+        <Image
+          source={require("../../assets/image/logo/logoblack.png")}
+          style={styles.logo}
+        />
+      </Pressable>
+      <Pressable
+        onPress={() => navigation.navigate("Main")}
+        style={styles.cancelContainer}
+      >
+        <Image
+          source={require("../../assets/icons/cancel.png")}
+          style={styles.cancel}
+        />
+      </Pressable>
     </View>
   );
 };
@@ -28,10 +44,12 @@ const styles = StyleSheet.create({
     width: 189,
     height: 35,
   },
+  cancelContainer: {
+    position: "absolute",
+    right: 25,
+  },
   cancel: {
     width: 22.92,
     height: 22.92,
-    position: "absolute",
-    right: 20,
   },
 });

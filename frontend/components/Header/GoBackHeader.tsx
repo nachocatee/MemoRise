@@ -1,34 +1,39 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { View, StyleSheet, Image, Pressable } from "react-native";
+import Colors from "../../constants/colors";
 
 type RootStackParamList = {
-  Menu: undefined;
   Main: undefined;
+  Menu: undefined;
 };
 
-const MainHeader = () => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+const GoBackHeader = () => {
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackParamList, "Main">>();
 
   return (
     <View style={styles.header}>
-      <Pressable style={styles.notificationContainer}>
+      <Pressable
+        onPress={() => navigation.goBack()}
+        style={styles.goBackContainer}
+      >
         <View style={styles.padding}>
           <Image
-            source={require("../../assets/icons/notification_none.png")}
-            style={styles.notification}
+            source={require("../../assets/icons/goback.png")}
+            style={styles.goBack}
           />
         </View>
       </Pressable>
       <Pressable onPress={() => navigation.navigate("Main")}>
         <Image
-          source={require("../../assets/image/logo/logowhite.png")}
+          source={require("../../assets/image/logo/logoblack.png")}
           style={styles.logo}
         />
       </Pressable>
       <Pressable
-        style={styles.menuContainer}
         onPress={() => navigation.navigate("Menu")}
+        style={styles.menuContainer}
       >
         <View style={styles.padding}>
           <View style={styles.menu}></View>
@@ -38,7 +43,7 @@ const MainHeader = () => {
   );
 };
 
-export default MainHeader;
+export default GoBackHeader;
 
 const styles = StyleSheet.create({
   header: {
@@ -52,13 +57,13 @@ const styles = StyleSheet.create({
     width: 189,
     height: 35,
   },
-  notificationContainer: {
+  goBackContainer: {
     position: "absolute",
     left: 0,
   },
-  notification: {
-    width: 26.25,
-    height: 28.43,
+  goBack: {
+    width: 13,
+    height: 25,
   },
   menuContainer: {
     position: "absolute",
@@ -68,9 +73,9 @@ const styles = StyleSheet.create({
     width: 31,
     height: 15,
     borderTopWidth: 2,
-    borderTopColor: "white",
+    borderTopColor: Colors.text,
     borderBottomWidth: 2,
-    borderBottomColor: "white",
+    borderBottomColor: Colors.text,
   },
   padding: {
     padding: 10,

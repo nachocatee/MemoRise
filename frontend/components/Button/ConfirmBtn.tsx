@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  View,
   Text,
   StyleSheet,
   Pressable,
@@ -16,25 +15,22 @@ type ConfirmBtnProps = {
 
 const ConfirmBtn: React.FC<ConfirmBtnProps> = ({ children, onPress }) => {
   return (
-    <View style={styles.buttonOuterContainer}>
-      <Pressable
-        style={({ pressed }) =>
-          pressed
-            ? [styles.buttonInnerContainer, styles.pressed]
-            : styles.buttonInnerContainer
-        }
-        onPress={onPress}
-      >
-        <Text style={styles.buttonText}>{children}</Text>
-      </Pressable>
-    </View>
+    <Pressable
+      style={({ pressed }) =>
+        pressed
+          ? [styles.buttonInnerContainer, styles.pressed]
+          : styles.buttonInnerContainer
+      }
+      onPress={onPress}
+    >
+      <Text style={styles.buttonText}>{children}</Text>
+    </Pressable>
   );
 };
 
 export default ConfirmBtn;
 
 const styles = StyleSheet.create({
-  buttonOuterContainer: {},
   buttonInnerContainer: {
     backgroundColor: Colors.primary200,
     width: calculateDynamicWidth(270),

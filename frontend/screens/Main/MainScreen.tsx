@@ -1,6 +1,6 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
 import { RootStackParamList } from "../../App";

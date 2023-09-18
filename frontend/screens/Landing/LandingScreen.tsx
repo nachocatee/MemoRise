@@ -1,10 +1,10 @@
 import React, { useRef, useEffect } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, Animated } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import { RootStackParamList } from "../../App";
-import { calculateDynamicWidth } from "../../constants/dynamicSize";
+import { styles } from "./LandingStyle";
 
 type LandingScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -60,7 +60,7 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.rootContainer}>
         <Animated.Image
           source={require("../../assets/image/logo/logo.png")}
-          style={[imageStyle, animatedStyles]}
+          style={[styles.image, animatedStyles]}
         />
       </View>
     </LinearGradient>
@@ -68,16 +68,3 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
 };
 
 export default LandingScreen;
-
-const styles = StyleSheet.create({
-  rootContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
-
-const imageStyle = {
-  width: calculateDynamicWidth(312),
-  height: calculateDynamicWidth(57),
-};

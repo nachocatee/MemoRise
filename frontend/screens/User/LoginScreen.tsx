@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet, Pressable } from "react-native";
+import { View, Image, Pressable } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import KakaoLogins, {
   login,
@@ -6,7 +6,7 @@ import KakaoLogins, {
 } from "@react-native-seoul/kakao-login";
 import axios from "axios";
 
-import { calculateDynamicWidth } from "../../constants/dynamicSize";
+import { styles } from "./LoginStyle";
 
 const LoginScreen = () => {
   // 카카오 로그인 함수
@@ -32,16 +32,16 @@ const LoginScreen = () => {
         <View style={{ alignItems: "center" }}>
           <Image
             source={require("../../assets/image/note_sm.png")}
-            style={imageStyle}
+            style={styles.image}
           />
           <Image
             source={require("../../assets/image/logo/logo.png")}
-            style={[logoStyle, styles.logo]}
+            style={styles.logo}
           />
           <Pressable style={styles.kakao} onPress={loginHandler}>
             <Image
               source={require("../../assets/image/kakao.png")}
-              style={kakaoStyle}
+              style={styles.kakaoImage}
             />
           </Pressable>
         </View>
@@ -51,34 +51,3 @@ const LoginScreen = () => {
 };
 
 export default LoginScreen;
-
-const styles = StyleSheet.create({
-  rootContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logo: {
-    position: "absolute",
-    top: "27%",
-  },
-  kakao: {
-    position: "absolute",
-    bottom: "27%",
-  },
-});
-
-const imageStyle = {
-  width: calculateDynamicWidth(320),
-  height: calculateDynamicWidth(333),
-};
-
-const logoStyle = {
-  width: calculateDynamicWidth(253),
-  height: calculateDynamicWidth(48),
-};
-
-const kakaoStyle = {
-  width: calculateDynamicWidth(230),
-  height: calculateDynamicWidth(48),
-};
