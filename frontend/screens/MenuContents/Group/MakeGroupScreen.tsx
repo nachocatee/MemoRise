@@ -1,25 +1,37 @@
 import React, { useState } from "react";
-import { View, Text, Image, Pressable, Switch } from "react-native";
+import { View, Text, Pressable, Switch, Modal } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import ConfirmBtn from "../../../components/Button/ConfirmBtn";
+import { BlurView } from "@react-native-community/blur";
 
 import GoBackHeader from "../../../components/Header/GoBackHeader";
 import Colors from "../../../constants/colors";
 import { styles } from "./GroupStyle";
+import PasswordInputModal from "../../../components/Modal/PasswordInputModal";
 
 const MakeGroupScreen = () => {
+  // 비밀번호 설정
+  const [password, setPassword] = useState("");
+
   // 모달 상태
   const [isModalVisible, setModalVisible] = useState(false);
 
   // 토글 스위치
   const [isEnabled, setIsEnabled] = useState(false);
+
   const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
-    setModalVisible(true);
+    setIsEnabled((previousState) => {
+      if (!previousState) {
+        // isEnabled가 현재 false인 경우 (즉, true로 바뀔 경우)
+        setModalVisible(true);
+      }
+      return !previousState;
+    });
   };
 
   const closeModal = () => {
     setModalVisible(false);
+    setIsEnabled(false);
   };
 
   const ConfirmHandler = () => {};
@@ -67,6 +79,32 @@ const MakeGroupScreen = () => {
           <ConfirmBtn onPress={ConfirmHandler}>확인</ConfirmBtn>
         </View>
       </View>
+
+      {/* 모달 */}
+      {isModalVisible && (
+        <BlurView
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          blurType="light"
+          blurAmount={4}
+        >
+          <Modal
+            transparent={true}
+            animationType="fade"
+            visible={isModalVisible}
+            onRequestClose={closeModal}
+          >
+            <View style={styles.modalContainer}>
+              <PasswordInputModal closeModal={closeModal} />
+            </View>
+          </Modal>
+        </BlurView>
+      )}
     </LinearGradient>
   );
 };

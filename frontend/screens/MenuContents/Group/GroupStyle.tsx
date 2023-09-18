@@ -86,4 +86,9 @@ export const styles = StyleSheet.create({
   btnContainer: {
     marginBottom: "10%",
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
