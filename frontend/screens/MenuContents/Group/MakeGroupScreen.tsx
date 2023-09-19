@@ -8,23 +8,65 @@ import GoBackHeader from "../../../components/Header/GoBackHeader";
 import Colors from "../../../constants/colors";
 import { styles } from "./GroupStyle";
 import PasswordInputModal from "../../../components/Modal/PasswordInputModal";
+import GroupNameInputModal from "../../../components/Modal/GroupNameInputModal";
+import { calculateDynamicWidth } from "../../../constants/dynamicSize";
 
 const MakeGroupScreen = () => {
+  // 그룹 이름 설정
+  const [name, setName] = useState("Group123"); // 더미 데이터
+  const [enteredName, setEnteredName] = useState("");
+
+  const nameModalHandler = () => {
+    setNameModalVisible(true);
+    setEnteredName("");
+  };
+
+  const nameInputHandler = (enterdText: string) => {
+    setEnteredName(enterdText);
+  };
+
+  const nameConfirmHandler = () => {
+    setName(enteredName);
+    setNameModalVisible(false);
+  };
+
   // 비밀번호 설정
   const [password, setPassword] = useState("");
-  const [enteredString, setEnteredString] = useState("");
+  const [enteredPassword, setEnteredPassword] = useState("");
+  const [invalid, setInvalid] = useState(false);
+
+  const passwordModalHandler = () => {
+    setPasswordModalVisible(true);
+    setEnteredPassword("");
+  };
 
   const passwordInputHandler = (enteredText: string) => {
-    setEnteredString(enteredText);
+    setEnteredPassword(enteredText);
   };
 
   const passwordConfirmHandler = () => {
-    setPassword(enteredString);
-    setModalVisible(false);
+    if (enteredPassword.length < 4) {
+      setInvalid(true);
+      return;
+    }
+    setPassword(enteredPassword);
+    setPasswordModalVisible(false);
+    setInvalid(false);
   };
 
   // 모달 상태
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
+  const [isNameModalVisible, setNameModalVisible] = useState(false);
+
+  const closePasswordModal = () => {
+    setPasswordModalVisible(false);
+    setIsEnabled(false);
+    setInvalid(false);
+  };
+
+  const closeNameModal = () => {
+    setNameModalVisible(false);
+  };
 
   // 토글 스위치
   const [isEnabled, setIsEnabled] = useState(false);
@@ -33,18 +75,12 @@ const MakeGroupScreen = () => {
     setIsEnabled((previousState) => {
       if (!previousState) {
         // isEnabled가 현재 false인 경우 (즉, true로 바뀔 경우)
-        setEnteredString("");
-        setModalVisible(true);
+        passwordModalHandler();
       } else {
         setPassword("");
       }
       return !previousState;
     });
-  };
-
-  const closeModal = () => {
-    setModalVisible(false);
-    setIsEnabled(false);
   };
 
   const confirmHandler = () => {};
@@ -68,8 +104,8 @@ const MakeGroupScreen = () => {
           <View>
             <View style={styles.itemContainer}>
               <Text style={styles.text}>그룹 이름</Text>
-              <Pressable>
-                <Text style={[styles.text, { opacity: 0.5 }]}>Group123</Text>
+              <Pressable onPress={nameModalHandler}>
+                <Text style={[styles.text, { opacity: 0.5 }]}>{name}</Text>
               </Pressable>
             </View>
 
@@ -82,6 +118,12 @@ const MakeGroupScreen = () => {
                 thumbColor="white"
                 onValueChange={toggleSwitch}
                 value={isEnabled}
+                style={{
+                  transform: [
+                    { scaleX: calculateDynamicWidth(1) },
+                    { scaleY: calculateDynamicWidth(1) },
+                  ],
+                }}
               />
             </View>
             {password && (
@@ -89,7 +131,7 @@ const MakeGroupScreen = () => {
                 <View style={styles.line}></View>
                 <View style={styles.itemContainer}>
                   <Text style={styles.text}>비밀번호</Text>
-                  <Pressable>
+                  <Pressable onPress={passwordModalHandler}>
                     <Text style={[styles.text, { opacity: 0.5 }]}>
                       {password}
                     </Text>
@@ -106,8 +148,8 @@ const MakeGroupScreen = () => {
         </View>
       </View>
 
-      {/* 모달 */}
-      {isModalVisible && (
+      {/* 비밀번호 모달 */}
+      {isPasswordModalVisible && (
         <BlurView
           style={{
             position: "absolute",
@@ -122,15 +164,47 @@ const MakeGroupScreen = () => {
           <Modal
             transparent={true}
             animationType="fade"
-            visible={isModalVisible}
-            onRequestClose={closeModal}
+            visible={isPasswordModalVisible}
+            onRequestClose={closePasswordModal}
           >
             <View style={styles.modalContainer}>
               <PasswordInputModal
-                closeModal={closeModal}
+                closeModal={closePasswordModal}
                 onChangeText={passwordInputHandler}
-                value={enteredString}
+                value={enteredPassword}
                 onConfirm={passwordConfirmHandler}
+                invalid={invalid}
+              />
+            </View>
+          </Modal>
+        </BlurView>
+      )}
+
+      {/* 그룹이름 모달 */}
+      {isNameModalVisible && (
+        <BlurView
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          blurType="light"
+          blurAmount={4}
+        >
+          <Modal
+            transparent={true}
+            animationType="fade"
+            visible={isNameModalVisible}
+            onRequestClose={closeNameModal}
+          >
+            <View style={styles.modalContainer}>
+              <GroupNameInputModal
+                closeModal={closeNameModal}
+                onChangeText={nameInputHandler}
+                value={enteredName}
+                onConfirm={nameConfirmHandler}
               />
             </View>
           </Modal>

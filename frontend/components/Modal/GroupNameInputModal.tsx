@@ -16,32 +16,24 @@ type ModalProps = {
   onChangeText: (text: string) => void;
   value: string;
   onConfirm: () => void;
-  invalid: boolean;
 };
 
-const PasswordInputModal: React.FC<ModalProps> = ({
+const GroupNameInputModal: React.FC<ModalProps> = ({
   closeModal,
   onChangeText,
   value,
   onConfirm,
-  invalid,
 }) => {
   return (
     <View style={styles.modalContainer}>
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>비밀번호 입력</Text>
-        <Text
-          style={
-            invalid ? [styles.content, styles.invalidText] : styles.content
-          }
-        >
-          영문/숫자 4~8자리로 입력해 주세요.
-        </Text>
+        <Text style={styles.title}>그룹 이름 설정</Text>
+        <Text style={styles.content}>최대 10자리로 입력해 주세요.</Text>
         <TextInput
-          style={invalid ? [styles.input, styles.invalidInput] : styles.input}
+          style={styles.input}
           onChangeText={onChangeText}
           value={value}
-          maxLength={8}
+          maxLength={10}
         />
         <View style={styles.btnContainer}>
           <ModalBtn onPress={closeModal} color="white">
@@ -56,7 +48,7 @@ const PasswordInputModal: React.FC<ModalProps> = ({
   );
 };
 
-export default PasswordInputModal;
+export default GroupNameInputModal;
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -96,11 +88,5 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Regular",
     fontSize: calculateDynamicWidth(17),
     marginBottom: calculateDynamicWidth(30),
-  },
-  invalidInput: {
-    borderBottomColor: Colors.red400,
-  },
-  invalidText: {
-    color: Colors.red400,
   },
 });
