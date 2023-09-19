@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, Pressable, Switch, Modal } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
-import ConfirmBtn from "../../../components/Button/ConfirmBtn";
 import { BlurView } from "@react-native-community/blur";
 
+import ConfirmBtn from "../../../components/Button/ConfirmBtn";
 import GoBackHeader from "../../../components/Header/GoBackHeader";
 import Colors from "../../../constants/colors";
 import { styles } from "./GroupStyle";
@@ -59,9 +59,14 @@ const MakeGroupScreen = () => {
   const [isNameModalVisible, setNameModalVisible] = useState(false);
 
   const closePasswordModal = () => {
-    setPasswordModalVisible(false);
-    setIsEnabled(false);
-    setInvalid(false);
+    if (password) {
+      setPasswordModalVisible(false);
+      setInvalid(false);
+    } else {
+      setPasswordModalVisible(false);
+      setIsEnabled(false);
+      setInvalid(false);
+    }
   };
 
   const closeNameModal = () => {

@@ -1,7 +1,8 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import { View, Dimensions, Text } from "react-native";
+import { View, Dimensions, Text, Modal, Pressable } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import { BlurView } from "@react-native-community/blur";
 
 import { RootStackParamList } from "../../App";
 import ConfirmBtn from "../../components/Button/ConfirmBtn";
@@ -31,7 +32,6 @@ const MainScreen: React.FC<Props> = ({ navigation }) => {
       <MainHeader />
       <View>
         <ConfirmBtn onPress={ImsiHandler}>뒤로가기</ConfirmBtn>
-        <Text style={{ color: "#000" }}>{screenWidth}</Text>
       </View>
     </LinearGradient>
   );
