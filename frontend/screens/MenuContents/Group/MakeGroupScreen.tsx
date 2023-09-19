@@ -26,8 +26,13 @@ const MakeGroupScreen = () => {
   };
 
   const nameConfirmHandler = () => {
-    setName(enteredName);
-    setNameModalVisible(false);
+    if (enteredName) {
+      setName(enteredName);
+      setNameModalVisible(false);
+      setInvalid(false);
+    } else {
+      setInvalid(true);
+    }
   };
 
   // 비밀번호 설정
@@ -70,6 +75,7 @@ const MakeGroupScreen = () => {
   };
 
   const closeNameModal = () => {
+    setInvalid(false);
     setNameModalVisible(false);
   };
 
@@ -210,6 +216,7 @@ const MakeGroupScreen = () => {
                 onChangeText={nameInputHandler}
                 value={enteredName}
                 onConfirm={nameConfirmHandler}
+                invalid={invalid}
               />
             </View>
           </Modal>

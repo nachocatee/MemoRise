@@ -16,6 +16,7 @@ type ModalProps = {
   onChangeText: (text: string) => void;
   value: string;
   onConfirm: () => void;
+  invalid: boolean;
 };
 
 const GroupNameInputModal: React.FC<ModalProps> = ({
@@ -23,14 +24,20 @@ const GroupNameInputModal: React.FC<ModalProps> = ({
   onChangeText,
   value,
   onConfirm,
+  invalid,
 }) => {
   return (
     <View style={styles.modalContainer}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>그룹 이름 설정</Text>
-        <Text style={styles.content}>최대 10자리로 입력해 주세요.</Text>
+        {invalid ? (
+          <Text style={styles.invalidText}>그룹 이름을 입력해 주세요.</Text>
+        ) : (
+          <Text style={styles.content}>최대 10자리로 입력해 주세요.</Text>
+        )}
+
         <TextInput
-          style={styles.input}
+          style={invalid ? [styles.input, styles.invalidInput] : styles.input}
           onChangeText={onChangeText}
           value={value}
           maxLength={10}
@@ -88,5 +95,11 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard-Regular",
     fontSize: calculateDynamicWidth(17),
     marginBottom: calculateDynamicWidth(30),
+  },
+  invalidInput: {
+    borderBottomColor: Colors.red400,
+  },
+  invalidText: {
+    color: Colors.red400,
   },
 });
