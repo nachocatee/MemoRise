@@ -13,20 +13,32 @@ import ModalBtn from "../Button/ModalBtn";
 
 type ModalProps = {
   closeModal: (event: GestureResponderEvent) => void;
+  onChangeText: (text: string) => void;
+  value: string;
+  onConfirm: () => void;
 };
 
-const PasswordInputModal: React.FC<ModalProps> = ({ closeModal }) => {
+const PasswordInputModal: React.FC<ModalProps> = ({
+  closeModal,
+  onChangeText,
+  value,
+  onConfirm,
+}) => {
   return (
     <View style={styles.modalContainer}>
       <View>
         <Text style={styles.title}>비밀번호 입력</Text>
         <Text style={styles.content}>영문/숫자 4~8자리로 입력해 주세요.</Text>
-        <TextInput style={styles.input} />
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeText}
+          value={value}
+        />
         <View style={styles.btnContainer}>
           <ModalBtn onPress={closeModal} color="white">
             취소
           </ModalBtn>
-          <ModalBtn onPress={closeModal} color={Colors.primary200}>
+          <ModalBtn onPress={onConfirm} color={Colors.primary200}>
             확인
           </ModalBtn>
         </View>

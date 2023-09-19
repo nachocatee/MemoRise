@@ -72,16 +72,18 @@ export const styles = StyleSheet.create({
   line: {
     borderBottomWidth: 1,
     borderBottomColor: Colors.hover,
-    height: calculateDynamicWidth(20),
-    width: calculateDynamicWidth(330),
+    height: calculateDynamicWidth(30),
+    width: screenWidth - 60,
+    // width: calculateDynamicWidth(330),
     marginBottom: calculateDynamicWidth(10),
   },
   itemContainer: {
-    marginTop: calculateDynamicWidth(10),
+    marginTop: calculateDynamicWidth(15),
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     width: screenWidth - 60,
+    // marginHorizontal: 30,
   },
   btnContainer: {
     marginBottom: "10%",

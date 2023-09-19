@@ -12,6 +12,16 @@ import PasswordInputModal from "../../../components/Modal/PasswordInputModal";
 const MakeGroupScreen = () => {
   // 비밀번호 설정
   const [password, setPassword] = useState("");
+  const [enteredString, setEnteredString] = useState("");
+
+  const passwordInputHandler = (enteredText: string) => {
+    setEnteredString(enteredText);
+  };
+
+  const passwordConfirmHandler = () => {
+    setPassword(enteredString);
+    setModalVisible(false);
+  };
 
   // 모달 상태
   const [isModalVisible, setModalVisible] = useState(false);
@@ -23,7 +33,10 @@ const MakeGroupScreen = () => {
     setIsEnabled((previousState) => {
       if (!previousState) {
         // isEnabled가 현재 false인 경우 (즉, true로 바뀔 경우)
+        setEnteredString("");
         setModalVisible(true);
+      } else {
+        setPassword("");
       }
       return !previousState;
     });
@@ -34,7 +47,7 @@ const MakeGroupScreen = () => {
     setIsEnabled(false);
   };
 
-  const ConfirmHandler = () => {};
+  const confirmHandler = () => {};
 
   return (
     <LinearGradient
@@ -71,12 +84,25 @@ const MakeGroupScreen = () => {
                 value={isEnabled}
               />
             </View>
+            {password && (
+              <>
+                <View style={styles.line}></View>
+                <View style={styles.itemContainer}>
+                  <Text style={styles.text}>비밀번호</Text>
+                  <Pressable>
+                    <Text style={[styles.text, { opacity: 0.5 }]}>
+                      {password}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
           </View>
         </View>
         {/* 여기까지 */}
 
         <View style={styles.btnContainer}>
-          <ConfirmBtn onPress={ConfirmHandler}>확인</ConfirmBtn>
+          <ConfirmBtn onPress={confirmHandler}>확인</ConfirmBtn>
         </View>
       </View>
 
@@ -100,7 +126,12 @@ const MakeGroupScreen = () => {
             onRequestClose={closeModal}
           >
             <View style={styles.modalContainer}>
-              <PasswordInputModal closeModal={closeModal} />
+              <PasswordInputModal
+                closeModal={closeModal}
+                onChangeText={passwordInputHandler}
+                value={enteredString}
+                onConfirm={passwordConfirmHandler}
+              />
             </View>
           </Modal>
         </BlurView>
