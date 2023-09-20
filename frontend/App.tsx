@@ -22,7 +22,7 @@ import MyMemoScreen from "./screens/MenuContents/Memo/MyMemoScreen";
 import MyGroupScreen from "./screens/MenuContents/Group/MyGroupScreen";
 import FindGroupScreen from "./screens/MenuContents/Group/FindGroupScreen";
 import ModifyInfoScreen from "./screens/User/ModifyInfoScreen";
-import { store } from "./store/stote";
+import { store } from "./store/store";
 import MakeGroupScreen from "./screens/MenuContents/Group/MakeGroupScreen";
 
 export type RootStackParamList = {
@@ -49,8 +49,8 @@ function App(): JSX.Element {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Landing" component={LandingScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Main" component={MainScreen} />
             {/* 메뉴 */}
