@@ -1,10 +1,12 @@
 package com.tjjhtjh.memorise.domain.user.service;
 
+import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.exception.UserEmailDuplicateException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
 import com.tjjhtjh.memorise.domain.user.repository.entity.Role;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
 import com.tjjhtjh.memorise.domain.user.service.dto.request.JoinRequest;
+import com.tjjhtjh.memorise.domain.user.service.dto.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,11 @@ public class UserServiceImpl implements UserService {
          }
          User user = new User(joinRequest.getEmail(), joinRequest.getNickname(), joinRequest.getProfile(), Role.MEMBER);
          userRepository.save(user);
+    }
+
+    @Override
+    public User getUserInfo(String email) {
+        return userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(() -> new NoUserException("존재하지 않는 유저입니다."));
     }
 
 }

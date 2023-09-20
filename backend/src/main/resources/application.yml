@@ -19,6 +19,13 @@ spring:
 #    multipart:
 #      max-file-size: 20MB
 #      max-request-size: 50MB
+  jwt:
+    prefix: 'Bearer '
+    secret: 2BBE0C48B91A7D1B8A6753A8B9CBE1DB16B84379F3F91FE115621284DF7A48F1CD71E9BEB90EA614C7BD924250AA9E446A866725E685A65DF5D139A5CD180DC9 # test -> sha512
+    token:
+      access-expiration-time: ${ACCESS_EXPIRATION}
+      test-access-expiration-time: 5000
+      refresh-expiration-time: ${REFRESH_EXPIRATION}
   security:
     oauth2:
       client:
@@ -33,19 +40,11 @@ spring:
             client-id: ${CLIENT_ID}
             client-secret: ${CLIENT_SECRET}
             client-authentication-method: client_secret_post
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: http://localhost:8000/auth/oauth2/code/kakao
             authorization-grant-type: authorization_code
             client-name: kakao
             scope:
               - account_email
-jwt:
-  secretKey: testsy
-  access:
-    expiration: ${ACCESS_EXPIRATION} # 1??(60?) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
-    header: Authorization
-  refresh:
-    expiration: ${REFRESH_EXPIRATION} #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> ??) * 14(2?))
-    header: Authorization-refresh
 server:
   port: 8000
 
