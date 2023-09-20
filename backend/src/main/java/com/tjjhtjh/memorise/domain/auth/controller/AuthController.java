@@ -6,10 +6,7 @@ import com.tjjhtjh.memorise.domain.user.service.dto.request.LoginRequest;
 import com.tjjhtjh.memorise.domain.user.service.dto.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +15,7 @@ public class AuthController {
 
     private final UserService userService;
 
-    @GetMapping
+    @PostMapping
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         User user = userService.getUserInfo(loginRequest.getEmail());
         return ResponseEntity.ok(new LoginResponse(true));
