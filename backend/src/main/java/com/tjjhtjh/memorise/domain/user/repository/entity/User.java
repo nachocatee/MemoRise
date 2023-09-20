@@ -46,4 +46,8 @@ public class User extends BaseEntity {
         this.deletedAt = LocalDateTime.now();
     }
 
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
+
 }
