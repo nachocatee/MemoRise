@@ -9,11 +9,35 @@ import axios from "axios";
 import { styles } from "./LoginStyle";
 
 const LoginScreen = () => {
-  // 카카오 로그인 함수
-  const loginHandler = async () => {
-    return await login()
+  // 카카오 사용자 정보 조회 함수
+  const getProfileHandler = () => {
+    getProfile()
       .then((response) => {
-        console.log(response);
+        console.log(response.email);
+        // 백엔드에 이메일 정보 보내서 사용자 확인
+        axios
+          .post("http://j9b106.p.ssafy.io:8000/auth/oauth2/code/kakao", {
+            email: response.email,
+          })
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  // 카카오 소셜 로그인 함수
+  const loginHandler = async () => {
+    await login()
+      .then((response) => {
+        console.log(response.scopes);
+        // 사용자 프로필 정보 조회
+        getProfileHandler();
       })
       .catch((error) => {
         console.log(error);
@@ -38,7 +62,7 @@ const LoginScreen = () => {
             source={require("../../assets/image/logo/logo.png")}
             style={styles.logo}
           />
-          <Pressable style={styles.kakao} onPress={loginHandler}>
+          <Pressable style={styles.kakao} onPress={() => loginHandler()}>
             <Image
               source={require("../../assets/image/kakao.png")}
               style={styles.kakaoImage}
