@@ -15,10 +15,10 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 500
-#  servlet:
-#    multipart:
-#      max-file-size: 20MB
-#      max-request-size: 50MB
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
   jwt:
     prefix: 'Bearer '
     secret: 2BBE0C48B91A7D1B8A6753A8B9CBE1DB16B84379F3F91FE115621284DF7A48F1CD71E9BEB90EA614C7BD924250AA9E446A866725E685A65DF5D139A5CD180DC9 # test -> sha512
@@ -64,15 +64,15 @@ management:
     metrics:
       export:
         enabled: true
-#cloud:
-#  aws:
-#    s3:
-#      bucket: ${AWS_S3_BUCKET}
-#    credentials:
-#      access-key: ${AWS_ACCESS_KEY}
-#      secret-key: ${AWS_SECRET_KEY}
-#    region:
-#      static: ap-northeast-2
-#      auto: false
-#    stack:
-#      auto: false
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
