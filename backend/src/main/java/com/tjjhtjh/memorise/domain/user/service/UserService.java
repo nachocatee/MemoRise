@@ -7,5 +7,6 @@ import com.tjjhtjh.memorise.domain.user.service.dto.response.UserInfoResponse;
 public interface UserService {
 
     void join(JoinRequest joinRequest);
-    User getUserInfo(String accessToken);
+    User getUserInfo(String email);
+
 }
