@@ -12,14 +12,14 @@ const CancelHeader = () => {
 
   return (
     <View style={styles.header}>
-      <Pressable onPress={() => navigation.navigate("Main")}>
+      <Pressable onPress={() => navigation.replace("Main")}>
         <Image
           source={require("../../assets/image/logo/logoblack.png")}
           style={styles.logo}
         />
       </Pressable>
       <Pressable
-        onPress={() => navigation.navigate("Main")}
+        onPress={() => navigation.replace("Main")}
         style={styles.cancelContainer}
       >
         <Image

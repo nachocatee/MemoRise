@@ -1,6 +1,16 @@
-import React, { useState } from "react";
-import { View, Text, Modal, Pressable, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Modal,
+  Pressable,
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
+
 import { BlurView } from "@react-native-community/blur";
+import { Camera, useCameraDevices } from "react-native-vision-camera";
 
 import MainHeader from "../../components/Header/MainHeader";
 import { styles } from "./MainStyle";
@@ -21,14 +31,46 @@ const MainScreen = () => {
     setMemoBtnModalVisible(false);
   };
 
+  // 카메라 로직
+  // 연결된 디바이스 확인
+  const devices = useCameraDevices();
+
+  // 후방 카메라
+  const device = devices.back;
+
+  // 페이지 첫 렌더링 시 허용 권한 체크
+  useEffect(() => {
+    checkPermission();
+  }, []);
+
+  // 카메라 허용 권한 확인
+  const checkPermission = async () => {
+    const cameraPermission = await Camera.getCameraPermissionStatus(); // 현재 카메라 권한 상태
+    if (cameraPermission === "denied") {
+      return Camera.requestCameraPermission(); // 카메라 허용 요청
+    }
+  };
+
+  if (device == null) return <ActivityIndicator />; // 디바이스가 없을 시 원형 로딩 표시기를 표시
+
   return (
     <View style={{ flex: 1 }}>
       {!isNotificationModalVisible && (
         <View style={styles.headerContainer}>
-          <MainHeader openModal={() => setNotificationModalVisible(true)} />
+          <MainHeader
+            openModal={() => {
+              setNotificationModalVisible(true);
+            }}
+          />
         </View>
       )}
       <View style={styles.rootContainer}>
+        <Camera
+          style={StyleSheet.absoluteFill}
+          device={device}
+          isActive={true}
+          photo
+        />
         <Pressable
           style={styles.btnContainer}
           onPress={() => setMemoBtnModalVisible(true)}
