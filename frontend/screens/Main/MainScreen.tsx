@@ -1,39 +1,83 @@
+import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react";
-import { View, Dimensions, Text, Modal, Pressable } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
+import React, { useState } from "react";
+import { View, Text, Modal, Pressable, Image } from "react-native";
 import { BlurView } from "@react-native-community/blur";
 
-import { RootStackParamList } from "../../App";
 import ConfirmBtn from "../../components/Button/ConfirmBtn";
 import MainHeader from "../../components/Header/MainHeader";
+import { styles } from "./MainStyle";
 
-type MainNavigationProp = StackNavigationProp<RootStackParamList, "Login">;
-
-type Props = {
-  navigation: MainNavigationProp;
+type RootStackParamList = {
+  SignUp: undefined;
 };
 
-const MainScreen: React.FC<Props> = ({ navigation }) => {
+const MainScreen = () => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+  // 임시 네비게이터
   const ImsiHandler = () => {
     navigation.navigate("SignUp");
   };
 
-  const screenWidth = Dimensions.get("window").width;
+  // 알림 모달
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   return (
-    <LinearGradient
-      // colors={["#000000", "red"]}
-      colors={["#F5F5F5", "#E9E9E9"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 1 }}
-      style={{ flex: 1 }}
-    >
-      <MainHeader />
+    <View>
+      {!isModalVisible && (
+        <MainHeader openModal={() => setModalVisible(true)} />
+      )}
       <View>
         <ConfirmBtn onPress={ImsiHandler}>뒤로가기</ConfirmBtn>
       </View>
-    </LinearGradient>
+
+      {/* 알림 모달 */}
+      {isModalVisible && (
+        <BlurView
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          blurType="dark"
+          blurAmount={4}
+        >
+          <Modal
+            transparent={true}
+            animationType="slide"
+            visible={isModalVisible}
+            onRequestClose={closeModal}
+          >
+            {/* 헤더 */}
+            <View style={styles.header}>
+              <Pressable>
+                <Image
+                  source={require("../../assets/image/logo/logowhite.png")}
+                  style={styles.logo}
+                />
+              </Pressable>
+              <Pressable style={styles.cancelContainer} onPress={closeModal}>
+                <Image
+                  source={require("../../assets/icons/cancelwhite.png")}
+                  style={styles.cancel}
+                />
+              </Pressable>
+            </View>
+
+            <View style={styles.modalEmptyContainer}>
+              <Text style={styles.modalEmpty}>알림 없음</Text>
+            </View>
+          </Modal>
+        </BlurView>
+      )}
+    </View>
   );
 };
 

@@ -1,18 +1,29 @@
+import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { View, StyleSheet, Image, Pressable } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Pressable,
+  GestureResponderEvent,
+} from "react-native";
 
 type RootStackParamList = {
   Menu: undefined;
   Main: undefined;
 };
 
-const MainHeader = () => {
+type HeaderProps = {
+  openModal: (event: GestureResponderEvent) => void;
+};
+
+const MainHeader: React.FC<HeaderProps> = ({ openModal }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
     <View style={styles.header}>
-      <Pressable style={styles.notificationContainer}>
+      <Pressable style={styles.notificationContainer} onPress={openModal}>
         <View style={styles.padding}>
           <Image
             source={require("../../assets/icons/notification_none.png")}

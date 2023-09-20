@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { View, Text, Image } from "react-native";
+import { View, Text } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import SmallBtn from "../../../components/Button/SmallBtn";
 

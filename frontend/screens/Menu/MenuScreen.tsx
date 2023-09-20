@@ -34,9 +34,9 @@ const MenuScreen = () => {
         <View style={{ marginBottom: calculateDynamicWidth(4) }}>
           <ProfilePic />
         </View>
-        {/* 유저 닉네임 */}
+        {/* 유저 더미 닉네임 */}
         <Text style={styles.text}>권소정</Text>
-        {/* 유저 이메일 */}
+        {/* 유저 더미 이메일 */}
         <View style={styles.emailBox}>
           <Image
             source={require("../../assets/image/kakao_sm.png")}
