@@ -12,7 +12,7 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(UserEmailDuplicateException.class)
     public ResponseEntity<ErrorResponse> handleException() {
-        ErrorResponse errorResponse = new ErrorResponse("회원가입 정보가 잘못되었습니다.");
+        ErrorResponse errorResponse = new ErrorResponse("이미 존재하는 이메일입니다.");
         return ResponseEntity.ok(errorResponse);
     }
 

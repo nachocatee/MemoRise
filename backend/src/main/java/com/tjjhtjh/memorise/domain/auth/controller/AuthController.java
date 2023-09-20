@@ -1,21 +1,26 @@
 package com.tjjhtjh.memorise.domain.auth.controller;
 
+import com.tjjhtjh.memorise.domain.user.repository.entity.User;
+import com.tjjhtjh.memorise.domain.user.service.UserService;
+import com.tjjhtjh.memorise.domain.user.service.dto.request.LoginRequest;
+import com.tjjhtjh.memorise.domain.user.service.dto.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-@Slf4j
 public class AuthController {
 
-    @GetMapping("/jwt-test")
-    public String jwtTest() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return "jwtTest 요청 성공 : " + authentication.getName();
-    }
+    private final UserService userService;
 
+    @GetMapping
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        User user = userService.getUserInfo(loginRequest.getEmail());
+        return ResponseEntity.ok(new LoginResponse(true));
+    }
 }
