@@ -1,43 +1,47 @@
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState } from "react";
 import { View, Text, Modal, Pressable, Image } from "react-native";
 import { BlurView } from "@react-native-community/blur";
 
-import ConfirmBtn from "../../components/Button/ConfirmBtn";
 import MainHeader from "../../components/Header/MainHeader";
 import { styles } from "./MainStyle";
 
-type RootStackParamList = {
-  SignUp: undefined;
-};
-
 const MainScreen = () => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  // 알림 모달
+  const [isNotificationModalVisible, setNotificationModalVisible] =
+    useState(false);
 
-  // 임시 네비게이터
-  const ImsiHandler = () => {
-    navigation.navigate("SignUp");
+  const closeNotificationModal = () => {
+    setNotificationModalVisible(false);
   };
 
-  // 알림 모달
-  const [isModalVisible, setModalVisible] = useState(false);
+  // 추가 버튼 모달
+  const [isMemoBtnModalVisible, setMemoBtnModalVisible] = useState(false);
 
-  const closeModal = () => {
-    setModalVisible(false);
+  const closeMemoBtnModal = () => {
+    setMemoBtnModalVisible(false);
   };
 
   return (
-    <View>
-      {!isModalVisible && (
-        <MainHeader openModal={() => setModalVisible(true)} />
+    <View style={{ flex: 1 }}>
+      {!isNotificationModalVisible && (
+        <View style={styles.headerContainer}>
+          <MainHeader openModal={() => setNotificationModalVisible(true)} />
+        </View>
       )}
-      <View>
-        <ConfirmBtn onPress={ImsiHandler}>뒤로가기</ConfirmBtn>
+      <View style={styles.rootContainer}>
+        <Pressable
+          style={styles.btnContainer}
+          onPress={() => setMemoBtnModalVisible(true)}
+        >
+          <Image
+            source={require("../../assets/image/mainbtn.png")}
+            style={styles.addBtn}
+          />
+        </Pressable>
       </View>
 
       {/* 알림 모달 */}
-      {isModalVisible && (
+      {isNotificationModalVisible && (
         <BlurView
           style={{
             position: "absolute",
@@ -52,8 +56,8 @@ const MainScreen = () => {
           <Modal
             transparent={true}
             animationType="slide"
-            visible={isModalVisible}
-            onRequestClose={closeModal}
+            visible={isNotificationModalVisible}
+            onRequestClose={closeNotificationModal}
           >
             {/* 헤더 */}
             <View style={styles.header}>
@@ -63,7 +67,10 @@ const MainScreen = () => {
                   style={styles.logo}
                 />
               </Pressable>
-              <Pressable style={styles.cancelContainer} onPress={closeModal}>
+              <Pressable
+                style={styles.cancelContainer}
+                onPress={closeNotificationModal}
+              >
                 <Image
                   source={require("../../assets/icons/cancelwhite.png")}
                   style={styles.cancel}
@@ -74,6 +81,56 @@ const MainScreen = () => {
             <View style={styles.modalEmptyContainer}>
               <Text style={styles.modalEmpty}>알림 없음</Text>
             </View>
+          </Modal>
+        </BlurView>
+      )}
+
+      {/* 메모 버튼 모달 */}
+      {isMemoBtnModalVisible && (
+        <BlurView
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          blurType="dark"
+          blurAmount={4}
+        >
+          <Modal
+            transparent={true}
+            animationType="fade"
+            visible={isMemoBtnModalVisible}
+            onRequestClose={closeMemoBtnModal}
+          >
+            <View style={styles.memoBtnWrap}>
+              <View style={styles.memoBtnContainer}>
+                <Text style={styles.memoBtnText}>메모 조회하기</Text>
+                <Pressable>
+                  <Image
+                    source={require("../../assets/image/memoreadbtn.png")}
+                    style={styles.addBtn}
+                  />
+                </Pressable>
+              </View>
+              <View style={styles.memoBtnContainer}>
+                <Text style={styles.memoBtnText}>메모 작성하기</Text>
+                <Pressable>
+                  <Image
+                    source={require("../../assets/image/memocreatebtn.png")}
+                    style={styles.addBtn}
+                  />
+                </Pressable>
+              </View>
+            </View>
+
+            <Pressable onPress={closeMemoBtnModal} style={styles.btnContainer}>
+              <Image
+                source={require("../../assets/image/cancelbtn.png")}
+                style={styles.addBtn}
+              />
+            </Pressable>
           </Modal>
         </BlurView>
       )}

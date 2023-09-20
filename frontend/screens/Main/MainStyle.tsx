@@ -1,8 +1,30 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 
 import { calculateDynamicWidth } from "../../constants/dynamicSize";
 
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+
 export const styles = StyleSheet.create({
+  rootContainer: {
+    flex: 1,
+    backgroundColor: "pink",
+  },
+  headerContainer: {
+    position: "absolute",
+    zIndex: 1,
+    width: screenWidth,
+  },
+  btnContainer: {
+    position: "absolute",
+    bottom: calculateDynamicWidth(20),
+    left: "50%",
+    transform: [{ translateX: -calculateDynamicWidth(55) / 2 }],
+  },
+  addBtn: {
+    width: calculateDynamicWidth(55),
+    height: calculateDynamicWidth(55),
+  },
   header: {
     height: 97,
     justifyContent: "center",
@@ -31,5 +53,21 @@ export const styles = StyleSheet.create({
     color: "white",
     fontFamily: "Pretendard-SemiBold",
     fontSize: calculateDynamicWidth(18),
+  },
+  memoBtnContainer: {
+    marginVertical: calculateDynamicWidth(5),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  memoBtnText: {
+    color: "white",
+    fontFamily: "Pretendard-SemiBold",
+    fontSize: calculateDynamicWidth(18),
+    marginRight: calculateDynamicWidth(10),
+    position: "absolute",
+    left: screenWidth / 2 - calculateDynamicWidth(150),
+  },
+  memoBtnWrap: {
+    marginTop: screenHeight - calculateDynamicWidth(240),
   },
 });
