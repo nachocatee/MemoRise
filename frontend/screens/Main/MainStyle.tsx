@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import Colors from "../../constants/colors";
 
 import { calculateDynamicWidth } from "../../constants/dynamicSize";
 
@@ -69,5 +70,66 @@ export const styles = StyleSheet.create({
   },
   memoBtnWrap: {
     marginTop: screenHeight - calculateDynamicWidth(240),
+  },
+  memoContainer: {
+    width: calculateDynamicWidth(306),
+    height: calculateDynamicWidth(306),
+    maxHeight: calculateDynamicWidth(306),
+    overflow: "scroll",
+    borderRadius: calculateDynamicWidth(15),
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [
+      { translateY: -calculateDynamicWidth(306) / 2 },
+      { translateX: -calculateDynamicWidth(306) / 2 },
+    ],
+  },
+  openState: {
+    width: calculateDynamicWidth(81),
+    height: calculateDynamicWidth(23),
+  },
+  blueDotContainer: {
+    marginLeft: calculateDynamicWidth(3),
+    position: "absolute",
+    top: calculateDynamicWidth(23) / 2,
+    right: calculateDynamicWidth(7),
+    transform: [{ translateY: -calculateDynamicWidth(8) / 2 }],
+  },
+  blueDot: {
+    width: calculateDynamicWidth(8),
+    height: calculateDynamicWidth(8),
+    borderRadius: calculateDynamicWidth(8) / 2,
+    backgroundColor: Colors.blue500,
+  },
+  toggleContainer: {
+    width: calculateDynamicWidth(81),
+    height: calculateDynamicWidth(69),
+    borderRadius: calculateDynamicWidth(8),
+    backgroundColor: "white",
+    elevation: 4,
+    alignItems: "center",
+    position: "absolute",
+    top: calculateDynamicWidth(23),
+    zIndex: 1,
+  },
+  toggleContentContainer: {
+    width: calculateDynamicWidth(81),
+    flexDirection: "row",
+    borderBottomWidth: 0.8,
+    borderBlockColor: "#CCCCCC",
+    paddingBottom: 3,
+    paddingLeft: calculateDynamicWidth(10.5),
+  },
+  toggleClosedContentContainer: {
+    width: calculateDynamicWidth(81),
+    flexDirection: "row",
+    paddingBottom: 3,
+    paddingLeft: calculateDynamicWidth(10.5),
+  },
+  toggleText: {
+    fontFamily: "Pretendard-Medium",
+    fontSize: calculateDynamicWidth(14),
+    color: Colors.text,
   },
 });
