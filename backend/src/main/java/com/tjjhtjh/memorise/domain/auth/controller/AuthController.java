@@ -18,6 +18,9 @@ public class AuthController {
     @PostMapping
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         User user = userService.getUserInfo(loginRequest.getEmail());
+        if(user == null) {
+            return ResponseEntity.ok(new LoginResponse(false));
+        }
         return ResponseEntity.ok(new LoginResponse(true));
     }
 }
