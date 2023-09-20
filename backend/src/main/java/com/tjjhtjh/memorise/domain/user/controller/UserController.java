@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
 import com.tjjhtjh.memorise.domain.user.service.UserService;
 import com.tjjhtjh.memorise.domain.user.service.dto.request.JoinRequest;
+import com.tjjhtjh.memorise.domain.user.service.dto.request.LoginRequest;
 import com.tjjhtjh.memorise.domain.user.service.dto.response.JoinResponse;
+import com.tjjhtjh.memorise.domain.user.service.dto.response.LoginResponse;
 import com.tjjhtjh.memorise.domain.user.service.dto.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +23,5 @@ public class UserController {
     public ResponseEntity<JoinResponse> join(@RequestBody JoinRequest joinRequest) {
         userService.join(joinRequest);
         return ResponseEntity.ok(new JoinResponse(true));
-    }
-
-    @GetMapping
-    public ResponseEntity<UserInfoResponse> getUserInfo(@RequestParam String email) {
-        User user = userService.getUserInfo(email);
-        return ResponseEntity.ok(UserInfoResponse.builder()
-                .userSeq(user.getUserSeq())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .profile(user.getProfile())
-                .build());
     }
 }

@@ -1,9 +1,9 @@
 package com.tjjhtjh.memorise.global.config;
 
-import com.tjjhtjh.memorise.domain.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.tjjhtjh.memorise.domain.auth.service.OAuth2AuthenticationFailureHandler;
-import com.tjjhtjh.memorise.domain.auth.service.OAuth2AuthenticationSuccessHandler;
-import com.tjjhtjh.memorise.domain.auth.service.CustomOAuth2UserService;
+//import com.tjjhtjh.memorise.domain.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
+//import com.tjjhtjh.memorise.domain.auth.service.OAuth2AuthenticationFailureHandler;
+//import com.tjjhtjh.memorise.domain.auth.service.OAuth2AuthenticationSuccessHandler;
+//import com.tjjhtjh.memorise.domain.auth.service.CustomOAuth2UserService;
 import com.tjjhtjh.memorise.global.jwt.controller.JwtAuthenticationFilter;
 import com.tjjhtjh.memorise.global.jwt.service.JwtTokenProvider;
 import lombok.AllArgsConstructor;
@@ -25,9 +25,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+//    private final CustomOAuth2UserService customOAuth2UserService;
+//    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+//    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
 //    public SecurityConfig(JwtTokenProvider jwtTokenProvider, CustomOAuth2UserService customOAuth2UserService, OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler, OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
 //        this.jwtTokenProvider = jwtTokenProvider;
@@ -36,10 +36,10 @@ public class SecurityConfig {
 //        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
 //    }
 
-    @Bean
-    public HttpCookieOAuth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository() {
-        return new HttpCookieOAuth2AuthorizationRequestRepository();
-    }
+//    @Bean
+//    public HttpCookieOAuth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository() {
+//        return new HttpCookieOAuth2AuthorizationRequestRepository();
+//    }
 
     @Bean
     public BCryptPasswordEncoder encoder() {
@@ -62,21 +62,23 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/user/**").permitAll()
 //                        .requestMatchers("/user/**").permitAll()
                         .anyRequest().authenticated()
             );
-        http.oauth2Login(oAuth2LoginConfigurer -> oAuth2LoginConfigurer
-                        .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
-                                        .baseUri("/oauth2/authorization")
-                                        .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository()))
-                        .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig
-                                        .baseUri("/*/oauth2/code/*"))
-                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                                        .userService(customOAuth2UserService)
-                        )
-                        .successHandler(oAuth2AuthenticationSuccessHandler)
-                        .failureHandler(oAuth2AuthenticationFailureHandler)
-            );
+//        http.oauth2Login(oAuth2LoginConfigurer -> oAuth2LoginConfigurer
+//                        .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
+//                                        .baseUri("/oauth2/authorization")
+//                                        .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository()))
+//                        .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig
+//                                        .baseUri("/*/oauth2/code/*"))
+//                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+//                                        .userService(customOAuth2UserService)
+//                        )
+//                        .successHandler(oAuth2AuthenticationSuccessHandler)
+//                        .failureHandler(oAuth2AuthenticationFailureHandler)
+//            );
+
 //                .oauth2Login()
 //                .authorizationEndpoint().baseUri("/oauth2/authorize")
 //                .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository())
