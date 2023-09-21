@@ -1,23 +1,26 @@
 // 라이브러리
 import axios from "axios";
 import React, { useState } from "react";
-import { View, Text, Image, TextInput } from "react-native";
+import { View, Text, Image, TextInput, Pressable } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
+import { launchImageLibrary } from "react-native-image-picker";
 
 // 컴포넌트
 import ConfirmBtn from "../../components/Button/ConfirmBtn";
 import HighlightHeader from "../../components/Header/HighlightHeader";
 import ProfilePic from "../../components/ProfilePic";
 import { RootStackParamList } from "../../App";
+
+// 스타일
 import { styles } from "./UserInputStyle";
 
 // 리듀서
 import { setNickname, setProfileImg } from "../../store/user";
 
 // 백엔드 URL
-import { BACKEND_URL } from "../../util/http";
+import { BACKEND_URL, S3_URL } from "../../util/http";
 
 type SignUpScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -46,8 +49,6 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
     //리덕스 정보 저장
     dispatch(setNickname(userNickname));
 
-    console.log(userEmail, userNickname, userProfileImg);
-
     // 백엔드 연동
     const userData = {
       email: userEmail,
@@ -58,7 +59,6 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
     await axios
       .post(BACKEND_URL + "/user", userData)
       .then((response) => {
-        console.log(response.data);
         //메인페이지 이동
         if (response.data.success === true) {
           navigation.navigate("Main");
@@ -69,6 +69,51 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  // 사용자 프로필 사진 가져오기 (사용자 앨범 접근)
+  const selectProfileImageHanlder = () => {
+    launchImageLibrary(
+      {
+        mediaType: "photo",
+        maxWidth: 512,
+        maxHeight: 512,
+        includeBase64: true,
+      },
+      (response: any) => {
+        if (response.didCancel) {
+          return;
+        } else if (response.errorCode) {
+          console.log("Image Error : " + response.errorCode);
+        }
+
+        // 백엔드 연동을 위한 Form Data
+        const formData = new FormData();
+        formData.append("files", {
+          uri: response.assets[0].uri,
+          type: response.assets[0].type,
+          name: response.assets[0].fileName,
+        });
+
+        // S3에 사진 업로드
+        axios
+          .post(BACKEND_URL + "/user/upload", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response: any) => {
+            // 요청 성공 시, 리덕스 및 상태관리 (사용자 이미지 S3링크로 저장)
+            const tempS3URL = S3_URL + response.data[0].savedFileName;
+            console.log(tempS3URL);
+            setUserProfileImg(tempS3URL);
+            dispatch(setProfileImg(tempS3URL));
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    );
   };
 
   return (
@@ -85,10 +130,18 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           <View style={{ alignItems: "center" }}>
             <View style={styles.profilebox}>
               <ProfilePic />
-              <Image
-                source={require("../../assets/icons/album.png")}
-                style={styles.album}
-              />
+              {userProfileImg ? (
+                <Image
+                  source={{ uri: userProfileImg }}
+                  style={styles.userImage}
+                />
+              ) : null}
+              <Pressable onPress={() => selectProfileImageHanlder()}>
+                <Image
+                  source={require("../../assets/icons/album.png")}
+                  style={styles.album}
+                />
+              </Pressable>
             </View>
           </View>
           <View style={styles.inputBox}>
