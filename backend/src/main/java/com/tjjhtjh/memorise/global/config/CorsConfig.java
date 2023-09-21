@@ -15,7 +15,7 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:8000", "https://localhost:8000, http://localhost:3000", "https://localhost:3000"));
+        config.setAllowedOrigins(List.of("http://localhost:8000", "https://localhost:8000", "http://j9b106.p.ssafy.io:8000", "https://j9b106.p.ssafy.io:8000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "*" ));
 //        config.setExposedHeaders(List.of("Authorization", "Authorization-refresh", "*"));

@@ -1,12 +1,11 @@
 package com.tjjhtjh.memorise.domain.user.controller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
 import com.tjjhtjh.memorise.domain.user.service.UserService;
 import com.tjjhtjh.memorise.domain.user.service.dto.request.JoinRequest;
-import com.tjjhtjh.memorise.domain.user.service.dto.request.LoginRequest;
+import com.tjjhtjh.memorise.domain.user.service.dto.request.UpdateUserInfoRequest;
 import com.tjjhtjh.memorise.domain.user.service.dto.response.JoinResponse;
-import com.tjjhtjh.memorise.domain.user.service.dto.response.LoginResponse;
+import com.tjjhtjh.memorise.domain.user.service.dto.response.UpdateUserInfoResponse;
 import com.tjjhtjh.memorise.domain.user.service.dto.response.UserInfoResponse;
 import com.tjjhtjh.memorise.global.file.service.AwsS3Service;
 import com.tjjhtjh.memorise.global.file.service.dto.CreateFileRequest;
@@ -34,7 +33,19 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<JoinResponse> join(@RequestBody JoinRequest joinRequest) {
-        userService.join(joinRequest);
-        return ResponseEntity.ok(new JoinResponse(true));
+        User user = userService.join(joinRequest);
+        return ResponseEntity.ok(new JoinResponse(true, user.getUserSeq()));
+    }
+
+    @PutMapping("/{userSeq}")
+    public ResponseEntity<UpdateUserInfoResponse> update(@PathVariable Long userSeq, @RequestBody UpdateUserInfoRequest updateUserInfoRequest) {
+        userService.updateUserInfo(userSeq, updateUserInfoRequest);
+        return ResponseEntity.ok(new UpdateUserInfoResponse(true));
+    }
+
+    @GetMapping("/{userSeq}")
+    public ResponseEntity<UserInfoResponse> getUserInfo(@PathVariable Long userSeq) {
+        User user = userService.getUserInfo(userSeq);
+        return ResponseEntity.ok(new UserInfoResponse(user.getUserSeq(), user.getEmail(), user.getNickname(), user.getProfile()));
     }
 }
