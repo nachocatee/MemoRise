@@ -31,11 +31,5 @@ public class Team extends BaseEntity {
     private Long owner;
     @Column(name = "password")
     private String password;
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
 }
