@@ -1,10 +1,10 @@
 package com.tjjhtjh.memorise.domain.memo.exception;
 
-public class BookMarkException extends NullPointerException{
+public class BookmarkException extends NullPointerException{
 
     private String message;
 
-    public BookMarkException(String message) {
+    public BookmarkException(String message) {
         this.message = message;
     }
 }

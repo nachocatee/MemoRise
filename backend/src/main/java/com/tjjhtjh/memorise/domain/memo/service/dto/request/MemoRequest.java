@@ -16,7 +16,7 @@ public class MemoRequest {
     private Long itemSeq;
     private AccessType accessType;
     private User user;
-    private String userId;
+    private Long userId;
 
     public Memo registToEntity(User addUser) {
         return Memo.builder()
