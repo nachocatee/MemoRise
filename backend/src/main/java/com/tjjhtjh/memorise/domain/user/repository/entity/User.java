@@ -36,8 +36,7 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    public void update(Long userSeq, String nickname, String profile) {
-        this.userSeq = userSeq;
+    public void update(String nickname, String profile) {
         this.nickname = nickname;
         this.profile = profile;
     }

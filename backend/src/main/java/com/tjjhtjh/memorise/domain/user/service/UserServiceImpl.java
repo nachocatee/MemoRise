@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new NoUserException("존재하지 않는 유저입니다.");
         }
-        user.update(userSeq, updateUserInfoRequest.getNickname(), updateUserInfoRequest.getProfile());
+        user.update(updateUserInfoRequest.getNickname(), updateUserInfoRequest.getProfile());
         userRepository.save(user);
     }
 
