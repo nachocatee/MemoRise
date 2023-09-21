@@ -221,3 +221,4 @@ gradle-app.setting
 *.hprof
 
 /.idea/
+/src/main/generated/
