@@ -12,6 +12,7 @@ import ConfirmBtn from "../../components/Button/ConfirmBtn";
 import HighlightHeader from "../../components/Header/HighlightHeader";
 import ProfilePic from "../../components/ProfilePic";
 import { RootStackParamList } from "../../App";
+import { RootState } from "../../store/store";
 
 // 스타일
 import { styles } from "./UserInputStyle";
@@ -35,10 +36,12 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch();
 
   // 리덕스에 저장된 사용자 정보 가져오기
-  const userEmail = useSelector((state: any) => state.userInfo.email);
-  const tempNickname = useSelector((state: any) => state.userInfo.nickname);
+  const userEmail = useSelector((state: RootState) => state.userInfo.email);
+  const tempNickname = useSelector(
+    (state: RootState) => state.userInfo.nickname
+  );
   const tempProfileImg = useSelector(
-    (state: any) => state.userInfo.profile_img
+    (state: RootState) => state.userInfo.profile_img
   );
 
   // 닉네임 & 프로필사진 상태관리 (리덕스에 닉네임 & 프로필사진 있다면 초기값으로 사용)

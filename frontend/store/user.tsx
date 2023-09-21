@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // 타입 지정
-type UserProps = {
+export type UserProps = {
   nickname: string;
   email: string;
   profile_img: string;
