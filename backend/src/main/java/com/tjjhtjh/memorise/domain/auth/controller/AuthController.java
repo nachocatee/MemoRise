@@ -1,9 +1,8 @@
 package com.tjjhtjh.memorise.domain.auth.controller;
 
-import com.tjjhtjh.memorise.domain.user.repository.entity.User;
-import com.tjjhtjh.memorise.domain.user.service.UserService;
-import com.tjjhtjh.memorise.domain.user.service.dto.request.LoginRequest;
-import com.tjjhtjh.memorise.domain.user.service.dto.response.LoginResponse;
+import com.tjjhtjh.memorise.domain.auth.service.AuthService;
+import com.tjjhtjh.memorise.domain.auth.service.dto.request.LoginRequest;
+import com.tjjhtjh.memorise.domain.auth.service.dto.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        User user = userService.getUserInfo(loginRequest.getEmail());
-        if(user == null) {
-            return ResponseEntity.ok(new LoginResponse(false));
-        }
-        return ResponseEntity.ok(new LoginResponse(true));
+        return ResponseEntity.ok(authService.login(loginRequest));
     }
 }

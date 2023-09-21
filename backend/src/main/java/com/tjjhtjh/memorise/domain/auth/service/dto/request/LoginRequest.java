@@ -1,4 +1,4 @@
-package com.tjjhtjh.memorise.domain.user.service.dto.request;
+package com.tjjhtjh.memorise.domain.auth.service.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
