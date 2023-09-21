@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserSeqAndIsDeletedFalse(Long userSeq);
     Optional<User> findByEmailAndIsDeletedFalse(String email);
+    Optional<User> findByEmail(String email);
 
 }
