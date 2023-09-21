@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class Item {
 
     @Id
+    @Column(name = "item_seq")
     private Long itemSeq;
 
     private String itemImage;
