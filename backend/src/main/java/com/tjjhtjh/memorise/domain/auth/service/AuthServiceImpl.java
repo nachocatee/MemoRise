@@ -19,9 +19,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
-        if(userRepository.findByEmailAndIsDeletedFalse(loginRequest.getEmail()) == null) {
+        if(userRepository.findByEmailAndIsDeletedFalse(loginRequest.getEmail()).isEmpty()) {
             return new LoginResponse(false, null);
         }
-        return new LoginResponse(true, userRepository.findByEmailAndIsDeletedFalse(loginRequest.getEmail()).getUserSeq());
+        User user = userRepository.findByEmailAndIsDeletedFalse(loginRequest.getEmail()).orElseThrow();
+        return new LoginResponse(true, user.getUserSeq());
     }
 }

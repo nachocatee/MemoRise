@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUserSeqAndIsDeletedFalse(Long userSeq);
-    User findByEmailAndIsDeletedFalse(String email);
+    Optional<User> findByUserSeqAndIsDeletedFalse(Long userSeq);
+    Optional<User> findByEmailAndIsDeletedFalse(String email);
 
 }
