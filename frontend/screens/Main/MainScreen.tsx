@@ -17,8 +17,10 @@ import { styles } from "./MainStyle";
 import { TextInput } from "react-native-gesture-handler";
 import { calculateDynamicWidth } from "../../constants/dynamicSize";
 import Colors from "../../constants/colors";
+import { useIsFocused } from "@react-navigation/native";
 
 const MainScreen = () => {
+  const isFocused = useIsFocused();
   // 공개 범위 설정
   // 0: 전체공개, 1: 일부공개, 2: 비공개
   const [openState, setOpenState] = useState(0);
@@ -97,7 +99,7 @@ const MainScreen = () => {
         <Camera
           style={StyleSheet.absoluteFill}
           device={device}
-          isActive={true}
+          isActive={isFocused}
           photo
         />
         <Pressable

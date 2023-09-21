@@ -24,6 +24,8 @@ import FindGroupScreen from "./screens/MenuContents/Group/FindGroupScreen";
 import ModifyInfoScreen from "./screens/User/ModifyInfoScreen";
 import { store } from "./store/store";
 import MakeGroupScreen from "./screens/MenuContents/Group/MakeGroupScreen";
+import ObjectDetection from "./screens/Main/Camera/ObjectDetection";
+import ObjectRegistration from "./screens/Main/Camera/ObjectRegistration";
 
 export type RootStackParamList = {
   Landing: undefined;
@@ -38,6 +40,8 @@ export type RootStackParamList = {
   FindGroup: undefined;
   ModifyInfo: undefined;
   MakeGroup: undefined;
+  ObjectDetection: undefined;
+  ObjectRegistration: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -49,10 +53,16 @@ function App(): JSX.Element {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="ObjectDetection" component={ObjectDetection} />
+            <Stack.Screen
+              name="ObjectRegistration"
+              component={ObjectRegistration}
+            />
+
+            <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="Landing" component={LandingScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Main" component={MainScreen} />
             {/* 메뉴 */}
             <Stack.Screen name="Menu" component={MenuScreen} />
             <Stack.Screen name="SavedMemo" component={SavedMemoScreen} />
