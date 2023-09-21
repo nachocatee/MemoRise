@@ -1,5 +1,7 @@
 package com.tjjhtjh.memorise.domain.memo.service;
 
+import com.tjjhtjh.memorise.domain.item.repository.ItemRepository;
+import com.tjjhtjh.memorise.domain.item.repository.entity.Item;
 import com.tjjhtjh.memorise.domain.memo.exception.BookmarkException;
 import com.tjjhtjh.memorise.domain.memo.exception.MemoException;
 import com.tjjhtjh.memorise.domain.memo.repository.BookmarkRepository;
@@ -17,6 +19,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -26,40 +30,50 @@ public class MemoService {
     private final MemoRepository memoRepository;
     private final UserRepository userRepository;
     private final BookmarkRepository bookMarkRepository;
+    private final ItemRepository itemRepository;
     private static final String NO_USER_EMAIL = "이메일에 해당하는 유저가 없습니다";
     private static final String NO_USER = "해당하는 유저가 존재하지 않습니다";
     private static final String NO_MEMO = "해당하는 메모가 없습니다";
     private static final String NO_FIND_BOOKMARK = "해당하는 북마크를 찾을 수 없습니다";
+    private static final String NO_FIND_ITEM = "해당하는 아이템을 찾을 수 없습니다";
 
     @Transactional
-    public void createMemo(MemoRequest memoRequest) {
+    public void createMemo(MemoRequest memoRequest, Long itemSeq) {
         User user = userRepository.findByUserSeqAndIsDeletedFalse(memoRequest.getUserId())
                 .orElseThrow(() -> new NoUserException(NO_USER_EMAIL));
-
-        memoRepository.save(memoRequest.registToEntity(user));
+        // TODO : itemException 생성 후 exception 변경 예정
+        Item item = itemRepository.findByItemSeq(itemSeq)
+                .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
+        memoRepository.save(memoRequest.registToEntity(user, item));
     }
 
     @Transactional
-    public void updateMemo(MemoRequest memoRequest, Long memoId) throws MemoException {
+    public void updateMemo(MemoRequest memoRequest, Long memoId, Long itemSeq) throws MemoException {
         Memo memo = memoRepository.findById(memoId)
                 .orElseThrow(() -> new MemoException(NO_MEMO));
         User user = userRepository.findByUserSeqAndIsDeletedFalse(memo.getUser().getUserSeq())
                 .orElseThrow(() -> new NoUserException(NO_USER_EMAIL));
-
-        memoRepository.save(memoRequest.updateToEntity(memoId, memoRequest, user));
+        // TODO : itemException 생성 후 exception 변경 예정
+        Item item = itemRepository.findByItemSeq(itemSeq)
+                .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
+        memoRepository.save(memoRequest.updateToEntity(memoId, memoRequest, user,item));
     }
 
     @Transactional
-    public void fakeDeleteMemo(Long memoId, MemoRequest memoRequest) throws MemoException {
+    public void fakeDeleteMemo(Long memoId, MemoRequest memoRequest, Long itemSeq) throws MemoException {
         Memo memo = memoRepository.findById(memoId)
                 .orElseThrow(() -> new MemoException(NO_MEMO));
         User user = userRepository.findByUserSeqAndIsDeletedFalse(memo.getUser().getUserSeq())
                 .orElseThrow(() -> new NoUserException(NO_USER_EMAIL));
+        // TODO : itemException 생성 후 exception 변경 예정
+        Item item = itemRepository.findByItemSeq(itemSeq)
+                .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
 
-        String email = user.getEmail();
-
-        memoRepository.save(memoRequest.deleteToEntity(memo, user));
-        deleteBookmark(memoId, user.getUserSeq());
+        memoRepository.save(memoRequest.deleteToEntity(memo, user,item));
+        List<Bookmark> bookmarkList = bookMarkRepository.bookmarkExistCheck(memoId,user.getUserSeq());
+        if(!bookmarkList.isEmpty()) {
+            deleteBookmark(memoId, user.getUserSeq());
+        }
     }
 
     @Transactional
