@@ -29,6 +29,7 @@
     "react-native-screens": "^3.25.0",
     "react-native-shadow-2": "^7.0.8",
     "react-native-vision-camera": "^3.0.0",
+    "react-native-webrtc": "^111.0.3",
     "react-native-worklets-core": "^0.2.0",
     "react-redux": "^8.1.2"
   },

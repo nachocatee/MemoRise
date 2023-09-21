@@ -12,13 +12,15 @@ import ConfirmBtn from "../../components/Button/ConfirmBtn";
 import HighlightHeader from "../../components/Header/HighlightHeader";
 import ProfilePic from "../../components/ProfilePic";
 import { RootStackParamList } from "../../App";
+
+// 리덕스 type
 import { RootState } from "../../store/store";
 
 // 스타일
 import { styles } from "./UserInputStyle";
 
 // 리듀서
-import { setNickname, setProfileImg } from "../../store/user";
+import { setNickname, setProfileImg, setUserId } from "../../store/user";
 
 // 백엔드 URL
 import { BACKEND_URL, S3_URL } from "../../util/http";
@@ -64,9 +66,11 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
       .then((response) => {
         //메인페이지 이동
         if (response.data.success === true) {
+          dispatch(setUserId(response.data.userSeq));
           navigation.navigate("Main");
         } else {
           console.log("회원가입 중 에러가 발생했습니다.");
+          navigation.navigate("NotFound");
         }
       })
       .catch((error) => {

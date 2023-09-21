@@ -26,6 +26,8 @@ import { store } from "./store/store";
 import MakeGroupScreen from "./screens/MenuContents/Group/MakeGroupScreen";
 import ObjectDetection from "./screens/Main/Camera/ObjectDetection";
 import ObjectRegistration from "./screens/Main/Camera/ObjectRegistration";
+import NotFoundScreen from "./screens/NotFound/NotFoundScreen";
+import TestScreen from "./screens/test";
 
 export type RootStackParamList = {
   Landing: undefined;
@@ -42,6 +44,8 @@ export type RootStackParamList = {
   MakeGroup: undefined;
   ObjectDetection: undefined;
   ObjectRegistration: undefined;
+  NotFound: undefined;
+  Test: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -53,9 +57,14 @@ function App(): JSX.Element {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Main" component={MainScreen} />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="ObjectDetection" component={ObjectDetection} />
+            <Stack.Screen
+              name="ObjectRegistration"
+              component={ObjectRegistration}
+            />
             <Stack.Screen name="Landing" component={LandingScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             {/* 메뉴 */}
             <Stack.Screen name="Menu" component={MenuScreen} />
@@ -66,6 +75,8 @@ function App(): JSX.Element {
             <Stack.Screen name="FindGroup" component={FindGroupScreen} />
             <Stack.Screen name="ModifyInfo" component={ModifyInfoScreen} />
             <Stack.Screen name="MakeGroup" component={MakeGroupScreen} />
+            {/* 404에러 */}
+            <Stack.Screen name="NotFound" component={NotFoundScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
