@@ -4,6 +4,8 @@ spring:
 #      host: ${MONGODB_HOST}
 #      port: ${MONGODB_PORT}
 #      database: ${MONGODB_DATABASE}
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
