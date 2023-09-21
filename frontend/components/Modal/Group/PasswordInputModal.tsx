@@ -7,9 +7,9 @@ import {
   GestureResponderEvent,
 } from "react-native";
 
-import Colors from "../../constants/colors";
-import { calculateDynamicWidth } from "../../constants/dynamicSize";
-import ModalBtn from "../Button/ModalBtn";
+import Colors from "../../../constants/colors";
+import { calculateDynamicWidth } from "../../../constants/dynamicSize";
+import ModalBtn from "../../Button/ModalBtn";
 
 type ModalProps = {
   closeModal: (event: GestureResponderEvent) => void;
@@ -19,7 +19,7 @@ type ModalProps = {
   invalid: boolean;
 };
 
-const GroupNameInputModal: React.FC<ModalProps> = ({
+const PasswordInputModal: React.FC<ModalProps> = ({
   closeModal,
   onChangeText,
   value,
@@ -29,18 +29,19 @@ const GroupNameInputModal: React.FC<ModalProps> = ({
   return (
     <View style={styles.modalContainer}>
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>그룹 이름 설정</Text>
-        {invalid ? (
-          <Text style={styles.invalidText}>그룹 이름을 입력해 주세요.</Text>
-        ) : (
-          <Text style={styles.content}>최대 10자리로 입력해 주세요.</Text>
-        )}
-
+        <Text style={styles.title}>비밀번호 입력</Text>
+        <Text
+          style={
+            invalid ? [styles.content, styles.invalidText] : styles.content
+          }
+        >
+          영문/숫자 4~8자리로 입력해 주세요.
+        </Text>
         <TextInput
           style={invalid ? [styles.input, styles.invalidInput] : styles.input}
           onChangeText={onChangeText}
           value={value}
-          maxLength={10}
+          maxLength={8}
         />
         <View style={styles.btnContainer}>
           <ModalBtn onPress={closeModal} color="white">
@@ -55,7 +56,7 @@ const GroupNameInputModal: React.FC<ModalProps> = ({
   );
 };
 
-export default GroupNameInputModal;
+export default PasswordInputModal;
 
 const styles = StyleSheet.create({
   modalContainer: {

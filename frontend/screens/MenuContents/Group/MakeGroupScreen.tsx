@@ -7,8 +7,8 @@ import ConfirmBtn from "../../../components/Button/ConfirmBtn";
 import GoBackHeader from "../../../components/Header/GoBackHeader";
 import Colors from "../../../constants/colors";
 import { styles } from "./GroupStyle";
-import PasswordInputModal from "../../../components/Modal/PasswordInputModal";
-import GroupNameInputModal from "../../../components/Modal/GroupNameInputModal";
+import PasswordInputModal from "../../../components/Modal/Group/PasswordInputModal";
+import GroupNameInputModal from "../../../components/Modal/Group/GroupNameInputModal";
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
 
 const MakeGroupScreen = () => {

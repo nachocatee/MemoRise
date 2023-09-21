@@ -7,20 +7,47 @@ import {
   Image,
   ActivityIndicator,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { BlurView } from "@react-native-community/blur";
 import { Camera, useCameraDevices } from "react-native-vision-camera";
+import { useIsFocused } from "@react-navigation/native";
 
 import MainHeader from "../../components/Header/MainHeader";
 import { styles } from "./MainStyle";
 import { TextInput } from "react-native-gesture-handler";
 import { calculateDynamicWidth } from "../../constants/dynamicSize";
 import Colors from "../../constants/colors";
-import { useIsFocused } from "@react-navigation/native";
+import MemoBtnModal from "../../components/Modal/Memo/MemoBtnModal";
+
+// 오늘 날짜 가져오기
+function getFormattedDate(): string {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // 월이 0부터 시작하므로 1을 더해줌
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}. ${month}. ${day}.`;
+}
+
+const currentDate = getFormattedDate();
 
 const MainScreen = () => {
   const isFocused = useIsFocused();
+  // 메모 작성 내용
+  const [memoContent, setMemoContent] = useState("");
+  const [enteredMemo, setEnteredMemo] = useState("");
+
+  const memoInputHandler = (enteredText: string) => {
+    setEnteredMemo(enteredText);
+  };
+
+  const memoConfirmHandler = () => {
+    setMemoContent(enteredMemo);
+    setMemoCreateModalVisible(false);
+  };
+
   // 공개 범위 설정
   // 0: 전체공개, 1: 일부공개, 2: 비공개
   const [openState, setOpenState] = useState(0);
@@ -40,6 +67,8 @@ const MainScreen = () => {
 
   const closeMemoCreateModal = () => {
     setMemoCreateModalVisible(false);
+    setOpenState(0);
+    setToggleOpen(false);
   };
 
   const openMemoCreateModal = () => {
@@ -178,33 +207,10 @@ const MainScreen = () => {
             visible={isMemoBtnModalVisible}
             onRequestClose={closeMemoBtnModal}
           >
-            <View style={styles.memoBtnWrap}>
-              <View style={styles.memoBtnContainer}>
-                <Text style={styles.memoBtnText}>메모 조회하기</Text>
-                <Pressable>
-                  <Image
-                    source={require("../../assets/image/memoreadbtn.png")}
-                    style={styles.addBtn}
-                  />
-                </Pressable>
-              </View>
-              <View style={styles.memoBtnContainer}>
-                <Text style={styles.memoBtnText}>메모 작성하기</Text>
-                <Pressable onPress={openMemoCreateModal}>
-                  <Image
-                    source={require("../../assets/image/memocreatebtn.png")}
-                    style={styles.addBtn}
-                  />
-                </Pressable>
-              </View>
-            </View>
-
-            <Pressable onPress={closeMemoBtnModal} style={styles.btnContainer}>
-              <Image
-                source={require("../../assets/image/cancelbtn.png")}
-                style={styles.addBtn}
-              />
-            </Pressable>
+            <MemoBtnModal
+              openMemoCreateModal={openMemoCreateModal}
+              closeModal={closeMemoBtnModal}
+            />
           </Modal>
         </BlurView>
       )}
@@ -241,80 +247,104 @@ const MainScreen = () => {
               >
                 <View style={{ padding: calculateDynamicWidth(15) }}>
                   {/* 공개 범위 설정 버튼 */}
-                  <View>
-                    {openState === 0 && (
-                      <Pressable onPress={selectOpenState}>
-                        <Image
-                          source={require("../../assets/image/public.png")}
-                          style={styles.openState}
-                        />
-                      </Pressable>
-                    )}
-                    {openState === 1 && (
-                      <Pressable onPress={selectOpenState}>
-                        <Image
-                          source={require("../../assets/image/restrict.png")}
-                          style={styles.openState}
-                        />
-                      </Pressable>
-                    )}
-                    {openState === 2 && (
-                      <Pressable onPress={selectOpenState}>
-                        <Image
-                          source={require("../../assets/image/closed.png")}
-                          style={styles.openState}
-                        />
-                      </Pressable>
-                    )}
-                    {isToggleOpen && (
-                      <View style={styles.toggleContainer}>
-                        <Pressable onPress={() => chooseOpenState(0)}>
-                          <View style={styles.toggleContentContainer}>
-                            <Text style={styles.toggleText}>전체공개</Text>
-                            {openState === 0 && (
-                              <View style={styles.blueDotContainer}>
-                                <View style={styles.blueDot}></View>
-                              </View>
-                            )}
-                          </View>
+                  <View style={styles.memoInnerContainer}>
+                    <View>
+                      {openState === 0 && (
+                        <Pressable onPress={selectOpenState}>
+                          <Image
+                            source={require("../../assets/image/public.png")}
+                            style={styles.openState}
+                          />
                         </Pressable>
-                        <Pressable onPress={() => chooseOpenState(1)}>
-                          <View style={styles.toggleContentContainer}>
-                            <Text style={styles.toggleText}>일부공개</Text>
-                            {openState === 1 && (
-                              <View style={styles.blueDotContainer}>
-                                <View style={styles.blueDot}></View>
-                              </View>
-                            )}
-                          </View>
+                      )}
+                      {openState === 1 && (
+                        <Pressable onPress={selectOpenState}>
+                          <Image
+                            source={require("../../assets/image/restrict.png")}
+                            style={styles.openState}
+                          />
                         </Pressable>
-                        <Pressable onPress={() => chooseOpenState(2)}>
-                          <View
-                            style={[
-                              styles.toggleClosedContentContainer,
-                              { paddingLeft: calculateDynamicWidth(16) },
-                            ]}
-                          >
-                            <Text style={styles.toggleText}>비공개</Text>
-                            {openState === 2 && (
-                              <View style={styles.blueDotContainer}>
-                                <View
-                                  style={[
-                                    styles.blueDot,
-                                    { backgroundColor: Colors.text },
-                                  ]}
-                                ></View>
-                              </View>
-                            )}
-                          </View>
+                      )}
+                      {openState === 2 && (
+                        <Pressable onPress={selectOpenState}>
+                          <Image
+                            source={require("../../assets/image/closed.png")}
+                            style={styles.openState}
+                          />
                         </Pressable>
-                      </View>
-                    )}
+                      )}
+                      {isToggleOpen && (
+                        <View style={styles.toggleContainer}>
+                          <Pressable onPress={() => chooseOpenState(0)}>
+                            <View style={styles.toggleContentContainer}>
+                              <Text style={styles.toggleText}>전체공개</Text>
+                              {openState === 0 && (
+                                <View style={styles.blueDotContainer}>
+                                  <View style={styles.blueDot}></View>
+                                </View>
+                              )}
+                            </View>
+                          </Pressable>
+                          <Pressable onPress={() => chooseOpenState(1)}>
+                            <View style={styles.toggleContentContainer}>
+                              <Text style={styles.toggleText}>일부공개</Text>
+                              {openState === 1 && (
+                                <View style={styles.blueDotContainer}>
+                                  <View style={styles.blueDot}></View>
+                                </View>
+                              )}
+                            </View>
+                          </Pressable>
+                          <Pressable onPress={() => chooseOpenState(2)}>
+                            <View
+                              style={[
+                                styles.toggleClosedContentContainer,
+                                { paddingLeft: calculateDynamicWidth(16) },
+                              ]}
+                            >
+                              <Text style={styles.toggleText}>비공개</Text>
+                              {openState === 2 && (
+                                <View style={styles.blueDotContainer}>
+                                  <View
+                                    style={[
+                                      styles.blueDot,
+                                      { backgroundColor: Colors.text },
+                                    ]}
+                                  ></View>
+                                </View>
+                              )}
+                            </View>
+                          </Pressable>
+                        </View>
+                      )}
 
-                    {/* 임시 더미 데이터 */}
-                    <Text>오늘 2023. 09. 04.</Text>
+                      <Text style={styles.currentDate}>{currentDate}</Text>
+                    </View>
+                    <View style={styles.memoInnerBtnContainer}>
+                      <Pressable>
+                        <Image
+                          source={require("../../assets/icons/addpic.png")}
+                          style={styles.addPic}
+                        />
+                      </Pressable>
+                      <Pressable onPress={memoConfirmHandler}>
+                        <View>
+                          <Image
+                            source={require("../../assets/icons/confirm.png")}
+                            style={styles.confirm}
+                          />
+                        </View>
+                      </Pressable>
+                    </View>
                   </View>
-                  <TextInput />
+                  <ScrollView>
+                    <TextInput
+                      style={styles.memoContent}
+                      multiline={true}
+                      onChangeText={memoInputHandler}
+                      value={enteredMemo}
+                    />
+                  </ScrollView>
                 </View>
               </LinearGradient>
             </View>
