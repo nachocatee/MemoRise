@@ -17,21 +17,25 @@ public class MemoController {
 
     private final MemoService memoService;
 
-    @PostMapping
-    public ResponseEntity<Object> registMemo(@RequestBody MemoRequest memoRequest){
-        memoService.createMemo(memoRequest);
+    @PostMapping("/{itemSeq}")
+    public ResponseEntity<Object> registMemo(@PathVariable Long itemSeq, @RequestBody MemoRequest memoRequest){
+        memoService.createMemo(memoRequest, itemSeq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{memoId}")
-    public ResponseEntity<Object> updateMemo(@PathVariable Long memoId, @RequestBody MemoRequest memoRequest) throws MemoException {
-        memoService.updateMemo(memoRequest, memoId);
+    @PutMapping("/{memoId}/{itemSeq}")
+    public ResponseEntity<Object> updateMemo(
+            @PathVariable Long memoId, @RequestBody MemoRequest memoRequest, @PathVariable Long itemSeq
+    ) throws MemoException {
+        memoService.updateMemo(memoRequest, memoId,itemSeq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{memoId}")
-    public ResponseEntity<Object> deleteMemo(@PathVariable Long memoId,@RequestBody MemoRequest memoRequest) throws MemoException {
-        memoService.fakeDeleteMemo(memoId,memoRequest);
+    @DeleteMapping("/{memoId}/{itemSeq}")
+    public ResponseEntity<Object> deleteMemo(
+            @PathVariable Long memoId,@RequestBody MemoRequest memoRequest , @PathVariable Long itemSeq
+    ) throws MemoException {
+        memoService.fakeDeleteMemo(memoId,memoRequest,itemSeq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

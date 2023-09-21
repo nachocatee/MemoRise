@@ -1,5 +1,6 @@
 package com.tjjhtjh.memorise.domain.memo.repository.entity;
 
+import com.tjjhtjh.memorise.domain.item.repository.entity.Item;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
 import com.tjjhtjh.memorise.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -27,8 +28,6 @@ public class Memo extends BaseEntity implements Serializable {
     private Long memoSeq;
     @Column(name = "content")
     private String content;
-    @Column(name = "item_seq")
-    private Long itemSeq;
     @Column(name = "access_type")
     @Enumerated(EnumType.STRING)
     private AccessType accessType;
@@ -39,5 +38,8 @@ public class Memo extends BaseEntity implements Serializable {
     @ManyToOne(targetEntity = User.class ,fetch = FetchType.LAZY)
     @JoinColumn(name = "user_seq" , referencedColumnName = "user_seq")
     private User user;
+    @ManyToOne(targetEntity = Item.class ,fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_seq" , referencedColumnName = "item_seq")
+    private Item item;
 
 }
