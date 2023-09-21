@@ -5,10 +5,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class LoginResponse {
+public class UpdateUserInfoResponse {
     boolean isSuccess;
 
-    public LoginResponse(boolean isSuccess) {
+    public UpdateUserInfoResponse(boolean isSuccess) {
         this.isSuccess = isSuccess;
     }
 }

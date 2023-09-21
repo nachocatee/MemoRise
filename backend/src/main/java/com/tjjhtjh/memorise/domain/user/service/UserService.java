@@ -2,11 +2,12 @@ package com.tjjhtjh.memorise.domain.user.service;
 
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
 import com.tjjhtjh.memorise.domain.user.service.dto.request.JoinRequest;
-import com.tjjhtjh.memorise.domain.user.service.dto.response.UserInfoResponse;
+import com.tjjhtjh.memorise.domain.user.service.dto.request.UpdateUserInfoRequest;
 
 public interface UserService {
 
-    void join(JoinRequest joinRequest);
-    User getUserInfo(String email);
+    User join(JoinRequest joinRequest);
+    void updateUserInfo(Long userSeq, UpdateUserInfoRequest updateUserInfoRequest);
+    User getUserInfo(Long userSeq);
 
 }
