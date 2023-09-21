@@ -27,8 +27,8 @@ public class UserController {
     private static String dirName = "profile-image";
 
     @PostMapping("/upload")
-    public ResponseEntity<List<CreateFileRequest>> uploadMultipleFile(@RequestPart(required = false) List<MultipartFile> files) {
-        return ResponseEntity.ok(awsS3Service.uploadMultiFile(files, dirName));
+    public ResponseEntity<CreateFileRequest> uploadMultipleFile(@RequestPart MultipartFile file) {
+        return ResponseEntity.ok(awsS3Service.uploadMultiFile(file, dirName));
     }
 
     @PostMapping
