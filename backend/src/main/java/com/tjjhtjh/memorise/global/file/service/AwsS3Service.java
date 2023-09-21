@@ -28,20 +28,24 @@ public class AwsS3Service {
  
     private final AmazonS3 amazonS3;
 
-    public String uploadOnlyOneMultiFile(MultipartFile multipartFile, String dirName) {
-        String fileName = createFileName(multipartFile.getOriginalFilename(), dirName);
-        try (InputStream inputStream = multipartFile.getInputStream()) {
+    public CreateFileRequest uploadMultiFile(MultipartFile file, String dirName) {
+        String fileName = createFileName(file.getOriginalFilename(), dirName);
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.getSize());
+        objectMetadata.setContentType(file.getContentType());
+
+        try (InputStream inputStream = file.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, null)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
         }
-        return fileName;
+        return new CreateFileRequest(file.getOriginalFilename(), fileName, file.getContentType(), file.getSize());
     }
  
-    public List<CreateFileRequest> uploadMultiFile(List<MultipartFile> multipartFile, String dirName) {
+    public List<CreateFileRequest> uploadMultiFile(List<MultipartFile> fileList, String dirName) {
         List<CreateFileRequest> files = new ArrayList<>();
-        for (MultipartFile file : multipartFile) {
+        for (MultipartFile file : fileList) {
             String fileName = createFileName(file.getOriginalFilename(), dirName);
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(file.getSize());
