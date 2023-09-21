@@ -2,14 +2,11 @@ package com.tjjhtjh.memorise.domain.memo.controller;
 
 import com.tjjhtjh.memorise.domain.memo.exception.MemoException;
 import com.tjjhtjh.memorise.domain.memo.service.MemoService;
-import com.tjjhtjh.memorise.domain.memo.service.dto.request.CreateMemoRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -38,15 +35,15 @@ public class MemoController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/{memoId}/bookmarks/{email}")
-    public ResponseEntity<?> addBookmark(@PathVariable Long memoId,@PathVariable String email) throws MemoException {
-        memoService.addBookmark(memoId,email);
+    @PostMapping("/{memoId}/bookmarks/{userSeq}")
+    public ResponseEntity<?> addBookmark(@PathVariable Long memoId,@PathVariable Long userSeq) throws MemoException {
+        memoService.addBookmark(memoId,userSeq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{memoId}/bookmarks/{email}")
-    public ResponseEntity<?> deleteBookmark(@PathVariable Long memoId , @PathVariable String email) throws MemoException {
-        memoService.deleteBookmark(memoId,email);
+    @DeleteMapping("/{memoId}/bookmarks/{userSeq}")
+    public ResponseEntity<?> deleteBookmark(@PathVariable Long memoId , @PathVariable Long userSeq) {
+        memoService.deleteBookmark(memoId,userSeq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
