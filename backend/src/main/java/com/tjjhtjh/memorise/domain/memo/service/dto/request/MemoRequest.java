@@ -19,7 +19,6 @@ public class MemoRequest {
     private User user;
     private Long userId;
     private String newFile;
-    private Long deletedFileSeq;
 
     public Memo registToEntity(User addUser, Item item1) {
         return Memo.builder()
