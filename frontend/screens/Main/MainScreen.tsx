@@ -165,6 +165,14 @@ const MainScreen = () => {
   // 메모 작성 내용
   const [memoContent, setMemoContent] = useState("");
   const [enteredMemo, setEnteredMemo] = useState("");
+  // 메모 조회 상태관리
+  const [memoItemVisible, setMemoItemVisible] = useState(true);
+
+  // 메모모달 조회 함수
+  // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
+  const checkMemoHandler = () => {
+    setMemoItemVisible(true);
+  };
 
   const memoInputHandler = (enteredText: string) => {
     setEnteredMemo(enteredText);
@@ -291,6 +299,9 @@ const MainScreen = () => {
           />
         </Pressable>
       </View>
+
+      {/* 메모 조회 */}
+      {memoItemVisible && <MemoItem />}
 
       {/* 알림 모달 */}
       {isNotificationModalVisible && (
