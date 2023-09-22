@@ -17,10 +17,10 @@ public class TaggedUserRequest {
     private Memo memo;
     private List<Long> userSeqList;
 
-    public TaggedUser saveUserToEntity(Memo memo1, User user1){
+    public TaggedUser saveUserToEntity(Memo tagMemo, User tagUser){
         return TaggedUser.builder()
-                .user(user1)
-                .memo(memo1)
+                .user(tagUser)
+                .memo(tagMemo)
                 .build();
     }
 
