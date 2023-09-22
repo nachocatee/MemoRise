@@ -8,11 +8,14 @@ import {
   ActivityIndicator,
   StyleSheet,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { BlurView } from "@react-native-community/blur";
 import { Camera, useCameraDevices } from "react-native-vision-camera";
 import { useIsFocused } from "@react-navigation/native";
+import { launchImageLibrary } from "react-native-image-picker";
+import axios from "axios";
 
 import MainHeader from "../../components/Header/MainHeader";
 import { styles } from "./MainStyle";
@@ -21,11 +24,18 @@ import { calculateDynamicWidth } from "../../constants/dynamicSize";
 import Colors from "../../constants/colors";
 import MemoBtnModal from "../../components/Modal/Memo/MemoBtnModal";
 import AlertModal from "../../components/Modal/AlertModal";
+import { BACKEND_URL, S3_URL } from "../../util/http";
+
+const screenHeight = Dimensions.get("window").height;
 
 // 태그된 회원 타입
 type Member = {
   [name: string]: string;
 };
+
+// 첨부 이미지 크기
+const MAX_WIDTH = calculateDynamicWidth(286);
+const MAX_HEIGHT = screenHeight / 2;
 
 // 오늘 날짜 가져오기
 function getFormattedDate(): string {
@@ -41,6 +51,89 @@ const currentDate = getFormattedDate();
 
 const MainScreen = () => {
   const isFocused = useIsFocused();
+
+  // 사진 첨부
+  const [uploadedPic, setUploadedPic] = useState("");
+
+  const selectImageHanlder = () => {
+    launchImageLibrary(
+      {
+        mediaType: "photo",
+        includeBase64: true,
+      },
+      (response: any) => {
+        if (response.didCancel) {
+          return;
+        } else if (response.errorCode) {
+          console.log("Image Error : " + response.errorCode);
+        }
+
+        // 백엔드 연동을 위한 Form Data
+        const formData = new FormData();
+        formData.append("file", {
+          uri: response.assets[0].uri,
+          type: response.assets[0].type,
+          name: response.assets[0].fileName,
+        });
+
+        // S3에 사진 업로드
+        axios
+          .post(BACKEND_URL + "/user/upload", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((response: any) => {
+            console.log(response);
+            // 요청 성공 시, 리덕스 및 상태관리 (사용자 이미지 S3링크로 저장)
+            const tempS3URL = S3_URL + response.data.savedFileName;
+            console.log(tempS3URL);
+            setUploadedPic(tempS3URL);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    );
+  };
+
+  // 사진 상세
+  const [isFullImageVisible, setFullImageVisible] = useState(false);
+  const [imageWidth, setImageWidth] = useState(MAX_WIDTH);
+  const [imageHeight, setImageHeight] = useState(MAX_HEIGHT);
+
+  useEffect(() => {
+    if (uploadedPic) {
+      // 원본 이미지의 크기를 가져옵니다.
+      Image.getSize(uploadedPic, (width, height) => {
+        // 원본 이미지의 비율을 계산합니다.
+        const aspectRatio = width / height;
+
+        // 비율을 유지하면서 크기를 조절합니다.
+        if (width > height) {
+          setImageWidth(MAX_WIDTH);
+          setImageHeight(MAX_WIDTH / aspectRatio);
+        } else {
+          setImageHeight(MAX_HEIGHT);
+          setImageWidth(MAX_HEIGHT * aspectRatio);
+        }
+      });
+    }
+  }, [uploadedPic]);
+
+  const openFullImage = () => {
+    setFullImageVisible(true);
+  };
+
+  const closeFullImage = () => {
+    setFullImageVisible(false);
+  };
+
+  // 사진 삭제
+  const deleteUploadedPic = () => {
+    setUploadedPic("");
+    setFullImageVisible(false);
+  };
 
   // 태그된 회원 리스트
   // 더미 데이터
@@ -289,6 +382,58 @@ const MainScreen = () => {
             visible={isMemoCreateModalVisible}
             onRequestClose={closeMemoCreateModal}
           >
+            {/* 첨부 사진 상세 조회 */}
+            {isFullImageVisible && (
+              <>
+                <Pressable
+                  style={[
+                    styles.uploadedImgBg,
+                    { backgroundColor: "rgba(0, 0, 0, 0.5)", zIndex: 2 },
+                  ]}
+                  onPress={closeFullImage}
+                />
+                {/* 첨부 사진 삭제 버튼 */}
+                <Pressable
+                  onPress={deleteUploadedPic}
+                  style={[
+                    styles.binContainer,
+                    {
+                      transform: [
+                        {
+                          translateY: -(
+                            imageHeight / 2 +
+                            calculateDynamicWidth(26)
+                          ),
+                        },
+                        {
+                          translateX:
+                            imageWidth / 2 - calculateDynamicWidth(20),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  <Image
+                    source={require("../../assets/icons/bin.png")}
+                    style={styles.bin}
+                  />
+                </Pressable>
+                <Image
+                  source={{ uri: uploadedPic }}
+                  style={[
+                    styles.uploadedFullImg,
+                    {
+                      width: imageWidth,
+                      height: imageHeight,
+                      transform: [
+                        { translateY: -imageHeight / 2 },
+                        { translateX: -imageWidth / 2 },
+                      ],
+                    },
+                  ]}
+                />
+              </>
+            )}
             <Pressable
               style={{ flex: 1, backgroundColor: "transparent" }}
               onPress={openMemoCancelModal}
@@ -519,7 +664,7 @@ const MainScreen = () => {
                       <Text style={styles.currentDate}>{currentDate}</Text>
                     </View>
                     <View style={styles.memoInnerBtnContainer}>
-                      <Pressable>
+                      <Pressable onPress={selectImageHanlder}>
                         <Image
                           source={require("../../assets/icons/addpic.png")}
                           style={styles.addPic}
@@ -536,6 +681,17 @@ const MainScreen = () => {
                     </View>
                   </View>
                   <ScrollView>
+                    {uploadedPic && (
+                      <Pressable
+                        style={{ alignItems: "center" }}
+                        onPress={openFullImage}
+                      >
+                        <Image
+                          source={{ uri: uploadedPic }}
+                          style={styles.uploadedImg}
+                        />
+                      </Pressable>
+                    )}
                     <TextInput
                       style={styles.memoContent}
                       multiline={true}
