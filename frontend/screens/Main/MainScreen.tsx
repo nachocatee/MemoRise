@@ -20,6 +20,12 @@ import { TextInput } from "react-native-gesture-handler";
 import { calculateDynamicWidth } from "../../constants/dynamicSize";
 import Colors from "../../constants/colors";
 import MemoBtnModal from "../../components/Modal/Memo/MemoBtnModal";
+import AlertModal from "../../components/Modal/AlertModal";
+
+// 태그된 회원 타입
+type Member = {
+  [name: string]: string;
+};
 
 // 오늘 날짜 가져오기
 function getFormattedDate(): string {
@@ -35,6 +41,34 @@ const currentDate = getFormattedDate();
 
 const MainScreen = () => {
   const isFocused = useIsFocused();
+
+  // 태그된 회원 리스트
+  // 더미 데이터
+  const [taggedMember, setTaggedMember] = useState<Member[]>([]);
+
+  // 검색 결과에서 태그할 유저 터치 시 실행
+  const addTaggedMember = () => {
+    setTaggedMember((prevData) => [
+      ...prevData,
+      { 권소정: "flfk33@naver.com" },
+    ]);
+    setSearchResultVisible(false);
+    setTagSearchText("");
+  };
+
+  // 태그 검색 기능
+  const [tagSearchText, setTagSearchText] = useState("");
+  const [isSearchResultVisible, setSearchResultVisible] = useState(false);
+
+  const tagSearchHandler = () => {
+    setSearchResultVisible(true);
+  };
+
+  const closeTagSearch = () => {
+    setSearchResultVisible(false);
+    setTagSearchText("");
+  };
+
   // 메모 작성 내용
   const [memoContent, setMemoContent] = useState("");
   const [enteredMemo, setEnteredMemo] = useState("");
@@ -74,6 +108,29 @@ const MainScreen = () => {
   const openMemoCreateModal = () => {
     setMemoBtnModalVisible(false);
     setMemoCreateModalVisible(true);
+  };
+
+  // 메모 작성 중 취소 확인 모달
+  const [isMemoCancelModalVisible, setMemoCancelModalVisible] = useState(false);
+
+  const openMemoCancelModal = () => {
+    setMemoCancelModalVisible(true);
+  };
+
+  // 취소 버튼 눌렀을 때
+  const closeMemoCancelModal = () => {
+    setMemoCancelModalVisible(false);
+  };
+
+  // 확인 버튼 눌렀을 때
+  const memoCancelConfirm = () => {
+    setEnteredMemo("");
+    setOpenState(0);
+    setToggleOpen(false);
+    setMemoCancelModalVisible(false);
+    setMemoCreateModalVisible(false);
+    setTagSearchText("");
+    setTaggedMember([]);
   };
 
   // 알림 모달
@@ -153,7 +210,6 @@ const MainScreen = () => {
             bottom: 0,
           }}
           blurType="dark"
-          blurAmount={4}
         >
           <Modal
             transparent={true}
@@ -199,7 +255,6 @@ const MainScreen = () => {
             zIndex: 2,
           }}
           blurType="dark"
-          blurAmount={4}
         >
           <Modal
             transparent={true}
@@ -224,9 +279,9 @@ const MainScreen = () => {
             left: 0,
             right: 0,
             bottom: 0,
+            zIndex: 2,
           }}
           blurType="dark"
-          blurAmount={4}
         >
           <Modal
             transparent={true}
@@ -236,8 +291,151 @@ const MainScreen = () => {
           >
             <Pressable
               style={{ flex: 1, backgroundColor: "transparent" }}
-              onPress={closeMemoCreateModal}
+              onPress={openMemoCancelModal}
             />
+            {/* 유저 태그(empty) */}
+            {openState === 1 && !isSearchResultVisible && (
+              <View style={styles.tagContainer}>
+                <View style={styles.tagSearchContainer}>
+                  <Text style={styles.tagText}>@</Text>
+                  <TextInput
+                    style={styles.tagText}
+                    placeholder="태그할 닉네임이나 그룹명을 입력해 주세요  "
+                    placeholderTextColor="rgba(44, 44, 44, 0.5)"
+                    value={tagSearchText}
+                    onChangeText={setTagSearchText}
+                    returnKeyType="search"
+                    onSubmitEditing={tagSearchHandler}
+                  />
+                </View>
+              </View>
+            )}
+            {/* 유저 태그(결과값 O) */}
+            {/* 더미 데이터 */}
+            {openState === 1 && taggedMember[0] && (
+              <>
+                <ScrollView horizontal style={styles.tagResultBox}>
+                  <View
+                    style={{
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                      flexDirection: "row",
+                    }}
+                  >
+                    <LinearGradient
+                      colors={["#DDEAFF", "#C2D8FF"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
+                      style={styles.taggedMemberContainer}
+                    >
+                      <Text style={styles.tagText}>
+                        @ {Object.keys(taggedMember[0])[0]}
+                      </Text>
+                      <Pressable>
+                        <Image
+                          source={require("../../assets/icons/cancel_sm.png")}
+                          style={styles.cancelIcon}
+                        />
+                      </Pressable>
+                    </LinearGradient>
+                    <LinearGradient
+                      colors={["#DDEAFF", "#C2D8FF"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
+                      style={styles.taggedMemberContainer}
+                    >
+                      <Text style={styles.tagText}>
+                        @ {Object.keys(taggedMember[0])[0]}
+                      </Text>
+                      <Pressable>
+                        <Image
+                          source={require("../../assets/icons/cancel_sm.png")}
+                          style={styles.cancelIcon}
+                        />
+                      </Pressable>
+                    </LinearGradient>
+                    <LinearGradient
+                      colors={["#DDEAFF", "#C2D8FF"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
+                      style={styles.taggedMemberContainer}
+                    >
+                      <Text style={styles.tagText}>
+                        @ {Object.keys(taggedMember[0])[0]}
+                      </Text>
+                      <Pressable>
+                        <Image
+                          source={require("../../assets/icons/cancel_sm.png")}
+                          style={styles.cancelIcon}
+                        />
+                      </Pressable>
+                    </LinearGradient>
+                    <LinearGradient
+                      colors={["#DDEAFF", "#C2D8FF"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
+                      style={styles.taggedMemberContainer}
+                    >
+                      <Text style={styles.tagText}>
+                        @ {Object.keys(taggedMember[0])[0]}
+                      </Text>
+                      <Pressable>
+                        <Image
+                          source={require("../../assets/icons/cancel_sm.png")}
+                          style={styles.cancelIcon}
+                        />
+                      </Pressable>
+                    </LinearGradient>
+                  </View>
+                </ScrollView>
+              </>
+            )}
+            {/* 검색 결과 */}
+            {isSearchResultVisible && (
+              <>
+                <Pressable
+                  style={styles.closeTagSearch}
+                  onPress={closeTagSearch}
+                />
+                <View style={styles.tagResultContainer}>
+                  <View
+                    style={[
+                      styles.tagSearchContainer,
+                      {
+                        borderBottomWidth: 1,
+                        borderBottomColor: "rgba(44, 44, 44, 0.5)",
+                      },
+                    ]}
+                  >
+                    <Text style={styles.tagText}>@</Text>
+                    <TextInput
+                      style={styles.tagText}
+                      placeholder="태그할 닉네임이나 그룹명을 입력해 주세요  "
+                      placeholderTextColor="rgba(44, 44, 44, 0.5)"
+                      value={tagSearchText}
+                      onChangeText={setTagSearchText}
+                      returnKeyType="search"
+                      onSubmitEditing={tagSearchHandler}
+                    />
+                  </View>
+                  {/* 더미데이터 */}
+                  <Pressable
+                    style={styles.tagResultInnerContainer}
+                    onPress={addTaggedMember}
+                  >
+                    <Text style={styles.tagText}>
+                      권소정 <Text style={styles.email}> flfk33@naver.com</Text>
+                    </Text>
+                  </Pressable>
+                  <Pressable style={styles.tagResultInnerContainer}>
+                    <Text style={styles.tagText} onPress={addTaggedMember}>
+                      권소정{" "}
+                      <Text style={styles.email}> bijoucastle@naver.com</Text>
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
             <View style={styles.memoContainer}>
               <LinearGradient
                 colors={["#FFFFFF", "#F5F5F5"]}
@@ -350,6 +548,17 @@ const MainScreen = () => {
             </View>
           </Modal>
         </BlurView>
+      )}
+
+      {/* 메모 작성 중 취소 확인 모달 */}
+      {isMemoCancelModalVisible && (
+        <AlertModal
+          modalVisible={isMemoCancelModalVisible}
+          closeModal={closeMemoCancelModal}
+          onConfirm={memoCancelConfirm}
+          contentText="메모 작성을 취소하시겠습니까?"
+          btnText="확인"
+        />
       )}
     </View>
   );
