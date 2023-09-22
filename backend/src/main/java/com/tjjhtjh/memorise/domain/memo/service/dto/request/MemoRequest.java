@@ -4,12 +4,10 @@ import com.tjjhtjh.memorise.domain.item.repository.entity.Item;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.AccessType;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
-import com.tjjhtjh.memorise.global.file.service.dto.CreateFileRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -47,6 +45,20 @@ public class MemoRequest {
                 .memoSeq(memoId)
                 .content(memoRequest.getContent())
                 .item(item1)
+                .file(memoRequest.getNewFile())
+                .accessType(memoRequest.getAccessType())
+                .user(user)
+                .isDeleted(0)
+                .build();
+    }
+
+    public Memo updateToNoChangeFileEntity(Long memoId, MemoRequest memoRequest,User user,Item item1, String file){
+        return Memo.builder()
+                .memoSeq(memoId)
+                .content(memoRequest.getContent())
+                .item(item1)
+                .file(file)
+                .file(memoRequest.getNewFile())
                 .accessType(memoRequest.getAccessType())
                 .user(user)
                 .isDeleted(0)
@@ -58,11 +70,11 @@ public class MemoRequest {
                 .memoSeq(memo.getMemoSeq())
                 .isDeleted(1)
                 .item(item1)
+                .file(memo.getFile())
                 .accessType(memo.getAccessType())
                 .content(memo.getContent())
                 .deletedAt(LocalDateTime.now())
                 .user(writeUser)
                 .build();
     }
-
 }
