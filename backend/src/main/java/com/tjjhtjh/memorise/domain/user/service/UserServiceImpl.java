@@ -7,6 +7,7 @@ import com.tjjhtjh.memorise.domain.user.repository.entity.Role;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
 import com.tjjhtjh.memorise.domain.user.service.dto.request.JoinRequest;
 import com.tjjhtjh.memorise.domain.user.service.dto.request.UpdateUserInfoRequest;
+import com.tjjhtjh.memorise.domain.user.service.dto.response.UserListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,11 @@ public class UserServiceImpl implements UserService {
     public User getUserInfo(Long userSeq) {
         User user = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException("존재하지 않는 유저입니다."));
         return user;
+    }
+
+    @Override
+    public UserListResponse getUserList(String nickname) {
+        return userRepository.findByNicknameContainingAndIsDeletedFalse(nickname);
     }
 
 }
