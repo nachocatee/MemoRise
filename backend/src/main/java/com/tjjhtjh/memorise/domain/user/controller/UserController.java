@@ -7,9 +7,11 @@ import com.tjjhtjh.memorise.domain.user.service.dto.request.UpdateUserInfoReques
 import com.tjjhtjh.memorise.domain.user.service.dto.response.JoinResponse;
 import com.tjjhtjh.memorise.domain.user.service.dto.response.UpdateUserInfoResponse;
 import com.tjjhtjh.memorise.domain.user.service.dto.response.UserInfoResponse;
+import com.tjjhtjh.memorise.domain.user.service.dto.response.UserListResponse;
 import com.tjjhtjh.memorise.global.file.service.AwsS3Service;
 import com.tjjhtjh.memorise.global.file.service.dto.CreateFileRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,5 +49,10 @@ public class UserController {
     public ResponseEntity<UserInfoResponse> getUserInfo(@PathVariable Long userSeq) {
         User user = userService.getUserInfo(userSeq);
         return ResponseEntity.ok(new UserInfoResponse(user.getUserSeq(), user.getEmail(), user.getNickname(), user.getProfile()));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<UserListResponse> getUserList(@RequestParam(required = false) String keyword) {
+        return ResponseEntity.ok(userService.getUserList(keyword));
     }
 }
