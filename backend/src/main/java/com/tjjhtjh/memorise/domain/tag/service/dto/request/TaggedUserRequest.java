@@ -13,8 +13,6 @@ import java.util.List;
 public class TaggedUserRequest {
 
     private Long taggedUserSeq;
-    private User user;
-    private Memo memo;
     private List<Long> userSeqList;
 
     public TaggedUser saveUserToEntity(Memo tagMemo, User tagUser){
