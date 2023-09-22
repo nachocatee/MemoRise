@@ -28,6 +28,8 @@ public class Memo extends BaseEntity implements Serializable {
     private Long memoSeq;
     @Column(name = "content")
     private String content;
+    @Column(name = "file")
+    private String file;
     @Column(name = "access_type")
     @Enumerated(EnumType.STRING)
     private AccessType accessType;

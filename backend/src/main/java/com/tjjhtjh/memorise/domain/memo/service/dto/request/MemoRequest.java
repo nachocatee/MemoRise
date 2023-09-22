@@ -4,10 +4,12 @@ import com.tjjhtjh.memorise.domain.item.repository.entity.Item;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.AccessType;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
+import com.tjjhtjh.memorise.global.file.service.dto.CreateFileRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -18,12 +20,24 @@ public class MemoRequest {
     private AccessType accessType;
     private User user;
     private Long userId;
+    private String newFile;
+    private Long deletedFileSeq;
 
     public Memo registToEntity(User addUser, Item item1) {
         return Memo.builder()
                 .content(content)
                 .item(item1)
                 .accessType(accessType)
+                .user(addUser)
+                .build();
+    }
+
+    public Memo registToEntity(User addUser, Item item1, String file) {
+        return Memo.builder()
+                .content(content)
+                .item(item1)
+                .accessType(accessType)
+                .file(file)
                 .user(addUser)
                 .build();
     }

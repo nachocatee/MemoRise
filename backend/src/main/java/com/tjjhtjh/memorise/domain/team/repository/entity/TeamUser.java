@@ -21,8 +21,8 @@ public class TeamUser implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_user_seq")
-    private Long GroupUserSeq;
+    @Column(name = "team_user_seq")
+    private Long teamUserSeq;
     //    @JsonBackReference(value = "group-user-middle")
     @ManyToOne(targetEntity = Team.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "team_seq", referencedColumnName = "team_seq")
