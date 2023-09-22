@@ -62,16 +62,11 @@ public class MemoService {
         Item item = itemRepository.findByItemSeq(itemSeq)
                 .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
 
-        if(memo.getFile() == null){
+        if(memo.getFile() == null || (memoRequest.getNewFile() != null && memo.getFile() != null )){
             memoRepository.save(memoRequest.updateToEntity(memoId,memoRequest,user,item));
         }
         else {
-            if(memoRequest.getNewFile() == null) {
-                memoRepository.save(memoRequest.updateToNoChangeFileEntity(memoId,memoRequest,user,item, memo.getFile()));
-            }
-            else {
-                memoRepository.save(memoRequest.updateToEntity(memoId,memoRequest,user,item));
-            }
+            memoRepository.save(memoRequest.updateToNoChangeFileEntity(memoId,memoRequest,user,item, memo.getFile()));
         }
     }
 
