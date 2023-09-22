@@ -44,7 +44,7 @@ public class MemoService {
         // TODO : itemException 생성 후 exception 변경 예정
         Item item = itemRepository.findByItemSeq(itemSeq)
                 .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
-        // TODO : 파일 있을 때 없을 때 저장 로직 처리
+        // 파일 있을 때 없을 때 저장 로직
         if(memoRequest.getNewFile() == null) {
             memoRepository.save(memoRequest.registToEntity(user, item));
         } else {
@@ -61,13 +61,13 @@ public class MemoService {
         // TODO : itemException 생성 후 exception 변경 예정
         Item item = itemRepository.findByItemSeq(itemSeq)
                 .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
-//        if(memoRequest.getDeletedFileSeq() != null) {
-//            memoFileRepository.deleteById(memoRequest.getDeletedFileSeq());
-//        }
-//        if(memoRequest.getNewFile() != null) {
-//            memoFileRepository.save(new MemoFile(memoRequest.getNewFile()));
-//        }
-        memoRepository.save(memoRequest.updateToEntity(memoId, memoRequest, user,item));
+
+        if(memo.getFile() == null || (memoRequest.getNewFile() != null && memo.getFile() != null )){
+            memoRepository.save(memoRequest.updateToEntity(memoId,memoRequest,user,item));
+        }
+        else {
+            memoRepository.save(memoRequest.updateToNoChangeFileEntity(memoId,memoRequest,user,item, memo.getFile()));
+        }
     }
 
     @Transactional
@@ -79,11 +79,6 @@ public class MemoService {
         // TODO : itemException 생성 후 exception 변경 예정
         Item item = itemRepository.findByItemSeq(itemSeq)
                 .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
-
-//        MemoFile memoFile = memoFileRepository.findByMemoSeqAndIsDeletedFalse(memoId)
-//                .orElseThrow(() -> new MemoFileException(NO_MEMOFILE));
-//        memoFile.delete();
-//        memoFileRepository.save(memoFile);
 
         memoRepository.save(memoRequest.deleteToEntity(memo, user,item));
         List<Bookmark> bookmarkList = bookMarkRepository.bookmarkExistCheck(memoId,user.getUserSeq());

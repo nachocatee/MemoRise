@@ -12,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/memos")
@@ -22,7 +20,6 @@ public class MemoController {
 
     private final MemoService memoService;
     private final AwsS3Service awsS3Service;
-
     private static String dirName = "memo-image";
 
     @PostMapping("/upload")
