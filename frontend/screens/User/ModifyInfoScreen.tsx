@@ -44,6 +44,7 @@ const ModifyInfoScreen: React.FC<Props> = ({ navigation }) => {
   const tempProfileImg = useSelector(
     (state: RootState) => state.userInfo.profile_img
   );
+  const tempId = useSelector((state: RootState) => state.userInfo.id);
 
   // 닉네임 & 프로필사진 상태관리 (리덕스에 닉네임 & 프로필사진 있다면 초기값으로 사용)
   const [userNickname, setUserNickname] = useState(tempNickname);
@@ -107,7 +108,7 @@ const ModifyInfoScreen: React.FC<Props> = ({ navigation }) => {
 
     // 백엔드 연동
     await axios
-      .put(BACKEND_URL + "/user", userData)
+      .put(BACKEND_URL + `/user/${tempId}`, userData)
       .then((response) => {
         console.log(response);
         if (response.data.success === true) {
