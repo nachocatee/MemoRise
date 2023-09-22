@@ -2,6 +2,7 @@ package com.tjjhtjh.memorise.domain.item.controller;
 
 import com.tjjhtjh.memorise.domain.item.service.ItemService;
 import com.tjjhtjh.memorise.domain.item.service.dto.request.RegistItemRequest;
+import com.tjjhtjh.memorise.domain.item.service.dto.response.MemoCountResponse;
 import com.tjjhtjh.memorise.domain.item.service.dto.response.RegistItemResponse;
 import com.tjjhtjh.memorise.global.file.service.AwsS3Service;
 import com.tjjhtjh.memorise.global.file.service.dto.CreateFileRequest;
@@ -31,5 +32,10 @@ public class ItemController {
     public ResponseEntity<RegistItemResponse> registItem(@RequestBody RegistItemRequest registItemRequest) {
         itemService.registItem(registItemRequest.getItemSeq(), registItemRequest.getItemImage());
         return ResponseEntity.ok(new RegistItemResponse(true));
+    }
+
+    @GetMapping("/{itemSeq}")
+    public ResponseEntity<Long> getMemoCountOfItem(@PathVariable Long itemSeq) {
+        return ResponseEntity.ok(itemService.getMemoCount(itemSeq));
     }
 }
