@@ -47,8 +47,7 @@ public class UserController {
 
     @GetMapping("/{userSeq}")
     public ResponseEntity<UserInfoResponse> getUserInfo(@PathVariable Long userSeq) {
-        User user = userService.getUserInfo(userSeq);
-        return ResponseEntity.ok(new UserInfoResponse(user.getUserSeq(), user.getEmail(), user.getNickname(), user.getProfile()));
+        return ResponseEntity.ok(new UserInfoResponse(userService.getUserInfo(userSeq)));
     }
 
     @GetMapping("/list")
