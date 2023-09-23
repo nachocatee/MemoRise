@@ -11,5 +11,4 @@ public class CreateTeamRequest {
     private String name;
     private Long owner;
     private String password;
-    private List<Long> users;
 }
