@@ -28,7 +28,7 @@ public class TeamController {
         return ResponseEntity.ok(teamService.getTeamDetailInfo(teamSeq, userSeq));
     }
 
-    @PutMapping("/{teamSeq}")
+    @PutMapping("/{teamSeq}/invite")
     public ResponseEntity<InviteMemberResponse> updateGroup(@PathVariable Long teamSeq, @RequestBody InviteMemberRequest inviteMemberRequest) {
         return ResponseEntity.ok(teamService.inviteMember(teamSeq, inviteMemberRequest));
     }
