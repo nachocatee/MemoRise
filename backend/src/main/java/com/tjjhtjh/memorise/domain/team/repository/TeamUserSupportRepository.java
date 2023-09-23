@@ -5,6 +5,7 @@ import com.tjjhtjh.memorise.domain.team.repository.entity.TeamUser;
 import java.util.List;
 
 public interface TeamUserSupportRepository {
-    List<Long> findByTeamSeq(Long teamSeq);
+    List<Long> findAllUserByTeamSeq(Long teamSeq);
     TeamUser findByTeamSeqAndUserSeq(Long teamSeq, Long userSeq);
+    List<Long> findAllTeamByUserSeq(Long userSeq);
 }
