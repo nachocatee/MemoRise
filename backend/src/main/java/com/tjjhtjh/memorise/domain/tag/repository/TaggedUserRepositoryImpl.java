@@ -22,4 +22,9 @@ public class TaggedUserRepositoryImpl extends QuerydslRepositorySupport implemen
     public List<TaggedUser> findByTaggedUserWithMemoSeq(Long memoId) {
         return queryFactory.selectFrom(taggedUser).where(taggedUser.memo.memoSeq.eq(memoId)).fetch();
     }
+
+    @Override
+    public List<Long> findByTaggedListOfMe(Long userSeq) {
+        return queryFactory.select(taggedUser.memo.memoSeq).from(taggedUser).where(taggedUser.user.userSeq.eq(userSeq)).fetch();
+    }
 }

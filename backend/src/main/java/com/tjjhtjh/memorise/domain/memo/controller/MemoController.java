@@ -3,6 +3,7 @@ package com.tjjhtjh.memorise.domain.memo.controller;
 import com.tjjhtjh.memorise.domain.memo.exception.MemoException;
 import com.tjjhtjh.memorise.domain.memo.service.MemoService;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.global.file.service.AwsS3Service;
 import com.tjjhtjh.memorise.global.file.service.dto.CreateFileRequest;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -59,5 +62,10 @@ public class MemoController {
     public ResponseEntity<?> deleteBookmark(@PathVariable Long memoId , @PathVariable Long userSeq) {
         memoService.deleteBookmark(memoId,userSeq);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{itemSeq}/list/{userSeq}")
+    public ResponseEntity<?> myMemoListOfItem(@PathVariable Long itemSeq ,@PathVariable Long userSeq){
+        return new ResponseEntity<>(memoService.itemMemoView(itemSeq,userSeq),HttpStatus.OK);
     }
 }
