@@ -1,5 +1,6 @@
 package com.tjjhtjh.memorise.domain.user.controller;
 
+import com.tjjhtjh.memorise.domain.team.service.dto.response.MyTeamListResponse;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
 import com.tjjhtjh.memorise.domain.user.service.UserService;
 import com.tjjhtjh.memorise.domain.user.service.dto.request.JoinRequest;
@@ -54,4 +55,9 @@ public class UserController {
     public ResponseEntity<UserListResponse> getUserList(@RequestParam(required = false) String keyword) {
         return ResponseEntity.ok(userService.getUserList(keyword));
     }
+
+//    @GetMapping("/{userSeq}/my-teams")
+//    public ResponseEntity<List<MyTeamListResponse>> getMyTeamList(@PathVariable Long userSeq) {
+//        return ResponseEntity.ok(userService.getMyTeamList(userSeq));
+//    }
 }
