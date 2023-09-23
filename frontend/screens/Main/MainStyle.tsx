@@ -302,4 +302,32 @@ export const styles = StyleSheet.create({
     zIndex: 1,
     paddingHorizontal: calculateDynamicWidth(10),
   },
+  // RTC View 화면 비율
+  video: {
+    width: "100%",
+    height: "100%",
+  },
+  // RTC 통신 버튼(Start, Stop) => 향후 삭제 예정
+  rtcButton: {
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
+  },
+  // 물체 상단에 띄울 원형 표시
+  ObjCircle: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    backgroundColor: "blue",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  ObjCircleText: {
+    color: "white",
+    fontSize: 50,
+  },
 });

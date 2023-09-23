@@ -78,5 +78,6 @@ const styles = StyleSheet.create({
     fontSize: calculateDynamicWidth(18),
     color: Colors.text,
     marginBottom: calculateDynamicWidth(5),
+    textAlign: "center",
   },
 });
