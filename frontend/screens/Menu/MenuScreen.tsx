@@ -2,12 +2,14 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { View, Text, Image, Pressable } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import { useSelector } from "react-redux";
 
 import { calculateDynamicWidth } from "../../constants/dynamicSize";
 import Colors from "../../constants/colors";
 import CancelHeader from "../../components/Header/CancelHeader";
 import ProfilePic from "../../components/ProfilePic";
 import { styles } from "./MenuStyle";
+import { RootState } from "../../store/store";
 
 type RootStackParamList = {
   SavedMemo: undefined;
@@ -20,10 +22,10 @@ type RootStackParamList = {
 
 const MenuScreen = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const userInfo = useSelector((state: RootState) => state.userInfo);
 
   return (
     <LinearGradient
-      // colors={["#F5F5F5", "red"]}
       colors={["#F5F5F5", "#E9E9E9"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
@@ -32,17 +34,24 @@ const MenuScreen = () => {
       <CancelHeader />
       <View style={styles.container}>
         <View style={{ marginBottom: calculateDynamicWidth(4) }}>
+          {/* 유저 정보 */}
           <ProfilePic />
+          {userInfo.profile_img && (
+            <View style={styles.userImageContainer}>
+              <Image
+                source={{ uri: userInfo.profile_img }}
+                style={styles.userImage}
+              />
+            </View>
+          )}
         </View>
-        {/* 유저 더미 닉네임 */}
-        <Text style={styles.text}>권소정</Text>
-        {/* 유저 더미 이메일 */}
+        <Text style={styles.text}>{userInfo.nickname}</Text>
         <View style={styles.emailBox}>
           <Image
             source={require("../../assets/image/kakao_sm.png")}
             style={styles.kakao}
           />
-          <Text style={styles.email}>flfk33@naver.com</Text>
+          <Text style={styles.email}>{userInfo.email}</Text>
         </View>
         {/* 노트 이미지 */}
         <View style={{ marginTop: calculateDynamicWidth(25) }}>

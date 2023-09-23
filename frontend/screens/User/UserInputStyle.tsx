@@ -19,6 +19,13 @@ export const styles = StyleSheet.create({
     width: calculateDynamicWidth(103),
     marginTop: "20%",
   },
+  userImageContainer: {
+    position: "absolute",
+    width: calculateDynamicWidth(103),
+    height: calculateDynamicWidth(103),
+    borderRadius: calculateDynamicWidth(103) / 2,
+    elevation: 4,
+  },
   userImage: {
     width: calculateDynamicWidth(103),
     height: calculateDynamicWidth(103),

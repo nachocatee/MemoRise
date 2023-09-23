@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#DEDEDE",
-    width: calculateDynamicWidth(155),
+    // width: calculateDynamicWidth(155),
     borderRadius: calculateDynamicWidth(20) / 2,
     marginTop: calculateDynamicWidth(8),
   },
@@ -26,11 +26,12 @@ export const styles = StyleSheet.create({
     fontSize: calculateDynamicWidth(15),
     color: Colors.text,
     opacity: 0.5,
+    marginRight: calculateDynamicWidth(5),
   },
   kakao: {
     width: calculateDynamicWidth(12),
     height: calculateDynamicWidth(12),
-    marginRight: calculateDynamicWidth(5),
+    marginHorizontal: calculateDynamicWidth(5),
   },
   note: {
     width: calculateDynamicWidth(320),
@@ -79,5 +80,17 @@ export const styles = StyleSheet.create({
     zIndex: -1,
     bottom: 0,
     left: "-10%",
+  },
+  userImageContainer: {
+    position: "absolute",
+    width: calculateDynamicWidth(103),
+    height: calculateDynamicWidth(103),
+    borderRadius: calculateDynamicWidth(103) / 2,
+    elevation: 4,
+  },
+  userImage: {
+    width: calculateDynamicWidth(103),
+    height: calculateDynamicWidth(103),
+    borderRadius: calculateDynamicWidth(103) / 2,
   },
 });

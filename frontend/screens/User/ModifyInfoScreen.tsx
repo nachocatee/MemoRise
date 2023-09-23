@@ -137,12 +137,14 @@ const ModifyInfoScreen: React.FC<Props> = ({ navigation }) => {
           <View style={{ alignItems: "center" }}>
             <View style={styles.profilebox}>
               <ProfilePic />
-              {userProfileImg ? (
-                <Image
-                  source={{ uri: userProfileImg }}
-                  style={styles.userImage}
-                />
-              ) : null}
+              {userProfileImg && (
+                <View style={styles.userImageContainer}>
+                  <Image
+                    source={{ uri: userProfileImg }}
+                    style={styles.userImage}
+                  />
+                </View>
+              )}
               <Pressable onPress={() => selectProfileImageHanlder()}>
                 <Image
                   source={require("../../assets/icons/album.png")}
