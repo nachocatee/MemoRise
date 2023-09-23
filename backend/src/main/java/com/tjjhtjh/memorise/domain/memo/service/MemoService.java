@@ -119,7 +119,7 @@ public class MemoService {
     }
 
     public MemoDetailResponse detailMemo(Long memoId) throws MemoException {
-        return memoRepository.memoDetailResponse(memoId)
+        return memoRepository.detailMemo(memoId)
                 .orElseThrow(() -> new MemoException(NO_MEMO));
     }
 }
