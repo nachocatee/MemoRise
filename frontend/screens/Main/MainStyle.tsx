@@ -11,6 +11,16 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
 
+  // 모달 뒷배경
+  background: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
+
   // 헤더
   headerContainer: {
     position: "absolute",
@@ -170,7 +180,7 @@ export const styles = StyleSheet.create({
     width: calculateDynamicWidth(81),
     flexDirection: "row",
     borderBottomWidth: 0.8,
-    borderBlockColor: "#CCCCCC",
+    borderBlockColor: Colors.hover,
     paddingBottom: calculateDynamicWidth(2.5),
     paddingLeft: calculateDynamicWidth(10.5),
   },
@@ -189,7 +199,7 @@ export const styles = StyleSheet.create({
   currentDate: {
     fontFamily: "Pretendard-Regular",
     fontSize: calculateDynamicWidth(14),
-    color: "#CCCCCC",
+    color: Colors.hover,
     marginTop: calculateDynamicWidth(4),
   },
 
