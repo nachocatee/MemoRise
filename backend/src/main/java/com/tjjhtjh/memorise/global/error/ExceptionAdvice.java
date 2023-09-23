@@ -1,5 +1,6 @@
 package com.tjjhtjh.memorise.global.error;
 
+import com.tjjhtjh.memorise.domain.team.exception.NoAuthorityException;
 import com.tjjhtjh.memorise.domain.team.exception.NoTeamException;
 import com.tjjhtjh.memorise.domain.team.exception.NotMemberOfGroup;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
@@ -33,6 +34,12 @@ public class ExceptionAdvice {
     @ExceptionHandler(NotMemberOfGroup.class)
     public ResponseEntity<ErrorResponse> notGroupMember() {
         ErrorResponse errorResponse = new ErrorResponse("그룹에 속해있지 않습니다.");
+        return ResponseEntity.ok(errorResponse);
+    }
+
+    @ExceptionHandler(NoAuthorityException.class)
+    public ResponseEntity<ErrorResponse> noAuthority() {
+        ErrorResponse errorResponse = new ErrorResponse("권한이 없습니다.");
         return ResponseEntity.ok(errorResponse);
     }
 }
