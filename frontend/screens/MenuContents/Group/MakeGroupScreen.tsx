@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { View, Text, Pressable, Switch, Modal } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { BlurView } from "@react-native-community/blur";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import ConfirmBtn from "../../../components/Button/ConfirmBtn";
 import GoBackHeader from "../../../components/Header/GoBackHeader";
@@ -10,8 +14,36 @@ import { styles } from "./GroupStyle";
 import PasswordInputModal from "../../../components/Modal/Group/PasswordInputModal";
 import GroupNameInputModal from "../../../components/Modal/Group/GroupNameInputModal";
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
+import { RootState } from "../../../store/store";
+import { BACKEND_URL } from "../../../util/http";
+
+type RootStackParamList = {
+  // MakeGroup: undefined;
+};
 
 const MakeGroupScreen = () => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const userId = useSelector((state: RootState) => state.userInfo.id);
+
+  // 그룹 생성 axios
+  const GroupCreate = () => {
+    axios({
+      method: "POST",
+      url: BACKEND_URL + "/teams",
+      data: {
+        name: name,
+        owner: userId,
+        password: password,
+      },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   // 그룹 이름 설정
   const [name, setName] = useState("Group123"); // 더미 데이터
   const [enteredName, setEnteredName] = useState("");
@@ -94,8 +126,6 @@ const MakeGroupScreen = () => {
     });
   };
 
-  const confirmHandler = () => {};
-
   return (
     <LinearGradient
       // colors={["#F5F5F5", "red"]}
@@ -155,7 +185,7 @@ const MakeGroupScreen = () => {
         {/* 여기까지 */}
 
         <View style={styles.btnContainer}>
-          <ConfirmBtn onPress={confirmHandler}>확인</ConfirmBtn>
+          <ConfirmBtn onPress={GroupCreate}>확인</ConfirmBtn>
         </View>
       </View>
 

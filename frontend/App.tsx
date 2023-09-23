@@ -57,13 +57,13 @@ function App(): JSX.Element {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Landing" component={LandingScreen} />
             <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="ObjectDetection" component={ObjectDetection} />
             <Stack.Screen
               name="ObjectRegistration"
               component={ObjectRegistration}
             />
-            <Stack.Screen name="Landing" component={LandingScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             {/* 메뉴 */}

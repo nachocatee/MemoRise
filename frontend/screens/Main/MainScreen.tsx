@@ -16,6 +16,7 @@ import { Camera, useCameraDevices } from "react-native-vision-camera";
 import { useIsFocused } from "@react-navigation/native";
 import { launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 import MainHeader from "../../components/Header/MainHeader";
 import { styles } from "./MainStyle";
@@ -26,7 +27,6 @@ import MemoBtnModal from "../../components/Modal/Memo/MemoBtnModal";
 import AlertModal from "../../components/Modal/AlertModal";
 import { BACKEND_URL, S3_URL } from "../../util/http";
 import MemoItem from "../../components/Modal/Memo/MemoItem";
-import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 
 const screenHeight = Dimensions.get("window").height;
