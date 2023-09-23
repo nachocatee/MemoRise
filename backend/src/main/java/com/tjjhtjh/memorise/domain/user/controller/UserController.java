@@ -1,5 +1,6 @@
 package com.tjjhtjh.memorise.domain.user.controller;
 
+import com.tjjhtjh.memorise.domain.team.service.TeamService;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.MyTeamListResponse;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
 import com.tjjhtjh.memorise.domain.user.service.UserService;
@@ -25,6 +26,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final TeamService teamService;
     private final AwsS3Service awsS3Service;
 
     private static String dirName = "profile-image";
@@ -56,8 +58,8 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserList(keyword));
     }
 
-//    @GetMapping("/{userSeq}/my-teams")
-//    public ResponseEntity<List<MyTeamListResponse>> getMyTeamList(@PathVariable Long userSeq) {
-//        return ResponseEntity.ok(userService.getMyTeamList(userSeq));
-//    }
+    @GetMapping("/{userSeq}/my-teams")
+    public ResponseEntity<List<MyTeamListResponse>> getMyTeamList(@PathVariable Long userSeq) {
+        return ResponseEntity.ok(teamService.getMyTeamList(userSeq));
+    }
 }

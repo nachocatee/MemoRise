@@ -30,10 +30,10 @@ public class TeamController {
         return ResponseEntity.ok(teamService.getTeamDetailInfo(teamSeq, userSeq));
     }
 
-    @PutMapping("/{teamSeq}")
-    public ResponseEntity<TeamDetailResponse> updateGroup(@PathVariable Long teamSeq, @RequestBody UpdateTeamRequest updateTeamRequest) {
-        return ResponseEntity.ok(teamService.updateTeam(teamSeq, updateTeamRequest));
-    }
+//    @PutMapping("/{teamSeq}")
+//    public ResponseEntity<TeamDetailResponse> updateGroup(@PathVariable Long teamSeq, @RequestBody UpdateTeamRequest updateTeamRequest) {
+//        return ResponseEntity.ok(teamService.updateTeam(teamSeq, updateTeamRequest));
+//    }
 
     @PutMapping("/{teamSeq}/invite")
     public ResponseEntity<InviteMemberResponse> inviteMember(@PathVariable Long teamSeq, @RequestBody InviteMemberRequest inviteMemberRequest) {
