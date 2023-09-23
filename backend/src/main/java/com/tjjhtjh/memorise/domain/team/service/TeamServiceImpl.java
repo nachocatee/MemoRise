@@ -85,11 +85,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<InviteUserListResponse> getInviteUserList(Long teamSeq, Long userSeq, String nickname, String email) {
+    public List<InviteUserListResponse> getInviteUserList(Long teamSeq, Long userSeq, String keyword) {
         if(!teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM)).getOwner().equals(userSeq)) {
             throw new NoAuthorityException(NO_AUTHORITY);
         }
-        return teamRepository.findInviteUserList(teamSeq, userSeq, nickname, email);
+        return teamRepository.findInviteUserList(teamSeq, userSeq, keyword);
     }
 
     @Override

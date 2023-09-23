@@ -40,8 +40,8 @@ public class TeamController {
     }
 
     @GetMapping("/{teamSeq}/invite/{userSeq}")
-    public ResponseEntity<List<InviteUserListResponse>> getInviteUserList(@PathVariable Long teamSeq, @PathVariable Long userSeq, @RequestParam(required = false) String nickname, @RequestParam(required = false) String email) {
-        return ResponseEntity.ok(teamService.getInviteUserList(teamSeq, userSeq, nickname, email));
+    public ResponseEntity<List<InviteUserListResponse>> getInviteUserList(@PathVariable Long teamSeq, @PathVariable Long userSeq, @RequestParam(required = false) String keyword) {
+        return ResponseEntity.ok(teamService.getInviteUserList(teamSeq, userSeq, keyword));
     }
 
     @DeleteMapping("/{teamSeq}/kick")

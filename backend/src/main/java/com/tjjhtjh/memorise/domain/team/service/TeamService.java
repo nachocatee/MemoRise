@@ -12,7 +12,7 @@ public interface TeamService {
     CreateTeamResponse createTeam(CreateTeamRequest createTeamRequest);
     TeamDetailResponse getTeamDetailInfo(Long teamSeq, Long userSeq);
     InviteMemberResponse inviteMember(Long teamSeq, InviteMemberRequest inviteMemberRequest);
-    List<InviteUserListResponse> getInviteUserList(Long teamSeq, Long userSeq, String nickname, String email);
+    List<InviteUserListResponse> getInviteUserList(Long teamSeq, Long userSeq, String keyword);
     void kickMember(Long teamSeq, KickMemberRequest kickMemberRequest);
 //    TeamDetailResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest);
     List<MyTeamListResponse> getMyTeamList(Long userSeq);

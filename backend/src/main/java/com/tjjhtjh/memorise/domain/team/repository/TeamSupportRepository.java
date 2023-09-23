@@ -5,5 +5,5 @@ import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteUserListRespo
 import java.util.List;
 
 public interface TeamSupportRepository {
-    List<InviteUserListResponse> findInviteUserList(Long teamSeq, Long userSeq, String nickname, String email);
+    List<InviteUserListResponse> findInviteUserList(Long teamSeq, Long userSeq, String keyword);
 }

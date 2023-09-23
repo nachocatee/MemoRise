@@ -20,13 +20,10 @@ public class TeamSupportRepositoryImpl implements TeamSupportRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<InviteUserListResponse> findInviteUserList(Long teamSeq, Long userSeq, String nickname, String email) {
+    public List<InviteUserListResponse> findInviteUserList(Long teamSeq, Long userSeq, String keyword) {
         BooleanBuilder builder = new BooleanBuilder();
-        if(nickname != null) {
-            builder.and(user.nickname.contains(nickname));
-        }
-        if(email != null) {
-            builder.and(user.email.contains(email));
+        if(keyword != null) {
+            builder.and(user.nickname.contains(keyword).or(user.email.contains(keyword)));
         }
         return jpaQueryFactory
                 .select(Projections.constructor(InviteUserListResponse.class,
