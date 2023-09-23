@@ -173,7 +173,8 @@ const MainScreen = () => {
   // 메모모달 조회 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
   const checkMemoHandler = () => {
-    setMemoItemVisible(true);
+    setMemoItemVisible((prev) => !prev);
+    setMemoCreateModalVisible((prev) => !prev);
   };
 
   const memoInputHandler = (enteredText: string) => {
@@ -338,7 +339,7 @@ const MainScreen = () => {
       </View>
 
       {/* 메모 조회 */}
-      {memoItemVisible && <MemoItem />}
+      {memoItemVisible && <MemoItem onMemoWritePress={checkMemoHandler} />}
 
       {/* 알림 모달 */}
       {isNotificationModalVisible && (
