@@ -28,6 +28,7 @@ import AlertModal from "../../components/Modal/AlertModal";
 import { BACKEND_URL, S3_URL } from "../../util/http";
 import MemoItem from "../../components/Modal/Memo/MemoItem";
 import { RootState } from "../../store/store";
+import MemoDetail from "../../components/Modal/Memo/MemoDetail";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -168,13 +169,23 @@ const MainScreen = () => {
   };
 
   // 메모 조회 상태관리
+  // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
   const [memoItemVisible, setMemoItemVisible] = useState(true);
 
-  // 메모모달 조회 함수
+  // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
   const checkMemoHandler = () => {
-    setMemoItemVisible((prev) => !prev);
+    setMemoItemVisible(false);
     setMemoCreateModalVisible((prev) => !prev);
+  };
+
+  // 메모 상세 모달 상태관리
+  const [isMemoDetailVisible, setIsMemoDetailVisible] = useState(false);
+
+  // 메모 상세 조회 변경 함수
+  const setMemoDetailModal = () => {
+    setMemoItemVisible(false);
+    setIsMemoDetailVisible(true);
   };
 
   const memoInputHandler = (enteredText: string) => {
@@ -339,7 +350,15 @@ const MainScreen = () => {
       </View>
 
       {/* 메모 조회 */}
-      {memoItemVisible && <MemoItem onMemoWritePress={checkMemoHandler} />}
+      {memoItemVisible && (
+        <MemoItem
+          onMemoWritePress={checkMemoHandler}
+          onMemoDetailPress={setMemoDetailModal}
+        />
+      )}
+
+      {/* 메모 상세 조회 */}
+      {isMemoDetailVisible && <MemoDetail />}
 
       {/* 알림 모달 */}
       {isNotificationModalVisible && (
