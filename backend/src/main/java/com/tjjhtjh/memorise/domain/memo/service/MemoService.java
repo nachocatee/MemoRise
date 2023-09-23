@@ -11,6 +11,7 @@ import com.tjjhtjh.memorise.domain.memo.repository.entity.Bookmark;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.BookmarkRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.domain.tag.repository.TaggedUserRepository;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
@@ -115,5 +116,10 @@ public class MemoService {
 
     public List<MemoResponse> itemMemoView(Long itemSeq, Long userSeq){
         return memoRepository.findWrittenByMeOrOpenMemoOrTaggedMemo(itemSeq,userSeq);
+    }
+
+    public MemoDetailResponse detailMemo(Long memoId) throws MemoException {
+        return memoRepository.memoDetailResponse(memoId)
+                .orElseThrow(() -> new MemoException(NO_MEMO));
     }
 }

@@ -5,11 +5,13 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.AccessType;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.tjjhtjh.memorise.domain.memo.repository.entity.QMemo.memo;
 import static com.tjjhtjh.memorise.domain.tag.repository.entity.QTaggedUser.taggedUser;
@@ -43,6 +45,16 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
                 .groupBy(memo.memoSeq)
                 .orderBy(memo.updatedAt.desc())
                 .fetch();
+    }
+
+    @Override
+    public Optional<MemoDetailResponse> detailMemo(Long memoId) {
+        return queryFactory.select(Projections.fields(MemoDetailResponse.class,
+                memo.user.nickname.as("nickname"), memo.updatedAt,memo.content,memo.file))
+                .from(memo)
+                .leftJoin(memo.user)
+                .where(memo.memoSeq.eq(memoId))
+                .stream().findAny();
     }
 
 }
