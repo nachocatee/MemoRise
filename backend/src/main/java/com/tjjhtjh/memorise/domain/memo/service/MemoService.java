@@ -13,6 +13,7 @@ import com.tjjhtjh.memorise.domain.memo.service.dto.request.BookmarkRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MyMemoResponse;
 import com.tjjhtjh.memorise.domain.tag.repository.TaggedUserRepository;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
@@ -121,5 +122,13 @@ public class MemoService {
     public MemoDetailResponse detailMemo(Long memoId) throws MemoException {
         return memoRepository.detailMemo(memoId)
                 .orElseThrow(() -> new MemoException(NO_MEMO));
+    }
+
+    public List<MyMemoResponse> myMemoList(Long userSeq) {
+        return memoRepository.findByMyMemoIsDeletedFalse(userSeq);
+    }
+
+    public List<MyMemoResponse> allMyMemoList(Long userSeq) {
+        return memoRepository.findByAllMyMemoIsDeletedFalse(userSeq);
     }
 }
