@@ -3,6 +3,7 @@ package com.tjjhtjh.memorise.domain.memo.controller;
 import com.tjjhtjh.memorise.domain.memo.exception.MemoException;
 import com.tjjhtjh.memorise.domain.memo.service.MemoService;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.global.file.service.AwsS3Service;
 import com.tjjhtjh.memorise.global.file.service.dto.CreateFileRequest;
@@ -53,24 +54,24 @@ public class MemoController {
     }
 
     @PostMapping("/{memoId}/bookmarks/{userSeq}")
-    public ResponseEntity<?> addBookmark(@PathVariable Long memoId,@PathVariable Long userSeq) throws MemoException {
+    public ResponseEntity<Object> addBookmark(@PathVariable Long memoId,@PathVariable Long userSeq) throws MemoException {
         memoService.addBookmark(memoId,userSeq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{memoId}/bookmarks/{userSeq}")
-    public ResponseEntity<?> deleteBookmark(@PathVariable Long memoId , @PathVariable Long userSeq) {
+    public ResponseEntity<Object> deleteBookmark(@PathVariable Long memoId , @PathVariable Long userSeq) {
         memoService.deleteBookmark(memoId,userSeq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{itemSeq}/list/{userSeq}")
-    public ResponseEntity<?> myMemoListOfItem(@PathVariable Long itemSeq ,@PathVariable Long userSeq){
+    public ResponseEntity<List<MemoResponse>> myMemoListOfItem(@PathVariable Long itemSeq ,@PathVariable Long userSeq){
         return new ResponseEntity<>(memoService.itemMemoView(itemSeq,userSeq),HttpStatus.OK);
     }
 
     @GetMapping("/{memoId}/{userSeq}")
-    public ResponseEntity<?> detailMemo(@PathVariable Long memoId, @PathVariable Long userSeq) throws MemoException {
+    public ResponseEntity<MemoDetailResponse> detailMemo(@PathVariable Long memoId, @PathVariable Long userSeq) throws MemoException {
         return new ResponseEntity<>(memoService.detailMemo(memoId), HttpStatus.OK);
     }
 }
