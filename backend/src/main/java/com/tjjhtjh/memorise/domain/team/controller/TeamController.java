@@ -4,6 +4,7 @@ import com.tjjhtjh.memorise.domain.team.service.TeamService;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.request.UpdateTeamRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.CreateTeamResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteMemberResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.KickMemberResponse;
@@ -21,13 +22,17 @@ public class TeamController {
 
     @PostMapping
     public ResponseEntity<CreateTeamResponse> createGroup(@RequestBody CreateTeamRequest createTeamRequest) {
-        teamService.createTeam(createTeamRequest);
-        return ResponseEntity.ok(new CreateTeamResponse(true));
+        return ResponseEntity.ok(teamService.createTeam(createTeamRequest));
     }
 
     @GetMapping("/{teamSeq}/{userSeq}")
     public ResponseEntity<TeamDetailResponse> getGroupInfo(@PathVariable Long teamSeq, @PathVariable Long userSeq) {
         return ResponseEntity.ok(teamService.getTeamDetailInfo(teamSeq, userSeq));
+    }
+
+    @PutMapping("/{teamSeq}")
+    public ResponseEntity<TeamDetailResponse> updateGroup(@PathVariable Long teamSeq, @RequestBody UpdateTeamRequest updateTeamRequest) {
+        return ResponseEntity.ok(teamService.updateTeam(teamSeq, updateTeamRequest));
     }
 
     @PutMapping("/{teamSeq}/invite")

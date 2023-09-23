@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateTeamResponse {
     boolean isSuccess;
+    Long teamSeq;
 
-    public CreateTeamResponse(boolean isSuccess) {
+    public CreateTeamResponse(boolean isSuccess, Long teamSeq) {
         this.isSuccess = isSuccess;
+        this.teamSeq = teamSeq;
     }
 
 }
