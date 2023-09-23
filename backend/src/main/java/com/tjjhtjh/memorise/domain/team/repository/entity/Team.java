@@ -5,31 +5,42 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.relational.core.mapping.Table;
-
-import java.time.LocalDateTime;
 
 @DynamicUpdate
 @DynamicInsert
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Entity
-@Table(name = "team")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Team extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_seq")
     private Long teamSeq;
-    @Column(name = "name")
+
     private String name;
-    @Column(name = "owner")
     private Long owner;
-    @Column(name = "password")
     private String password;
 
+    @Builder
+    public Team(String name, Long owner) {
+        this.name = name;
+        this.owner = owner;
+    }
+
+    @Builder
+    public Team(String name, Long owner, String password) {
+        this.name = name;
+        this.owner = owner;
+        this.password = password;
+    }
+
+    public void update(String name) {
+        this.name = name;
+    }
+
+    public void update(String name, String password) {
+        this.name = name;
+        this.password = password;
+    }
 }
