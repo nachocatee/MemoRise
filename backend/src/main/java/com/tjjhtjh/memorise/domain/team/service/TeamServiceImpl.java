@@ -11,6 +11,7 @@ import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.UpdateTeamRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.CreateTeamResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteMemberResponse;
+import com.tjjhtjh.memorise.domain.team.service.dto.response.MyTeamListResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.TeamDetailResponse;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
@@ -57,7 +58,7 @@ public class TeamServiceImpl implements TeamService {
         UserInfoResponse me = new UserInfoResponse(userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER)));
         UserInfoResponse owner = team.getOwner().equals(userSeq) ? null : new UserInfoResponse(userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER)));
 
-        List<Long> userSeqs = teamUserRepository.findByTeamSeq(teamSeq);
+        List<Long> userSeqs = teamUserRepository.findAllUserByTeamSeq(teamSeq);
         if (!userSeqs.contains(userSeq)) {
             throw new NotMemberOfGroup(NOT_MEMBER);
         }
@@ -78,7 +79,7 @@ public class TeamServiceImpl implements TeamService {
         if(!team.getOwner().equals(inviteMemberRequest.getUserSeq())) {
             throw new NoAuthorityException(NO_AUTHORITY);
         }
-        if(teamUserRepository.findByTeamSeq(teamSeq).contains(inviteMemberRequest.getTargetSeq())) {
+        if(teamUserRepository.findAllUserByTeamSeq(teamSeq).contains(inviteMemberRequest.getTargetSeq())) {
             throw new ExistedMemberException(EXISTED_MEMBER);
         }
         User user = userRepository.findByUserSeqAndIsDeletedFalse(inviteMemberRequest.getTargetSeq()).orElseThrow(() -> new NoUserException(NO_USER));
@@ -96,7 +97,7 @@ public class TeamServiceImpl implements TeamService {
         if (!team.getOwner().equals(kickMemberRequest.getUserSeq())) {
             throw new NoAuthorityException(NO_AUTHORITY);
         }
-        if (!teamUserRepository.findByTeamSeq(teamSeq).contains(kickMemberRequest.getTargetSeq())) {
+        if (!teamUserRepository.findAllUserByTeamSeq(teamSeq).contains(kickMemberRequest.getTargetSeq())) {
             throw new NotMemberOfGroup(NOT_MEMBER);
         }
         TeamUser teamUser = teamUserRepository.findByTeamSeqAndUserSeq(teamSeq, kickMemberRequest.getTargetSeq());
@@ -104,8 +105,30 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @Transactional
-    public TeamDetailResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest) {
-        return null;
+    public List<MyTeamListResponse> getMyTeamList(Long userSeq) {
+        User me = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER));
+        List<Long> teamSeqs = teamUserRepository.findAllTeamByUserSeq(userSeq);
+
+        List<MyTeamListResponse> myTeamListResponses = new ArrayList<>();
+        for (Long teamSeq : teamSeqs) {
+            Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
+            List<Long> userSeqs = teamUserRepository.findAllUserByTeamSeq(teamSeq);
+            List<String> memberProfiles = new ArrayList<>();
+            memberProfiles.add(userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER)).getProfile());
+            for (Long user : userSeqs) {
+                if (memberProfiles.size() == 4) break;
+                if (!user.equals(userSeq) && !user.equals(team.getOwner())) {
+                    memberProfiles.add(userRepository.findByUserSeqAndIsDeletedFalse(user).orElseThrow(() -> new NoUserException(NO_USER)).getProfile());
+                }
+            }
+            myTeamListResponses.add(new MyTeamListResponse(team, me, memberProfiles));
+        }
+        return myTeamListResponses;
     }
+
+//    @Override
+//    @Transactional
+//    public TeamDetailResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest) {
+//        return null;
+//    }
 }

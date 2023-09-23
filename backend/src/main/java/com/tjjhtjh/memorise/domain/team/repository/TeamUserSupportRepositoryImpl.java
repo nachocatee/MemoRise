@@ -17,7 +17,7 @@ public class TeamUserSupportRepositoryImpl implements TeamUserSupportRepository 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Long> findByTeamSeq(Long teamSeq) {
+    public List<Long> findAllUserByTeamSeq(Long teamSeq) {
         return jpaQueryFactory
             .select(teamUser.user.userSeq)
             .from(teamUser)
@@ -31,5 +31,14 @@ public class TeamUserSupportRepositoryImpl implements TeamUserSupportRepository 
             .selectFrom(teamUser)
             .where(teamUser.team.teamSeq.eq(teamSeq).and(teamUser.user.userSeq.eq(userSeq)))
             .fetchOne();
+    }
+
+    @Override
+    public List<Long> findAllTeamByUserSeq(Long userSeq) {
+        return jpaQueryFactory
+            .select(teamUser.team.teamSeq)
+            .from(teamUser)
+            .where(teamUser.user.userSeq.eq(userSeq))
+            .fetch();
     }
 }
