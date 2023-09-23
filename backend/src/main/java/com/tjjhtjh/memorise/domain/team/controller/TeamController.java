@@ -26,17 +26,17 @@ public class TeamController {
     }
 
     @GetMapping("/{teamSeq}/{userSeq}")
-    public ResponseEntity<TeamDetailResponse> getGroup(@PathVariable Long teamSeq, @PathVariable Long userSeq) {
+    public ResponseEntity<TeamDetailResponse> getGroupInfo(@PathVariable Long teamSeq, @PathVariable Long userSeq) {
         return ResponseEntity.ok(teamService.getTeamDetailInfo(teamSeq, userSeq));
     }
 
     @PutMapping("/{teamSeq}/invite")
-    public ResponseEntity<InviteMemberResponse> updateGroup(@PathVariable Long teamSeq, @RequestBody InviteMemberRequest inviteMemberRequest) {
+    public ResponseEntity<InviteMemberResponse> inviteMember(@PathVariable Long teamSeq, @RequestBody InviteMemberRequest inviteMemberRequest) {
         return ResponseEntity.ok(teamService.inviteMember(teamSeq, inviteMemberRequest));
     }
 
     @DeleteMapping("/{teamSeq}/kick")
-    public ResponseEntity<KickMemberResponse> deleteGroup(@PathVariable Long teamSeq, @RequestBody KickMemberRequest kickMemberRequest) {
+    public ResponseEntity<KickMemberResponse> kickMember(@PathVariable Long teamSeq, @RequestBody KickMemberRequest kickMemberRequest) {
         teamService.kickMember(teamSeq, kickMemberRequest);
         return ResponseEntity.ok(new KickMemberResponse(true));
     }
