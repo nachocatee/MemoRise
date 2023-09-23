@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface TeamUserRepository extends JpaRepository<TeamUser,Long>, TeamUserSupprtRepository {
+public interface TeamUserRepository extends JpaRepository<TeamUser,Long>, TeamUserSupportRepository {
 }

@@ -11,7 +11,7 @@ import static com.tjjhtjh.memorise.domain.team.repository.entity.QTeamUser.teamU
 
 @Repository
 @RequiredArgsConstructor
-public class TeamUserSupprtRepositoryImpl implements TeamUserSupprtRepository {
+public class TeamUserSupportRepositoryImpl implements TeamUserSupportRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
