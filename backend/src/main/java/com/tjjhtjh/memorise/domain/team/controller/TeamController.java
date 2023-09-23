@@ -5,13 +5,12 @@ import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.UpdateTeamRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.response.CreateTeamResponse;
-import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteMemberResponse;
-import com.tjjhtjh.memorise.domain.team.service.dto.response.KickMemberResponse;
-import com.tjjhtjh.memorise.domain.team.service.dto.response.TeamDetailResponse;
+import com.tjjhtjh.memorise.domain.team.service.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class TeamController {
     }
 
     @GetMapping("/{teamSeq}/{userSeq}")
-    public ResponseEntity<TeamDetailResponse> getGroupInfo(@PathVariable Long teamSeq, @PathVariable Long userSeq) {
+    public ResponseEntity<TeamDetailResponse> getTeamInfo(@PathVariable Long teamSeq, @PathVariable Long userSeq) {
         return ResponseEntity.ok(teamService.getTeamDetailInfo(teamSeq, userSeq));
     }
 
@@ -38,6 +37,11 @@ public class TeamController {
     @PutMapping("/{teamSeq}/invite")
     public ResponseEntity<InviteMemberResponse> inviteMember(@PathVariable Long teamSeq, @RequestBody InviteMemberRequest inviteMemberRequest) {
         return ResponseEntity.ok(teamService.inviteMember(teamSeq, inviteMemberRequest));
+    }
+
+    @GetMapping("/{teamSeq}/invite/{userSeq}")
+    public ResponseEntity<List<InviteUserListResponse>> getInviteUserList(@PathVariable Long teamSeq, @PathVariable Long userSeq, @RequestParam(required = false) String keyword) {
+        return ResponseEntity.ok(teamService.getInviteUserList(teamSeq, userSeq, keyword));
     }
 
     @DeleteMapping("/{teamSeq}/kick")
