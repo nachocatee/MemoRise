@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 
-const ModifyInfoScreen = () => {
+const GroupBox = () => {
   return (
     <View>
       <Text>컴포넌트 기본</Text>
@@ -8,6 +8,6 @@ const ModifyInfoScreen = () => {
   );
 };
 
-export default ModifyInfoScreen;
+export default GroupBox;
 
 const styles = StyleSheet.create({});

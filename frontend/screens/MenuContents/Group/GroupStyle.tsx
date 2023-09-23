@@ -74,7 +74,6 @@ export const styles = StyleSheet.create({
     borderBottomColor: Colors.hover,
     height: calculateDynamicWidth(30),
     width: screenWidth - 60,
-    // width: calculateDynamicWidth(330),
     marginBottom: calculateDynamicWidth(10),
   },
   itemContainer: {
@@ -83,7 +82,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: screenWidth - 60,
-    // marginHorizontal: 30,
   },
   btnContainer: {
     marginBottom: "10%",
@@ -92,5 +90,62 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  // 그룹 상세 스타일
+  settingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: calculateDynamicWidth(25),
+  },
+  settingIcon: {
+    width: calculateDynamicWidth(19),
+    height: calculateDynamicWidth(19),
+    marginRight: calculateDynamicWidth(2),
+  },
+  settingText: {
+    fontFamily: "Pretendard-Regular",
+    fontSize: calculateDynamicWidth(14),
+    color: "rgba(44, 44, 44, 0.5)",
+  },
+  memberWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  memberContainer: {
+    width: "100%",
+    marginTop: calculateDynamicWidth(30),
+  },
+  memberInnerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  memberImageContainer: {
+    elevation: 4,
+    width: calculateDynamicWidth(60),
+    height: calculateDynamicWidth(60),
+    borderRadius: calculateDynamicWidth(15),
+  },
+  memberImagebg: {
+    width: calculateDynamicWidth(60),
+    height: calculateDynamicWidth(60),
+  },
+  memberImage: {
+    width: calculateDynamicWidth(60),
+    height: calculateDynamicWidth(60),
+    borderRadius: calculateDynamicWidth(15),
+    position: "absolute",
+  },
+  memberText: {
+    fontFamily: "Pretendard-Regular",
+    fontSize: calculateDynamicWidth(20),
+    color: Colors.text,
+    marginLeft: calculateDynamicWidth(18),
+    // marginBottom: calculateDynamicWidth(8),
+  },
+  meIcon: {
+    width: calculateDynamicWidth(21),
+    height: calculateDynamicWidth(21),
   },
 });
