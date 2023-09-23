@@ -6,6 +6,7 @@ import com.tjjhtjh.memorise.domain.memo.exception.BookmarkException;
 import com.tjjhtjh.memorise.domain.memo.exception.MemoException;
 import com.tjjhtjh.memorise.domain.memo.repository.BookmarkRepository;
 import com.tjjhtjh.memorise.domain.memo.repository.MemoRepository;
+import com.tjjhtjh.memorise.domain.memo.repository.MemoRepositoryCustom;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Bookmark;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.BookmarkRequest;
@@ -112,36 +113,7 @@ public class MemoService {
         bookMarkRepository.delete(bookmark);
     }
 
-    public List<MemoResponse> itemMemoView(Long itemSeq, Long userSeq) throws MemoException {
-        List<MemoResponse> itemMemoList = new ArrayList<>();
-        List<MemoResponse> openList = memoRepository.itemMemoListofOpen(itemSeq,userSeq);
-        for (MemoResponse response : openList) {
-            itemMemoList.add(response);
-        }
-
-        List<MemoResponse> closedList = memoRepository.itemMemoListofClosed(itemSeq,userSeq);
-        for (MemoResponse response : closedList) {
-            itemMemoList.add(response);
-        }
-
-        List<MemoResponse> restrictWrittenByMeList = memoRepository.itemMemoListofRestictMe(itemSeq,userSeq);
-        for (MemoResponse response : restrictWrittenByMeList) {
-            itemMemoList.add(response);
-        }
-
-        List<Long> taggedUserList = taggedUserRepository.findByTaggedListOfMe(userSeq);
-        for (Long memoSeq : taggedUserList) {
-            Memo memo = memoRepository.findById(memoSeq).orElseThrow(() -> new MemoException(NO_MEMO));
-            Boolean itemTrue = memo.getItem().getItemSeq().equals(itemSeq);
-
-            if(itemTrue) {
-                MemoResponse memoResponse = new MemoResponse();
-                itemMemoList.add(memoResponse.itemMemoResponse(memo));
-            }
-        }
-
-        itemMemoList.sort(Comparator.comparing(MemoResponse::getUpdatedAt).reversed());
-
-        return itemMemoList;
+    public List<MemoResponse> itemMemoView(Long itemSeq, Long userSeq){
+        return memoRepository.findWrittenByMeOrOpenMemo(itemSeq,userSeq);
     }
 }
