@@ -1,5 +1,6 @@
 package com.tjjhtjh.memorise.domain.team.service;
 
+import com.tjjhtjh.memorise.domain.team.exception.NotMemberOfGroup;
 import com.tjjhtjh.memorise.domain.team.repository.TeamRepository;
 import com.tjjhtjh.memorise.domain.team.repository.TeamUserRepository;
 import com.tjjhtjh.memorise.domain.team.repository.entity.Team;
@@ -50,6 +51,9 @@ public class TeamServiceImpl implements TeamService {
         UserInfoResponse owner = new UserInfoResponse(userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException("회원 정보가 존재하지 않습니다")));
 
         List<Long> userSeqs = teamUserRepository.findTeamUserSeqByTeamSeq(teamSeq);
+        if (!userSeqs.contains(userSeq)) {
+            throw new NotMemberOfGroup("해당 그룹의 멤버가 아닙니다");
+        }
         List<UserInfoResponse> members = new ArrayList<>();
         for(Long user : userSeqs) {
             if (!user.equals(userSeq) && !user.equals(team.getOwner())) {
