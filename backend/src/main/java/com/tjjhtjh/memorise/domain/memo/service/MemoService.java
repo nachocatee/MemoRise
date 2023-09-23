@@ -10,6 +10,8 @@ import com.tjjhtjh.memorise.domain.memo.repository.entity.Bookmark;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.BookmarkRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
+import com.tjjhtjh.memorise.domain.tag.repository.TaggedUserRepository;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
@@ -19,6 +21,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -31,6 +35,8 @@ public class MemoService {
     private final UserRepository userRepository;
     private final BookmarkRepository bookMarkRepository;
     private final ItemRepository itemRepository;
+    private final TaggedUserRepository taggedUserRepository;
+
     private static final String NO_USER_EMAIL = "이메일에 해당하는 유저가 없습니다";
     private static final String NO_USER = "해당하는 유저가 존재하지 않습니다";
     private static final String NO_MEMO = "해당하는 메모가 없습니다";
@@ -104,5 +110,38 @@ public class MemoService {
                 .orElseThrow(() -> new BookmarkException(NO_FIND_BOOKMARK));
 
         bookMarkRepository.delete(bookmark);
+    }
+
+    public List<MemoResponse> itemMemoView(Long itemSeq, Long userSeq) throws MemoException {
+        List<MemoResponse> itemMemoList = new ArrayList<>();
+        List<MemoResponse> openList = memoRepository.itemMemoListofOpen(itemSeq,userSeq);
+        for (MemoResponse response : openList) {
+            itemMemoList.add(response);
+        }
+
+        List<MemoResponse> closedList = memoRepository.itemMemoListofClosed(itemSeq,userSeq);
+        for (MemoResponse response : closedList) {
+            itemMemoList.add(response);
+        }
+
+        List<MemoResponse> restrictWrittenByMeList = memoRepository.itemMemoListofRestictMe(itemSeq,userSeq);
+        for (MemoResponse response : restrictWrittenByMeList) {
+            itemMemoList.add(response);
+        }
+
+        List<Long> taggedUserList = taggedUserRepository.findByTaggedListOfMe(userSeq);
+        for (Long memoSeq : taggedUserList) {
+            Memo memo = memoRepository.findById(memoSeq).orElseThrow(() -> new MemoException(NO_MEMO));
+            Boolean itemTrue = memo.getItem().getItemSeq().equals(itemSeq);
+
+            if(itemTrue) {
+                MemoResponse memoResponse = new MemoResponse();
+                itemMemoList.add(memoResponse.itemMemoResponse(memo));
+            }
+        }
+
+        itemMemoList.sort(Comparator.comparing(MemoResponse::getUpdatedAt).reversed());
+
+        return itemMemoList;
     }
 }
