@@ -38,9 +38,6 @@ public class TeamServiceImpl implements TeamService {
         log.info("teamSeq : {}", team.getTeamSeq());
 
         teamUserRepository.save(new TeamUser(team, owner));
-        for (Long userSeq : createTeamRequest.getUsers()) {
-            teamUserRepository.save(new TeamUser(team, userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException("회원 정보가 존재하지 않습니다"))));
-        }
     }
 
     @Override
