@@ -3,8 +3,10 @@ package com.tjjhtjh.memorise.domain.team.controller;
 import com.tjjhtjh.memorise.domain.team.service.TeamService;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.CreateTeamResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteMemberResponse;
+import com.tjjhtjh.memorise.domain.team.service.dto.response.KickMemberResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.TeamDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +33,11 @@ public class TeamController {
     @PutMapping("/{teamSeq}/invite")
     public ResponseEntity<InviteMemberResponse> updateGroup(@PathVariable Long teamSeq, @RequestBody InviteMemberRequest inviteMemberRequest) {
         return ResponseEntity.ok(teamService.inviteMember(teamSeq, inviteMemberRequest));
+    }
+
+    @DeleteMapping("/{teamSeq}/kick")
+    public ResponseEntity<KickMemberResponse> deleteGroup(@PathVariable Long teamSeq, @RequestBody KickMemberRequest kickMemberRequest) {
+        teamService.kickMember(teamSeq, kickMemberRequest);
+        return ResponseEntity.ok(new KickMemberResponse(true));
     }
 }
