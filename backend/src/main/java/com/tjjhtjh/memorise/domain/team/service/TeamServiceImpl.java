@@ -9,10 +9,7 @@ import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.UpdateTeamRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.response.CreateTeamResponse;
-import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteMemberResponse;
-import com.tjjhtjh.memorise.domain.team.service.dto.response.MyTeamListResponse;
-import com.tjjhtjh.memorise.domain.team.service.dto.response.TeamDetailResponse;
+import com.tjjhtjh.memorise.domain.team.service.dto.response.*;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
@@ -85,6 +82,14 @@ public class TeamServiceImpl implements TeamService {
         User user = userRepository.findByUserSeqAndIsDeletedFalse(inviteMemberRequest.getTargetSeq()).orElseThrow(() -> new NoUserException(NO_USER));
         teamUserRepository.save(new TeamUser(team, user));
         return new InviteMemberResponse(true);
+    }
+
+    @Override
+    public List<InviteUserListResponse> getInviteUserList(Long teamSeq, Long userSeq, String nickname, String email) {
+        if(!teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM)).getOwner().equals(userSeq)) {
+            throw new NoAuthorityException(NO_AUTHORITY);
+        }
+        return teamRepository.findInviteUserList(teamSeq, userSeq, nickname, email);
     }
 
     @Override
