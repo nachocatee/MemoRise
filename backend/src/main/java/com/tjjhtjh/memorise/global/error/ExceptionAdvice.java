@@ -1,5 +1,6 @@
 package com.tjjhtjh.memorise.global.error;
 
+import com.tjjhtjh.memorise.domain.team.exception.NoTeamException;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.exception.UserEmailDuplicateException;
 import com.tjjhtjh.memorise.global.error.dto.ErrorResponse;
@@ -19,6 +20,12 @@ public class ExceptionAdvice {
     @ExceptionHandler(NoUserException.class)
     public ResponseEntity<ErrorResponse> noUser() {
         ErrorResponse errorResponse = new ErrorResponse("유저가 존재하지 않습니다.");
+        return ResponseEntity.ok(errorResponse);
+    }
+
+    @ExceptionHandler(NoTeamException.class)
+    public ResponseEntity<ErrorResponse> noTeam() {
+        ErrorResponse errorResponse = new ErrorResponse("그룹이 존재하지 않습니다.");
         return ResponseEntity.ok(errorResponse);
     }
 }
