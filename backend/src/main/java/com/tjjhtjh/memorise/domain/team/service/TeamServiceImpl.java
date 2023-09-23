@@ -1,17 +1,16 @@
 package com.tjjhtjh.memorise.domain.team.service;
 
-import com.tjjhtjh.memorise.domain.team.exception.ExistedMemberException;
-import com.tjjhtjh.memorise.domain.team.exception.NoAuthorityException;
-import com.tjjhtjh.memorise.domain.team.exception.NotMemberOfGroup;
+import com.tjjhtjh.memorise.domain.team.exception.*;
 import com.tjjhtjh.memorise.domain.team.repository.TeamRepository;
 import com.tjjhtjh.memorise.domain.team.repository.TeamUserRepository;
 import com.tjjhtjh.memorise.domain.team.repository.entity.Team;
 import com.tjjhtjh.memorise.domain.team.repository.entity.TeamUser;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteMemberResponse;
+import com.tjjhtjh.memorise.domain.team.service.dto.response.KickMemberResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.TeamDetailResponse;
-import com.tjjhtjh.memorise.domain.team.exception.NoTeamException;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
@@ -39,6 +38,7 @@ public class TeamServiceImpl implements TeamService {
     private static final String NOT_MEMBER = "그룹의 멤버가 아닙니다";
     private static final String NO_AUTHORITY = "권한이 없습니다";
     private static final String EXISTED_MEMBER = "이미 그룹에 속해있는 멤버입니다";
+    private static final String WRONG_REQUEST = "잘못된 요청입니다";
 
     @Transactional
     public void createTeam(CreateTeamRequest createTeamRequest) {
@@ -55,7 +55,7 @@ public class TeamServiceImpl implements TeamService {
         UserInfoResponse me = new UserInfoResponse(userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER)));
         UserInfoResponse owner = team.getOwner().equals(userSeq) ? null : new UserInfoResponse(userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER)));
 
-        List<Long> userSeqs = teamUserRepository.findTeamUserSeqByTeamSeq(teamSeq);
+        List<Long> userSeqs = teamUserRepository.findByTeamSeq(teamSeq);
         if (!userSeqs.contains(userSeq)) {
             throw new NotMemberOfGroup(NOT_MEMBER);
         }
@@ -76,12 +76,29 @@ public class TeamServiceImpl implements TeamService {
         if(!team.getOwner().equals(inviteMemberRequest.getUserSeq())) {
             throw new NoAuthorityException(NO_AUTHORITY);
         }
-        if(teamUserRepository.findTeamUserSeqByTeamSeq(teamSeq).contains(inviteMemberRequest.getTargetSeq())) {
+        if(teamUserRepository.findByTeamSeq(teamSeq).contains(inviteMemberRequest.getTargetSeq())) {
             throw new ExistedMemberException(EXISTED_MEMBER);
         }
         User user = userRepository.findByUserSeqAndIsDeletedFalse(inviteMemberRequest.getTargetSeq()).orElseThrow(() -> new NoUserException(NO_USER));
         teamUserRepository.save(new TeamUser(team, user));
         return new InviteMemberResponse(true);
+    }
+
+    @Override
+    @Transactional
+    public void kickMember(Long teamSeq, KickMemberRequest kickMemberRequest) {
+        if (kickMemberRequest.getUserSeq().equals(kickMemberRequest.getTargetSeq())) {
+            throw new WrongRequestException(WRONG_REQUEST);
+        }
+        Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
+        if(!team.getOwner().equals(kickMemberRequest.getUserSeq())) {
+            throw new NoAuthorityException(NO_AUTHORITY);
+        }
+        if(!teamUserRepository.findByTeamSeq(teamSeq).contains(kickMemberRequest.getTargetSeq())) {
+            throw new NotMemberOfGroup(NOT_MEMBER);
+        }
+        TeamUser teamUser = teamUserRepository.findByTeamSeqAndUserSeq(teamSeq, kickMemberRequest.getTargetSeq());
+        teamUserRepository.delete(teamUser);
     }
 
 }

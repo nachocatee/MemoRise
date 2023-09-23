@@ -3,6 +3,7 @@ package com.tjjhtjh.memorise.global.error;
 import com.tjjhtjh.memorise.domain.team.exception.NoAuthorityException;
 import com.tjjhtjh.memorise.domain.team.exception.NoTeamException;
 import com.tjjhtjh.memorise.domain.team.exception.NotMemberOfGroup;
+import com.tjjhtjh.memorise.domain.team.exception.WrongRequestException;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.exception.UserEmailDuplicateException;
 import com.tjjhtjh.memorise.global.error.dto.ErrorResponse;
@@ -40,6 +41,12 @@ public class ExceptionAdvice {
     @ExceptionHandler(NoAuthorityException.class)
     public ResponseEntity<ErrorResponse> noAuthority() {
         ErrorResponse errorResponse = new ErrorResponse("권한이 없습니다.");
+        return ResponseEntity.ok(errorResponse);
+    }
+
+    @ExceptionHandler(WrongRequestException.class)
+    public ResponseEntity<ErrorResponse> wrongRequest() {
+        ErrorResponse errorResponse = new ErrorResponse("잘못된 요청입니다.");
         return ResponseEntity.ok(errorResponse);
     }
 }
