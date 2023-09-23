@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface MemoRepositoryCustom {
     List<MemoResponse>  findWrittenByMeOrOpenMemoOrTaggedMemo(Long itemSeq, Long userSeq);
-    Optional<MemoDetailResponse> memoDetailResponse(Long memoId);
+    Optional<MemoDetailResponse> detailMemo(Long memoId);
 }

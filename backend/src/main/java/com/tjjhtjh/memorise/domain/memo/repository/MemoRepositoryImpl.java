@@ -48,12 +48,12 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
     }
 
     @Override
-    public Optional<MemoDetailResponse> memoDetailResponse(Long memoId) {
+    public Optional<MemoDetailResponse> detailMemo(Long memoId) {
         return queryFactory.select(Projections.fields(MemoDetailResponse.class,
                 memo.user.nickname.as("nickname"), memo.updatedAt,memo.content,memo.file))
                 .from(memo)
                 .leftJoin(memo.user)
-                .where(memo.isDeleted.eq(0).and(memo.memoSeq.eq(memoId)))
+                .where(memo.memoSeq.eq(memoId))
                 .stream().findAny();
     }
 
