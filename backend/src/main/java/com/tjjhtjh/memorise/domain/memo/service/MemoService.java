@@ -114,6 +114,6 @@ public class MemoService {
     }
 
     public List<MemoResponse> itemMemoView(Long itemSeq, Long userSeq){
-        return memoRepository.findWrittenByMeOrOpenMemo(itemSeq,userSeq);
+        return memoRepository.findWrittenByMeOrOpenMemoOrTaggedMemo(itemSeq,userSeq);
     }
 }

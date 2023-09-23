@@ -24,7 +24,7 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
         this.queryFactory = jpaQueryFactory;
     }
     @Override
-    public List<MemoResponse> findWrittenByMeOrOpenMemo(Long itemSeq, Long userSeq) {
+    public List<MemoResponse> findWrittenByMeOrOpenMemoOrTaggedMemo(Long itemSeq, Long userSeq) {
 
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(memo.user.userSeq.eq(userSeq).and(memo.item.itemSeq.eq(itemSeq)))  // 내가 작성했거나
