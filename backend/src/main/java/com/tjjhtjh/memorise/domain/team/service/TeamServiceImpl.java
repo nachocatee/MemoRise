@@ -1,11 +1,15 @@
 package com.tjjhtjh.memorise.domain.team.service;
 
+import com.tjjhtjh.memorise.domain.team.exception.ExistedMemberException;
+import com.tjjhtjh.memorise.domain.team.exception.NoAuthorityException;
 import com.tjjhtjh.memorise.domain.team.exception.NotMemberOfGroup;
 import com.tjjhtjh.memorise.domain.team.repository.TeamRepository;
 import com.tjjhtjh.memorise.domain.team.repository.TeamUserRepository;
 import com.tjjhtjh.memorise.domain.team.repository.entity.Team;
 import com.tjjhtjh.memorise.domain.team.repository.entity.TeamUser;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteMemberResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.TeamDetailResponse;
 import com.tjjhtjh.memorise.domain.team.exception.NoTeamException;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
@@ -33,6 +37,8 @@ public class TeamServiceImpl implements TeamService {
     private static final String NO_USER = "회원 정보가 존재하지 않습니다";
     private static final String NO_TEAM = "팀 정보가 존재하지 않습니다";
     private static final String NOT_MEMBER = "그룹의 멤버가 아닙니다";
+    private static final String NO_AUTHORITY = "권한이 없습니다";
+    private static final String EXISTED_MEMBER = "이미 그룹에 속해있는 멤버입니다";
 
     @Transactional
     public void createTeam(CreateTeamRequest createTeamRequest) {
@@ -47,7 +53,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
 
         UserInfoResponse me = new UserInfoResponse(userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER)));
-        UserInfoResponse owner = new UserInfoResponse(userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER)));
+        UserInfoResponse owner = team.getOwner().equals(userSeq) ? null : new UserInfoResponse(userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER)));
 
         List<Long> userSeqs = teamUserRepository.findTeamUserSeqByTeamSeq(teamSeq);
         if (!userSeqs.contains(userSeq)) {
@@ -61,6 +67,21 @@ public class TeamServiceImpl implements TeamService {
         }
 
         return new TeamDetailResponse(team, me, owner, members);
+    }
+
+    @Override
+    @Transactional
+    public InviteMemberResponse inviteMember(Long teamSeq, InviteMemberRequest inviteMemberRequest) {
+        Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
+        if(!team.getOwner().equals(inviteMemberRequest.getUserSeq())) {
+            throw new NoAuthorityException(NO_AUTHORITY);
+        }
+        if(teamUserRepository.findTeamUserSeqByTeamSeq(teamSeq).contains(inviteMemberRequest.getTargetSeq())) {
+            throw new ExistedMemberException(EXISTED_MEMBER);
+        }
+        User user = userRepository.findByUserSeqAndIsDeletedFalse(inviteMemberRequest.getTargetSeq()).orElseThrow(() -> new NoUserException(NO_USER));
+        teamUserRepository.save(new TeamUser(team, user));
+        return new InviteMemberResponse(true);
     }
 
 }
