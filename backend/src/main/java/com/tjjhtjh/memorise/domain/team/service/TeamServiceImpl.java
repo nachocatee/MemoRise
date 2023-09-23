@@ -8,8 +8,9 @@ import com.tjjhtjh.memorise.domain.team.repository.entity.TeamUser;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
 import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.request.UpdateTeamRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.response.CreateTeamResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteMemberResponse;
-import com.tjjhtjh.memorise.domain.team.service.dto.response.KickMemberResponse;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.TeamDetailResponse;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
@@ -41,11 +42,12 @@ public class TeamServiceImpl implements TeamService {
     private static final String WRONG_REQUEST = "잘못된 요청입니다";
 
     @Transactional
-    public void createTeam(CreateTeamRequest createTeamRequest) {
+    public CreateTeamResponse createTeam(CreateTeamRequest createTeamRequest) {
         User owner = userRepository.findByUserSeqAndIsDeletedFalse(createTeamRequest.getOwner()).orElseThrow(() -> new NoUserException(NO_USER));
         Team team = (createTeamRequest.getPassword() == null) ? new Team(createTeamRequest.getName(), owner.getUserSeq()) : new Team(createTeamRequest.getName(), owner.getUserSeq(), createTeamRequest.getPassword());
         teamRepository.save(team);
         teamUserRepository.save(new TeamUser(team, owner));
+        return new CreateTeamResponse(true, team.getTeamSeq());
     }
 
     @Override
@@ -91,14 +93,19 @@ public class TeamServiceImpl implements TeamService {
             throw new WrongRequestException(WRONG_REQUEST);
         }
         Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
-        if(!team.getOwner().equals(kickMemberRequest.getUserSeq())) {
+        if (!team.getOwner().equals(kickMemberRequest.getUserSeq())) {
             throw new NoAuthorityException(NO_AUTHORITY);
         }
-        if(!teamUserRepository.findByTeamSeq(teamSeq).contains(kickMemberRequest.getTargetSeq())) {
+        if (!teamUserRepository.findByTeamSeq(teamSeq).contains(kickMemberRequest.getTargetSeq())) {
             throw new NotMemberOfGroup(NOT_MEMBER);
         }
         TeamUser teamUser = teamUserRepository.findByTeamSeqAndUserSeq(teamSeq, kickMemberRequest.getTargetSeq());
         teamUserRepository.delete(teamUser);
     }
 
+    @Override
+    @Transactional
+    public TeamDetailResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest) {
+        return null;
+    }
 }
