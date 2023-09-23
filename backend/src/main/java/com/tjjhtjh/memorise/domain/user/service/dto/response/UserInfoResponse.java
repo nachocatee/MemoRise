@@ -13,7 +13,6 @@ public class UserInfoResponse {
     String nickname;
     String profile;
 
-    @Builder
     public UserInfoResponse(User user) {
         this.userSeq = user.getUserSeq();
         this.email = user.getEmail();
