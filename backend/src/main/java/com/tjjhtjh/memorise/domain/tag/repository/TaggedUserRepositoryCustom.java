@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface TaggedUserRepositoryCustom {
     List<TaggedUser> findByTaggedUserWithMemoSeq(Long memoId);
+    List<Long> findByTaggedListOfMe(Long userSeq);
 }

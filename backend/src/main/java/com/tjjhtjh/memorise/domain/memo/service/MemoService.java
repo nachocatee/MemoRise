@@ -6,10 +6,13 @@ import com.tjjhtjh.memorise.domain.memo.exception.BookmarkException;
 import com.tjjhtjh.memorise.domain.memo.exception.MemoException;
 import com.tjjhtjh.memorise.domain.memo.repository.BookmarkRepository;
 import com.tjjhtjh.memorise.domain.memo.repository.MemoRepository;
+import com.tjjhtjh.memorise.domain.memo.repository.MemoRepositoryCustom;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Bookmark;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.BookmarkRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
+import com.tjjhtjh.memorise.domain.tag.repository.TaggedUserRepository;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
@@ -19,6 +22,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -31,6 +36,8 @@ public class MemoService {
     private final UserRepository userRepository;
     private final BookmarkRepository bookMarkRepository;
     private final ItemRepository itemRepository;
+    private final TaggedUserRepository taggedUserRepository;
+
     private static final String NO_USER_EMAIL = "이메일에 해당하는 유저가 없습니다";
     private static final String NO_USER = "해당하는 유저가 존재하지 않습니다";
     private static final String NO_MEMO = "해당하는 메모가 없습니다";
@@ -104,5 +111,9 @@ public class MemoService {
                 .orElseThrow(() -> new BookmarkException(NO_FIND_BOOKMARK));
 
         bookMarkRepository.delete(bookmark);
+    }
+
+    public List<MemoResponse> itemMemoView(Long itemSeq, Long userSeq){
+        return memoRepository.findWrittenByMeOrOpenMemoOrTaggedMemo(itemSeq,userSeq);
     }
 }
