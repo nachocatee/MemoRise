@@ -68,4 +68,9 @@ public class MemoController {
     public ResponseEntity<?> myMemoListOfItem(@PathVariable Long itemSeq ,@PathVariable Long userSeq){
         return new ResponseEntity<>(memoService.itemMemoView(itemSeq,userSeq),HttpStatus.OK);
     }
+
+    @GetMapping("/{memoId}/{userSeq}")
+    public ResponseEntity<?> detailMemo(@PathVariable Long memoId, @PathVariable Long userSeq) throws MemoException {
+        return new ResponseEntity<>(memoService.detailMemo(memoId), HttpStatus.OK);
+    }
 }
