@@ -7,6 +7,7 @@ import com.tjjhtjh.memorise.domain.memo.repository.entity.AccessType;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MyMemoResponse;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -50,11 +51,40 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
     @Override
     public Optional<MemoDetailResponse> detailMemo(Long memoId) {
         return queryFactory.select(Projections.fields(MemoDetailResponse.class,
-                memo.user.nickname.as("nickname"), memo.updatedAt,memo.content,memo.file))
+                memo.user.nickname.as("nickname"), memo.updatedAt,memo.content,memo.file,memo.accessType))
                 .from(memo)
                 .leftJoin(memo.user)
                 .where(memo.memoSeq.eq(memoId))
                 .stream().findAny();
+    }
+
+    @Override
+    public List<MyMemoResponse> findByMyMemoIsDeletedFalse(Long userSeq){
+        return queryFactory.select(Projections.fields
+                        (MyMemoResponse.class,memo.user.nickname.as("nickname"),memo.updatedAt,memo.content,memo.accessType,memo.file,memo.item.itemImage))
+                .from(memo)
+                .leftJoin(memo.user)
+                .leftJoin(memo.item)
+                .where(memo.isDeleted.eq(0).and(memo.user.userSeq.eq(userSeq)))
+                .orderBy(memo.updatedAt.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<MyMemoResponse> findByAllMyMemoIsDeletedFalse(Long userSeq) {
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(memo.user.userSeq.eq(userSeq)).or(memo.accessType.eq(AccessType.RESTRICT).and(taggedUser.user.userSeq.eq(userSeq)));
+
+        return queryFactory.select(Projections.fields
+                        (MyMemoResponse.class, memo.user.nickname,memo.updatedAt,memo.content,memo.accessType,memo.file,memo.item.itemImage))
+                .from(memo)
+                .leftJoin(memo.user)
+                .leftJoin(taggedUser).on(memo.memoSeq.eq(taggedUser.memo.memoSeq))
+                .leftJoin(memo.item)
+                .where(memo.isDeleted.eq(0).and(builder))
+                .groupBy(memo.memoSeq)
+                .orderBy(memo.updatedAt.desc())
+                .fetch();
     }
 
 }

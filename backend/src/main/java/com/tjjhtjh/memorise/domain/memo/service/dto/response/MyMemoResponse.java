@@ -12,12 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemoDetailResponse {
+public class MyMemoResponse {
 
     private String content;
+    private AccessType accessType;
     private String nickname;
     private LocalDateTime updatedAt;
-    private AccessType accessType;
     private String file;
+    private String itemImage;
 
 }
