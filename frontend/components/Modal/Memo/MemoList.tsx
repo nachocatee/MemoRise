@@ -20,7 +20,7 @@ type MemoItemProp = {
   onMemoDetailPress: () => void;
 };
 
-const MemoItem: React.FC<MemoItemProp> = ({
+const MemoList: React.FC<MemoItemProp> = ({
   onMemoWritePress,
   onMemoDetailPress,
 }) => {
@@ -33,7 +33,7 @@ const MemoItem: React.FC<MemoItemProp> = ({
         "Hate to give the satisfaction, asking how youre doing nowHows the castle built off people you pretend to care about?Just what you wantedLook at you, cool guy, you got it I see the parties and the",
       nickname: "권소정",
       openStatus: "전체공개",
-      isBookMark: false,
+      isBookMark: true,
       isphoto: "",
     },
     {
@@ -160,7 +160,7 @@ const MemoItem: React.FC<MemoItemProp> = ({
   );
 };
 
-export default MemoItem;
+export default MemoList;
 
 const styles = StyleSheet.create({
   mainContainer: {

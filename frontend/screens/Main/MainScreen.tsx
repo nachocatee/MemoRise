@@ -34,7 +34,7 @@ import Colors from "../../constants/colors";
 import MemoBtnModal from "../../components/Modal/Memo/MemoBtnModal";
 import AlertModal from "../../components/Modal/AlertModal";
 import { BACKEND_URL, S3_URL } from "../../util/http";
-import MemoItem from "../../components/Modal/Memo/MemoItem";
+import MemoList from "../../components/Modal/Memo/MemoList";
 import { RootState } from "../../store/store";
 import MemoDetail from "../../components/Modal/Memo/MemoDetail";
 
@@ -179,12 +179,12 @@ const MainScreen = () => {
 
   // 메모 조회 상태관리
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
-  const [memoItemVisible, setMemoItemVisible] = useState(true);
+  const [memoListVisible, setMemoListVisible] = useState(true);
 
   // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
   const checkMemoHandler = () => {
-    setMemoItemVisible(false);
+    setMemoListVisible(false);
     setMemoCreateModalVisible((prev) => !prev);
   };
 
@@ -193,7 +193,7 @@ const MainScreen = () => {
 
   // 메모 상세 조회 변경 함수
   const setMemoDetailModal = () => {
-    setMemoItemVisible(false);
+    setMemoListVisible(false);
     setIsMemoDetailVisible(true);
   };
 
@@ -535,8 +535,8 @@ const MainScreen = () => {
       </View>
 
       {/* 메모 조회 */}
-      {memoItemVisible && (
-        <MemoItem
+      {memoListVisible && (
+        <MemoList
           onMemoWritePress={checkMemoHandler}
           onMemoDetailPress={setMemoDetailModal}
         />
