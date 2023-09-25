@@ -70,6 +70,20 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public List<TeamListResponse> getTeamList(Long userSeq, String keyword) {
+        User me = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER));
+        List<Team> teams = teamRepository.findAllByContainsKeyword(userSeq, keyword);
+
+        List<TeamListResponse> teamListResponses = new ArrayList<>();
+        for (Team team : teams) {
+            User owner = userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER));
+            List<String> memberProfiles = teamRepository.findUserProfiles(team.getTeamSeq(), userSeq);
+            teamListResponses.add(new TeamListResponse(team, me, owner.getProfile(), memberProfiles, teamUserRepository.findByTeamSeqAndUserSeq(team.getTeamSeq(), userSeq) != null));
+        }
+        return teamListResponses;
+    }
+
+    @Override
     @Transactional
     public InviteMemberResponse inviteMember(Long teamSeq, InviteMemberRequest inviteMemberRequest) {
         Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
