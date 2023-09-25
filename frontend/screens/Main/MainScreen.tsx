@@ -39,7 +39,7 @@ import { RootState } from "../../store/store";
 import MemoDetail from "../../components/Modal/Memo/MemoDetail";
 
 const screenHeight = Dimensions.get("window").height;
-const SERVER_OFFER_URL = "https://192.168.0.26:8082/offer";
+const SERVER_OFFER_URL = "https://172.30.1.84:8082/offer";
 
 // 태그된 회원 타입
 type Member = {
@@ -179,7 +179,7 @@ const MainScreen = () => {
 
   // 메모 조회 상태관리
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
-  const [memoListVisible, setMemoListVisible] = useState(true);
+  const [memoItemVisible, setMemoItemVisible] = useState(false);
 
   // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
@@ -386,9 +386,21 @@ const MainScreen = () => {
   // WebRTC 연결을 시작
   const start = async (): Promise<void> => {
     // RTCPeerConnection의 설정
+    // const configuration = {
+    //   sdpSemantics: "unified-plan",
+    //   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+    // };
     const configuration = {
       sdpSemantics: "unified-plan",
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      encodings: [
+        {
+          rid: "h",
+          maxBitrate: 900000, // 예: 900 kbps로 최대 비트레이트를 설정
+          minBitrate: 300000, // 예: 300 kbps로 최소 비트레이트를 설정
+          maxFramerate: 30, // 최대 프레임레이트를 설정 (선택 사항)
+        },
+      ],
     };
     pc.current = new RTCPeerConnection(configuration);
 
@@ -401,7 +413,7 @@ const MainScreen = () => {
       const label = `Id: ${receivedData.id}, X: ${receivedData.label_x}, Y: ${receivedData.label_y}`;
 
       // 좌표 값 log 표시
-      console.log(label);
+      // console.log(label);
 
       setCoordinates({
         id: receivedData.id,
@@ -462,6 +474,31 @@ const MainScreen = () => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   // 주기적인 통계 데이터 가져오기를 위한 Interval ID
+  //   const intervalId = setInterval(() => {
+  //     if (pc.current) {
+  //       pc.current.getStats().then((stats) => {
+  //         stats.forEach((report) => {
+  //           // 관심 있는 통계 데이터만 출력 (예: inbound-rtp, outbound-rtp, candidate-pair)
+  //           if (
+  //             report.type === "inbound-rtp" ||
+  //             report.type === "outbound-rtp" ||
+  //             report.type === "candidate-pair"
+  //           ) {
+  //             console.log(report);
+  //           }
+  //         });
+  //       });
+  //     }
+  //   }, 5000); // 5초마다
+
+  //   // 컴포넌트가 언마운트될 때 Interval 정지
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, []);
+
   return (
     <View style={{ flex: 1 }}>
       {!isNotificationModalVisible && (
@@ -493,6 +530,7 @@ const MainScreen = () => {
                 top: coordinates.y,
               },
             ]}
+            activeOpacity={0.7} // 눌렀을 때 투명도 조절
             onPress={() => {
               if (coordinates.id !== "0") {
                 // 메모 개수
@@ -503,13 +541,18 @@ const MainScreen = () => {
               }
             }}
           >
-            {coordinates.id === "0" ? (
-              // 등록 되지 않은 물채 표시할 텍스트
-              <Text style={styles.ObjCircleText}>+</Text>
-            ) : (
-              // 메모 개수 표시
-              <Text style={styles.ObjCircleText}>2</Text>
-            )}
+            <LinearGradient
+              colors={["#339af0", "blue"]}
+              style={styles.ObjCircleLinear}
+            >
+              {coordinates.id === "0" ? (
+                // 등록 되지 않은 물채 표시할 텍스트
+                <Text style={styles.ObjCircleText}>+</Text>
+              ) : (
+                // 메모 개수 표시
+                <Text style={styles.ObjCircleText}>2</Text>
+              )}
+            </LinearGradient>
           </TouchableOpacity>
         )}
         <AlertModal

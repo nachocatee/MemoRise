@@ -325,6 +325,14 @@ export const styles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 5,
+  },
+  ObjCircleLinear: {
+    width: "100%", // TouchableOpacity의 크기를 전부 차지하게 설정
+    height: "100%", // TouchableOpacity의 크기를 전부 차지하게 설정
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   ObjCircleText: {
     color: "white",
