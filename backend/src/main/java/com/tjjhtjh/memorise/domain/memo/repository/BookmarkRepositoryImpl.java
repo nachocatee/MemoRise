@@ -2,6 +2,7 @@ package com.tjjhtjh.memorise.domain.memo.repository;
 
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -41,20 +42,21 @@ public class BookmarkRepositoryImpl extends QuerydslRepositorySupport implements
 
     @Override
     public List<MyMemoResponse> isBookmarkTrueList(Long userSeq) {
+        CaseBuilder caseBuilder = new CaseBuilder();
+        BooleanExpression isBookmarkedTrue = caseBuilder.when(JPAExpressions.selectOne().from(bookmark)
+                        .where(bookmark.memo.memoSeq.eq(memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq))).exists())
+                .then(true).otherwise(false);
+
         return queryFactory.select(Projections.fields
                         (MyMemoResponse.class, memo.memoSeq, memo.user.nickname, memo.updatedAt, memo.content, memo.accessType, memo.file, memo.item.itemImage
-                                , ExpressionUtils.as(new CaseBuilder().when(JPAExpressions.selectOne().from(bookmark)
-                                                .where(bookmark.memo.memoSeq.eq(memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq)))
-                                                .exists()).then(true).otherwise(false), "isBookmarked")))
+                                , ExpressionUtils.as(isBookmarkedTrue, "isBookmarked")))
                 .from(memo)
                 .leftJoin(memo.user)
                 .leftJoin(memo.item)
                 .leftJoin(bookmark).on(memo.memoSeq.eq(bookmark.memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq)))
                 .where(memo.isDeleted.eq(0))
                 .groupBy(memo.memoSeq)
-                .having(new CaseBuilder().when(JPAExpressions.selectOne().from(bookmark)
-                                .where(bookmark.memo.memoSeq.eq(memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq)))
-                                .exists()).then(true).otherwise(false).eq(true))
+                .having(isBookmarkedTrue.eq(true))
                 .orderBy(memo.updatedAt.desc())
                 .fetch();
     }
