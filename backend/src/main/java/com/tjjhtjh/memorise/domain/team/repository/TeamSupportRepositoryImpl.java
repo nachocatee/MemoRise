@@ -4,12 +4,14 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tjjhtjh.memorise.domain.team.repository.entity.Team;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteUserListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.tjjhtjh.memorise.domain.team.repository.entity.QTeam.team;
 import static com.tjjhtjh.memorise.domain.team.repository.entity.QTeamUser.teamUser;
 import static com.tjjhtjh.memorise.domain.user.repository.entity.QUser.user;
 
@@ -36,5 +38,32 @@ public class TeamSupportRepositoryImpl implements TeamSupportRepository {
                 .where(user.isDeleted.eq(0).and(builder))
                 .orderBy(user.nickname.asc(), user.email.asc())
                 .fetch();
+    }
+
+    @Override
+    public List<String> findUserProfiles(Long teamSeq, Long userSeq) {
+        return jpaQueryFactory
+            .select(user.profile)
+            .from(teamUser)
+            .join(user).on(teamUser.user.userSeq.eq(user.userSeq))
+            .where(teamUser.team.teamSeq.eq(teamSeq)
+                    .and(user.userSeq.ne(userSeq))
+                    .and(user.userSeq.ne(team.owner))
+                    .and(user.isDeleted.eq(0)))
+            .limit(4)
+            .fetch();
+    }
+
+    @Override
+    public List<Team> findAllByContainsKeyword(Long userSeq, String keyword) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if(keyword != null) {
+            builder.and(team.name.contains(keyword));
+        }
+        return jpaQueryFactory
+            .selectFrom(team)
+            .where(builder)
+            .orderBy(team.createdAt.desc())
+            .fetch();
     }
 }
