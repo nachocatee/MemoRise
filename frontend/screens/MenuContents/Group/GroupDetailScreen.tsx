@@ -10,13 +10,14 @@ import { BACKEND_URL } from "../../../util/http";
 import { RootStackParamList } from "../../../App";
 import { styles } from "./GroupStyle";
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
+import UserList from "../../../components/UserList";
 
 type GroupDetailScreenProps = {
   route: RouteProp<RootStackParamList, "GroupDetail">;
   navigation: StackNavigationProp<RootStackParamList, "GroupDetail">;
 };
 
-type MemoData = {
+type GroupData = {
   name: string;
   me: {
     userSeq: number;
@@ -46,7 +47,7 @@ const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
   navigation,
 }) => {
   const { teamSeq, userSeq } = route.params;
-  const [memoData, setMemoData] = useState<MemoData | null>(null);
+  const [groupData, setGroupData] = useState<GroupData | null>(null);
 
   // 그룹 상세 데이터 가져오기
   useEffect(() => {
@@ -56,13 +57,13 @@ const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
           method: "GET",
           url: BACKEND_URL + `/teams/${teamSeq}/${userSeq}`,
         });
-        setMemoData(res.data);
+        setGroupData(res.data);
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-  }, [memoData]);
+  }, [groupData]);
 
   return (
     <LinearGradient
@@ -73,10 +74,11 @@ const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
     >
       <GoBackHeader />
       <View style={styles.container}>
-        {memoData && !memoData.owner ? (
+        {groupData && !groupData.owner ? (
+          // 유저 == 그룹장일 때
           <>
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>{memoData.name}</Text>
+              <Text style={styles.title}>{groupData.name}</Text>
               <Pressable
                 onPress={() => navigation.navigate("GroupSetting")}
                 style={styles.settingContainer}
@@ -90,6 +92,12 @@ const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
             </View>
             <View style={styles.memberContainer}>
               <Pressable
+                onPress={() =>
+                  navigation.navigate("InviteUser", {
+                    teamSeq: teamSeq,
+                    teamName: groupData.name,
+                  })
+                }
                 style={[
                   styles.settingContainer,
                   { marginBottom: calculateDynamicWidth(25) },
@@ -106,21 +114,13 @@ const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
             </View>
           </>
         ) : null}
-        {memoData && (
+        {groupData && (
           <ScrollView contentContainerStyle={styles.memberWrap}>
-            <View style={styles.memberInnerContainer}>
-              <View style={styles.memberImageContainer}>
-                <Image
-                  style={styles.memberImagebg}
-                  source={require("../../../assets/image/profile_bg_square.png")}
-                />
-                <Image
-                  style={styles.memberImage}
-                  source={{ uri: memoData.me.profile }}
-                />
-              </View>
-              <Text style={styles.memberText}>{memoData.me.nickname}</Text>
-            </View>
+            {/* 내 정보 */}
+            <UserList
+              profileUri={groupData.me.profile}
+              nickname={groupData.me.nickname}
+            />
             <Pressable>
               <Image
                 style={styles.meIcon}

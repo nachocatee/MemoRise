@@ -53,7 +53,10 @@ export type RootStackParamList = {
     userSeq: number;
   };
   GroupSetting: undefined;
-  InviteUser: undefined;
+  InviteUser: {
+    teamSeq: number;
+    teamName: string;
+  };
   CamTestScreen: undefined;
 };
 

@@ -53,7 +53,8 @@ const MyGroupScreen = () => {
     } else {
       navigation.navigate("GroupDetail", {
         teamSeq: teamSeq,
-        userSeq: userId, // 더미 데이터
+        // userSeq: userId,
+        userSeq: 26, // 더미 데이터
       });
     }
   };
@@ -64,9 +65,9 @@ const MyGroupScreen = () => {
       try {
         const res = await axios({
           method: "GET",
-          url: BACKEND_URL + `/user/${userId}/my-teams`,
-          // url: BACKEND_URL + `/user/23/my-teams`, // 더미 데이터
-          // url: BACKEND_URL + `/user/26/my-teams`, // 더미 데이터
+          // url: BACKEND_URL + `/user/${userId}/my-teams`,
+          // url: BACKEND_URL + `/user/31/my-teams`, // 더미 데이터
+          url: BACKEND_URL + `/user/26/my-teams`, // 더미 데이터
         });
         setGroupData(res.data);
         console.log("조회 성공");

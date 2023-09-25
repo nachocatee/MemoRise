@@ -65,6 +65,12 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  contentsContainer: {
+    flex: 1,
+    alignItems: "center",
+    marginTop: calculateDynamicWidth(25),
+    justifyContent: "space-between",
+  },
 
   // 그룹 상세 스타일
   settingContainer: {
@@ -91,10 +97,6 @@ export const styles = StyleSheet.create({
     width: "100%",
     marginTop: calculateDynamicWidth(30),
   },
-  memberInnerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   memberImageContainer: {
     elevation: 4,
     width: calculateDynamicWidth(60),
@@ -104,12 +106,6 @@ export const styles = StyleSheet.create({
   memberImagebg: {
     width: calculateDynamicWidth(60),
     height: calculateDynamicWidth(60),
-  },
-  memberImage: {
-    width: calculateDynamicWidth(60),
-    height: calculateDynamicWidth(60),
-    borderRadius: calculateDynamicWidth(15),
-    position: "absolute",
   },
   memberText: {
     fontFamily: "Pretendard-Regular",
@@ -140,5 +136,16 @@ export const styles = StyleSheet.create({
     top: -calculateDynamicWidth(10),
     left: calculateDynamicWidth(1.5),
     zIndex: 1,
+  },
+
+  // 유저 초대하기
+  userEmptyContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: screenHeight / 4 - calculateDynamicWidth(79),
+  },
+  userEmptyIcon: {
+    width: calculateDynamicWidth(42),
+    height: calculateDynamicWidth(42),
   },
 });

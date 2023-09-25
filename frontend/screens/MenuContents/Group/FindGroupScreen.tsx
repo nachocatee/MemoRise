@@ -18,7 +18,6 @@ const FindGroupScreen = () => {
 
   return (
     <LinearGradient
-      // colors={["#F5F5F5", "red"]}
       colors={["#F5F5F5", "#E9E9E9"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
@@ -30,9 +29,7 @@ const FindGroupScreen = () => {
           <Text style={styles.title}>그룹 찾기</Text>
           <SmallBtn onPress={MakeGroupHandler}>만들기</SmallBtn>
         </View>
-        <View style={styles.contentsContainer}>
-          <SeachInput />
-        </View>
+        <View style={styles.contentsContainer}>{/* <SeachInput /> */}</View>
       </View>
     </LinearGradient>
   );
