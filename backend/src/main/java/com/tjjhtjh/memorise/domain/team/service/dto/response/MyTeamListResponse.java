@@ -16,6 +16,7 @@ public class MyTeamListResponse {
     private boolean isOwner;
     private String ownerProfile;
     private List<String> memberProfiles;
+    private boolean isPassword;
 
     public MyTeamListResponse(Team team, User user, List<String> memberProfiles) {
         this.teamSeq = team.getTeamSeq();
@@ -24,5 +25,6 @@ public class MyTeamListResponse {
         this.isOwner = team.getOwner().equals(user.getUserSeq());
         this.ownerProfile = isOwner ? null : memberProfiles.get(0);
         this.memberProfiles = isOwner ? memberProfiles : memberProfiles.subList(1, memberProfiles.size());
+        this.isPassword = team.getPassword() != null;
     }
 }
