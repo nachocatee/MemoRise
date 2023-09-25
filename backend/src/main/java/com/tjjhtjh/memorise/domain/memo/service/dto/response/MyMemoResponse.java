@@ -14,11 +14,13 @@ import java.time.LocalDateTime;
 @Builder
 public class MyMemoResponse {
 
+    private Long memoSeq;
     private String content;
     private AccessType accessType;
     private String nickname;
     private LocalDateTime updatedAt;
     private String file;
     private String itemImage;
+    private Boolean isBookmarked;
 
 }

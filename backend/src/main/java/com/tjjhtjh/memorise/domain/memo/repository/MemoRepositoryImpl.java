@@ -1,7 +1,10 @@
 package com.tjjhtjh.memorise.domain.memo.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.AccessType;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.tjjhtjh.memorise.domain.memo.repository.entity.QBookmark.bookmark;
 import static com.tjjhtjh.memorise.domain.memo.repository.entity.QMemo.memo;
 import static com.tjjhtjh.memorise.domain.tag.repository.entity.QTaggedUser.taggedUser;
 
@@ -22,10 +26,11 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
 
     private final JPAQueryFactory queryFactory;
 
-    public MemoRepositoryImpl(JPAQueryFactory jpaQueryFactory){
+    public MemoRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
         super(Memo.class);
         this.queryFactory = jpaQueryFactory;
     }
+
     @Override
     public List<MemoResponse> findWrittenByMeOrOpenMemoOrTaggedMemo(Long itemSeq, Long userSeq) {
 
@@ -34,11 +39,11 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
                 .or(memo.accessType.eq(AccessType.OPEN).and(memo.item.itemSeq.eq(itemSeq)))  // 공개된 메모거나
                 .or(memo.accessType.eq(AccessType.RESTRICT)
                         .and(memo.item.itemSeq.eq(itemSeq)
-                        .and(taggedUser.user.userSeq.eq(userSeq)).and(taggedUser.memo.memoSeq.eq(memo.memoSeq))));
+                                .and(taggedUser.user.userSeq.eq(userSeq)).and(taggedUser.memo.memoSeq.eq(memo.memoSeq))));
 
         return queryFactory.select(Projections.fields
-                (MemoResponse.class,
-                        memo.user.nickname.as("nickname"), memo.updatedAt,memo.content,memo.accessType,memo.file))
+                        (MemoResponse.class,
+                                memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.accessType, memo.file))
                 .from(memo)
                 .leftJoin(memo.user)
                 .leftJoin(taggedUser).on(memo.memoSeq.eq(taggedUser.memo.memoSeq))
@@ -51,7 +56,7 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
     @Override
     public Optional<MemoDetailResponse> detailMemo(Long memoId) {
         return queryFactory.select(Projections.fields(MemoDetailResponse.class,
-                memo.user.nickname.as("nickname"), memo.updatedAt,memo.content,memo.file,memo.accessType))
+                        memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.file, memo.accessType))
                 .from(memo)
                 .leftJoin(memo.user)
                 .where(memo.memoSeq.eq(memoId))
@@ -59,9 +64,9 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
     }
 
     @Override
-    public List<MyMemoResponse> findByMyMemoIsDeletedFalse(Long userSeq){
+    public List<MyMemoResponse> findByMyMemoIsDeletedFalse(Long userSeq) {
         return queryFactory.select(Projections.fields
-                        (MyMemoResponse.class,memo.user.nickname.as("nickname"),memo.updatedAt,memo.content,memo.accessType,memo.file,memo.item.itemImage))
+                        (MyMemoResponse.class, memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.accessType, memo.file, memo.item.itemImage))
                 .from(memo)
                 .leftJoin(memo.user)
                 .leftJoin(memo.item)
@@ -76,11 +81,18 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
         builder.and(memo.user.userSeq.eq(userSeq)).or(memo.accessType.eq(AccessType.RESTRICT).and(taggedUser.user.userSeq.eq(userSeq)));
 
         return queryFactory.select(Projections.fields
-                        (MyMemoResponse.class, memo.user.nickname,memo.updatedAt,memo.content,memo.accessType,memo.file,memo.item.itemImage))
+                        (MyMemoResponse.class, memo.memoSeq, memo.user.nickname, memo.updatedAt, memo.content, memo.accessType, memo.file, memo.item.itemImage
+                        ,ExpressionUtils.as(
+                                        new CaseBuilder().when(JPAExpressions.selectOne().from(bookmark)
+                                                .where(
+                                                        bookmark.memo.memoSeq.eq(memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq))
+                                                ).exists()).then(true).otherwise(false), "isBookmarked"
+                                )))
                 .from(memo)
                 .leftJoin(memo.user)
                 .leftJoin(taggedUser).on(memo.memoSeq.eq(taggedUser.memo.memoSeq))
                 .leftJoin(memo.item)
+                .leftJoin(bookmark).on(memo.memoSeq.eq(bookmark.memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq)))
                 .where(memo.isDeleted.eq(0).and(builder))
                 .groupBy(memo.memoSeq)
                 .orderBy(memo.updatedAt.desc())
