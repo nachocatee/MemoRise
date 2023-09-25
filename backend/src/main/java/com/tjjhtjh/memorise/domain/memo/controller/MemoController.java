@@ -2,6 +2,7 @@ package com.tjjhtjh.memorise.domain.memo.controller;
 
 import com.tjjhtjh.memorise.domain.memo.exception.MemoException;
 import com.tjjhtjh.memorise.domain.memo.service.MemoService;
+import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoCountRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
@@ -73,5 +74,10 @@ public class MemoController {
     @GetMapping("/{memoId}/{userSeq}")
     public ResponseEntity<MemoDetailResponse> detailMemo(@PathVariable Long memoId, @PathVariable Long userSeq) throws MemoException {
         return new ResponseEntity<>(memoService.detailMemo(memoId), HttpStatus.OK);
+    }
+
+    @PostMapping("/all/{userSeq}")
+    public ResponseEntity<List<Long>> countMemo(@PathVariable Long userSeq, @RequestBody MemoCountRequest memoCountRequest){
+        return new ResponseEntity<>(memoService.countOfMemoList(memoCountRequest.getItemSeqList(), userSeq) ,HttpStatus.OK);
     }
 }

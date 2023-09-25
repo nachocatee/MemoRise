@@ -8,6 +8,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.AccessType;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
+import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoCountRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MyMemoResponse;
@@ -113,6 +114,24 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
                 .groupBy(memo.memoSeq)
                 .orderBy(memo.updatedAt.desc())
                 .fetch();
+    }
+
+    @Override
+    public Long countMemoOfItem(Long itemSeq, Long userSeq) {
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(memo.user.userSeq.eq(userSeq).and(memo.item.itemSeq.eq(itemSeq)))  // 내가 작성했거나
+                .or(memo.accessType.eq(AccessType.OPEN).and(memo.item.itemSeq.eq(itemSeq)))  // 공개된 메모거나
+                .or(memo.accessType.eq(AccessType.RESTRICT)
+                        .and(memo.item.itemSeq.eq(itemSeq)
+                                .and(taggedUser.user.userSeq.eq(userSeq)).and(taggedUser.memo.memoSeq.eq(memo.memoSeq))));
+
+        return queryFactory.select(memo.memoSeq)
+                .from(memo)
+                .leftJoin(memo.user)
+                .leftJoin(taggedUser).on(memo.memoSeq.eq(taggedUser.memo.memoSeq))
+                .where(memo.isDeleted.eq(0).and(builder))
+                .groupBy(memo.memoSeq)
+                .stream().count();
     }
 
 }

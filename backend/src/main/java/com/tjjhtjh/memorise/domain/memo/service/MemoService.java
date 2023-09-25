@@ -6,7 +6,6 @@ import com.tjjhtjh.memorise.domain.memo.exception.BookmarkException;
 import com.tjjhtjh.memorise.domain.memo.exception.MemoException;
 import com.tjjhtjh.memorise.domain.memo.repository.BookmarkRepository;
 import com.tjjhtjh.memorise.domain.memo.repository.MemoRepository;
-import com.tjjhtjh.memorise.domain.memo.repository.MemoRepositoryCustom;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Bookmark;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.BookmarkRequest;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -130,5 +128,17 @@ public class MemoService {
 
     public List<MyMemoResponse> allMyMemoList(Long userSeq) {
         return memoRepository.findByAllMyMemoIsDeletedFalse(userSeq);
+    }
+
+    public void myBookmarkList(Long userSeq) {
+
+    }
+
+    public List<Long> countOfMemoList(List<Long> itemSeqList, Long userSeq){
+        List<Long> resultList = new ArrayList<>();
+        for (Long itemSeq: itemSeqList) {
+            resultList.add(memoRepository.countMemoOfItem(itemSeq,userSeq));
+        }
+        return resultList;
     }
 }
