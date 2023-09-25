@@ -30,6 +30,7 @@ import NotFoundScreen from "./screens/NotFound/NotFoundScreen";
 import GroupDetailScreen from "./screens/MenuContents/Group/GroupDetailScreen";
 import GroupSettingScreen from "./screens/MenuContents/Group/GroupSettingScreen";
 import InviteUserScreen from "./screens/MenuContents/Group/InviteUserScreen";
+import CamTestScreen from "./screens/Main/CamTestScreen";
 
 export type RootStackParamList = {
   Landing: undefined;
@@ -53,6 +54,7 @@ export type RootStackParamList = {
   };
   GroupSetting: undefined;
   InviteUser: undefined;
+  CamTestScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -64,6 +66,7 @@ function App(): JSX.Element {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="CamTestScreen" component={CamTestScreen} />
             <Stack.Screen name="Landing" component={LandingScreen} />
             <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="ObjectDetection" component={ObjectDetection} />

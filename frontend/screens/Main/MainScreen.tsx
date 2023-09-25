@@ -398,37 +398,49 @@ const MainScreen = () => {
   };
 
   // WebRTC 연결을 시작
-  const start = async (): Promise<void> => {
-    // RTCPeerConnection의 설정
-    // const configuration = {
-    //   sdpSemantics: "unified-plan",
-    //   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-    // };
+  const initializeCamera = async (): Promise<void> => {
+    try {
+      const stream = await mediaDevices.getUserMedia({
+        audio: true,
+        video: {
+          width: 3840,
+          height: 2160,
+          frameRate: 15,
+          facingMode: "environment",
+        },
+      });
+      setLocalStream(stream);
+    } catch (error) {
+      Alert.alert("Error", (error as Error).message);
+    }
+  };
+
+  const startRTCConnection = async (): Promise<void> => {
+    if (!localStream) {
+      Alert.alert("Error", "Please initialize the camera first.");
+      return;
+    }
+
     const configuration = {
       sdpSemantics: "unified-plan",
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
       encodings: [
         {
           rid: "h",
-          maxBitrate: 900000, // 예: 900 kbps로 최대 비트레이트를 설정
-          minBitrate: 300000, // 예: 300 kbps로 최소 비트레이트를 설정
-          maxFramerate: 30, // 최대 프레임레이트를 설정 (선택 사항)
+          maxBitrate: 900000,
+          minBitrate: 300000,
+          maxFramerate: 30,
         },
       ],
     };
+
     pc.current = new RTCPeerConnection(configuration);
 
-    // 데이터 채널 생성
     const dataChannel = pc.current.createDataChannel("data");
     dataChannel.onmessage = (event: any) => {
       const receivedData = JSON.parse(event.data);
-
-      // 좌표 값 저장
       const label = `Id: ${receivedData.id}, X: ${receivedData.label_x}, Y: ${receivedData.label_y}`;
-
-      // 좌표 값 log 표시
       console.log(label);
-
       setCoordinates({
         id: receivedData.id,
         x: receivedData.label_x,
@@ -436,84 +448,37 @@ const MainScreen = () => {
       });
     };
 
-    // 사용자의 미디어 장치(카메라 및 마이크)에서 미디어 스트림을 가져옴
-    try {
-      const stream = await mediaDevices.getUserMedia({
-        audio: true,
-        video: {
-          width: 3840, //3840
-          height: 2160, //2160
-          frameRate: 15,
-          facingMode: "environment",
-        },
-      });
+    localStream.getTracks().forEach((track) => {
+      pc.current?.addTrack(track, localStream);
+    });
 
-      // 가져온 미디어 스트림의 각 트랙을 RTCPeerConnection에 추가
-      stream.getTracks().forEach((track) => {
-        pc.current?.addTrack(track, stream);
-      });
+    await negotiate();
 
-      // SDP 교환을 시작
-      await negotiate();
-
-      // 연결 상태를 업데이트(연결함)하고 로컬 스트림을 설정
-      setIsConnected(true);
-      setLocalStream(stream);
-    } catch (error) {
-      Alert.alert("Error", (error as Error).message);
-    }
+    setIsConnected(true);
   };
 
-  // WebRTC 연결을 종료
   const stop = (): void => {
     setIsConnected(false);
-    if (localStream) {
-      // localStream의 모든 트랙을 종료
+
+    if (localStream && pc.current) {
       localStream.getTracks().forEach((track) => {
-        track.stop();
+        const sender = pc.current?.getSenders().find((s) => s.track === track);
+        if (sender) {
+          pc.current?.removeTrack(sender);
+        }
       });
     }
 
-    // 로컬 스트림 상태를 null로 설정
-    setLocalStream(null);
-    // RTCPeerConnection 종료
     pc.current?.close();
-    // 오브젝트 표시 제거
     setCoordinates(null);
   };
 
   useEffect(() => {
-    // start(); // 시작할때 자동 실행(현재 작업을 위해서 꺼둠)
-    // 컴포넌트가 언마운트될 때 스트림을 정지
+    initializeCamera();
     return () => {
       stop();
     };
   }, []);
-
-  // useEffect(() => {
-  //   // 주기적인 통계 데이터 가져오기를 위한 Interval ID
-  //   const intervalId = setInterval(() => {
-  //     if (pc.current) {
-  //       pc.current.getStats().then((stats) => {
-  //         stats.forEach((report) => {
-  //           // 관심 있는 통계 데이터만 출력 (예: inbound-rtp, outbound-rtp, candidate-pair)
-  //           if (
-  //             report.type === "inbound-rtp" ||
-  //             report.type === "outbound-rtp" ||
-  //             report.type === "candidate-pair"
-  //           ) {
-  //             console.log(report);
-  //           }
-  //         });
-  //       });
-  //     }
-  //   }, 5000); // 5초마다
-
-  //   // 컴포넌트가 언마운트될 때 Interval 정지
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -579,7 +544,11 @@ const MainScreen = () => {
           btnText="확인"
         />
         <View style={styles.rtcButton}>
-          <Button title="Start" onPress={start} disabled={isConnected} />
+          <Button
+            title="Start"
+            onPress={startRTCConnection}
+            disabled={isConnected}
+          />
           <Button title="Stop" onPress={stop} disabled={!isConnected} />
         </View>
         <Pressable
