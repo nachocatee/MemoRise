@@ -66,11 +66,20 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
     @Override
     public List<MyMemoResponse> findByMyMemoIsDeletedFalse(Long userSeq) {
         return queryFactory.select(Projections.fields
-                        (MyMemoResponse.class, memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.accessType, memo.file, memo.item.itemImage))
+                        (MyMemoResponse.class, memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.accessType, memo.file,
+                                memo.item.itemImage, memo.memoSeq,
+                                ExpressionUtils.as(
+                                        new CaseBuilder().when(JPAExpressions.selectOne().from(bookmark)
+                                                .where(
+                                                        bookmark.memo.memoSeq.eq(memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq))
+                                                ).exists()).then(true).otherwise(false), "isBookmarked"
+                                )))
                 .from(memo)
                 .leftJoin(memo.user)
                 .leftJoin(memo.item)
                 .where(memo.isDeleted.eq(0).and(memo.user.userSeq.eq(userSeq)))
+                .leftJoin(bookmark).on(memo.memoSeq.eq(bookmark.memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq)))
+                .groupBy(memo.memoSeq)
                 .orderBy(memo.updatedAt.desc())
                 .fetch();
     }
