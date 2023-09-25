@@ -11,6 +11,7 @@ import java.util.List;
 public interface TeamService {
     CreateTeamResponse createTeam(CreateTeamRequest createTeamRequest);
     TeamDetailResponse getTeamDetailInfo(Long teamSeq, Long userSeq);
+//    List<TeamListResponse> getTeamList(Long userSeq, String keyword);
     InviteMemberResponse inviteMember(Long teamSeq, InviteMemberRequest inviteMemberRequest);
     List<InviteUserListResponse> getInviteUserList(Long teamSeq, Long userSeq, String keyword);
     void kickMember(Long teamSeq, KickMemberRequest kickMemberRequest);

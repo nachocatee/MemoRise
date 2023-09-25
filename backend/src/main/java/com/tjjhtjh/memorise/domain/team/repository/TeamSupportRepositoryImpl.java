@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.tjjhtjh.memorise.domain.team.repository.entity.QTeam.team;
 import static com.tjjhtjh.memorise.domain.team.repository.entity.QTeamUser.teamUser;
 import static com.tjjhtjh.memorise.domain.user.repository.entity.QUser.user;
 
@@ -37,4 +38,53 @@ public class TeamSupportRepositoryImpl implements TeamSupportRepository {
                 .orderBy(user.nickname.asc(), user.email.asc())
                 .fetch();
     }
+
+//    @Override
+//    public List<TeamListResponse> findTeamList(Long userSeq, String keyword) {
+//        BooleanBuilder builder = new BooleanBuilder();
+//        if(keyword != null) {
+//            builder.and(team.name.contains(keyword));
+//        }
+//        return jpaQueryFactory
+//                .select(Projections.constructor(TeamListResponse.class,
+//                        team.teamSeq,
+//                        team.name,
+//                        team.owner,
+//                        user.userSeq,
+//                        user.profile,
+//                        Expressions.asString(JPAExpressions
+//                                .select(user.profile)
+//                                .from(user)
+//                                .where(user.userSeq.eq(team.owner).and(user.isDeleted.eq(0)))
+//                                .fetchOne()),
+//                        findTeamMemberProfiles(Expressions.asNumber((Expression<Long>) team.teamSeq), userSeq),
+//                        JPAExpressions
+//                                .selectFrom(teamUser)
+//                                .where(teamUser.team.teamSeq.eq(team.teamSeq).and(teamUser.user.userSeq.eq(userSeq)))
+//                                .exists() != null)
+//                )
+//                .from(team)
+//                .where(builder)
+//                .orderBy(team.name.asc())
+//                .fetch();
+//    }
+
+//    public String findTeamMemberProfiles(Long teamSeq, Long userSeq) {
+//        return jpaQueryFactory
+//                .select(user.profile)
+//                .from(user)
+//                .where(user.userSeq.in(
+//                                JPAExpressions
+//                                        .select(user.userSeq)
+//                                        .from(teamUser)
+//                                        .join(user).on(teamUser.user.userSeq.eq(user.userSeq))
+//                                        .where(teamUser.team.teamSeq.eq(team.teamSeq)
+//                                                .and(user.userSeq.ne(userSeq))
+//                                                .and(user.userSeq.ne(team.owner)))
+//                                        .limit(4)
+//                                        .fetch()
+//                        )
+//                )
+//                .fetchOne();
+//    }
 }

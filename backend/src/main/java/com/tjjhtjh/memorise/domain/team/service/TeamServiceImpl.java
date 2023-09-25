@@ -69,6 +69,11 @@ public class TeamServiceImpl implements TeamService {
         return new TeamDetailResponse(team, me, owner, members);
     }
 
+//    @Override
+//    public List<TeamListResponse> getTeamList(Long userSeq, String keyword) {
+//        return teamRepository.findTeamList(userSeq, keyword);
+//    }
+
     @Override
     @Transactional
     public InviteMemberResponse inviteMember(Long teamSeq, InviteMemberRequest inviteMemberRequest) {
