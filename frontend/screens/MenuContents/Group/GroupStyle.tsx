@@ -3,7 +3,6 @@ import { StyleSheet, Dimensions } from "react-native";
 import Colors from "../../../constants/colors";
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
 
-const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 export const styles = StyleSheet.create({
@@ -13,7 +12,7 @@ export const styles = StyleSheet.create({
     marginHorizontal: 30,
   },
   titleContainer: {
-    marginTop: calculateDynamicWidth(10),
+    marginVertical: calculateDynamicWidth(10),
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -58,31 +57,6 @@ export const styles = StyleSheet.create({
   pressed: {
     backgroundColor: Colors.hover,
   },
-  contentsContainer: {
-    flex: 1,
-    alignItems: "center",
-    marginTop: calculateDynamicWidth(25),
-    justifyContent: "space-between",
-  },
-  text: {
-    fontFamily: "Pretendard-Regular",
-    fontSize: calculateDynamicWidth(18),
-    color: Colors.text,
-  },
-  line: {
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.hover,
-    height: calculateDynamicWidth(30),
-    width: screenWidth - 60,
-    marginBottom: calculateDynamicWidth(10),
-  },
-  itemContainer: {
-    marginTop: calculateDynamicWidth(15),
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: screenWidth - 60,
-  },
   btnContainer: {
     marginBottom: "10%",
   },
@@ -96,7 +70,6 @@ export const styles = StyleSheet.create({
   settingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: calculateDynamicWidth(25),
   },
   settingIcon: {
     width: calculateDynamicWidth(19),
@@ -112,6 +85,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    width: "100%",
   },
   memberContainer: {
     width: "100%",
@@ -156,5 +130,15 @@ export const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "space-around",
     paddingVertical: calculateDynamicWidth(30),
+  },
+  delete: {
+    width: calculateDynamicWidth(22),
+    height: calculateDynamicWidth(22),
+  },
+  deleteContainer: {
+    position: "absolute",
+    top: -calculateDynamicWidth(10),
+    left: calculateDynamicWidth(1.5),
+    zIndex: 1,
   },
 });

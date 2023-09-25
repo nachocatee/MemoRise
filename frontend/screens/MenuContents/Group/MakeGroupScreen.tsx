@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, Switch, Modal } from "react-native";
+import { View, Text, Modal } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { BlurView } from "@react-native-community/blur";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import ConfirmBtn from "../../../components/Button/ConfirmBtn";
 import GoBackHeader from "../../../components/Header/GoBackHeader";
-import Colors from "../../../constants/colors";
 import { styles } from "./GroupStyle";
 import PasswordInputModal from "../../../components/Modal/Group/PasswordInputModal";
 import GroupNameInputModal from "../../../components/Modal/Group/GroupNameInputModal";
-import { calculateDynamicWidth } from "../../../constants/dynamicSize";
 import { RootState } from "../../../store/store";
 import { BACKEND_URL } from "../../../util/http";
+import GroupSetting from "../../../components/GroupSetting";
 
 type RootStackParamList = {
   MakeGroup: undefined;
@@ -39,8 +38,8 @@ const MakeGroupScreen = () => {
       url: BACKEND_URL + "/teams",
       data: {
         name: name,
-        // owner: userId,
-        owner: 26, // 더미 데이터
+        owner: userId,
+        // owner: 26, // 더미 데이터
         password: password,
       },
     })
@@ -48,7 +47,7 @@ const MakeGroupScreen = () => {
         console.log("그룹 생성 완료");
         navigation.navigate("GroupDetail", {
           teamSeq: res.data.teamSeq,
-          userSeq: 26, // 더미 데이터
+          userSeq: userId, // 더미 데이터
         });
       })
       .catch((err) => {
@@ -57,7 +56,7 @@ const MakeGroupScreen = () => {
   };
 
   // 그룹 이름 설정
-  const [name, setName] = useState("Group");
+  const [name, setName] = useState("내 그룹");
   const [enteredName, setEnteredName] = useState("");
 
   const nameModalHandler = () => {
@@ -140,7 +139,6 @@ const MakeGroupScreen = () => {
 
   return (
     <LinearGradient
-      // colors={["#F5F5F5", "red"]}
       colors={["#F5F5F5", "#E9E9E9"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
@@ -152,49 +150,15 @@ const MakeGroupScreen = () => {
           <Text style={styles.title}>그룹 만들기</Text>
         </View>
 
-        {/* 여기서부터 나중에 컴포넌트로 뺄거임 */}
-        <View style={styles.contentsContainer}>
-          <View>
-            <View style={styles.itemContainer}>
-              <Text style={styles.text}>그룹 이름</Text>
-              <Pressable onPress={nameModalHandler}>
-                <Text style={[styles.text, { opacity: 0.5 }]}>{name}</Text>
-              </Pressable>
-            </View>
-
-            <View style={styles.line}></View>
-
-            <View style={styles.itemContainer}>
-              <Text style={styles.text}>그룹 비공개</Text>
-              <Switch
-                trackColor={{ false: Colors.hover, true: Colors.primary300 }}
-                thumbColor="white"
-                onValueChange={toggleSwitch}
-                value={isEnabled}
-                style={{
-                  transform: [
-                    { scaleX: calculateDynamicWidth(1) },
-                    { scaleY: calculateDynamicWidth(1) },
-                  ],
-                }}
-              />
-            </View>
-            {password && (
-              <>
-                <View style={styles.line}></View>
-                <View style={styles.itemContainer}>
-                  <Text style={styles.text}>비밀번호</Text>
-                  <Pressable onPress={passwordModalHandler}>
-                    <Text style={[styles.text, { opacity: 0.5 }]}>
-                      {password}
-                    </Text>
-                  </Pressable>
-                </View>
-              </>
-            )}
-          </View>
-        </View>
-        {/* 여기까지 */}
+        {/* 그룹 이름, 비밀번호 설정 */}
+        <GroupSetting
+          nameModalHandler={nameModalHandler}
+          name={name}
+          toggleSwitch={toggleSwitch}
+          isEnabled={isEnabled}
+          password={password}
+          passwordModalHandler={passwordModalHandler}
+        />
 
         <View style={styles.btnContainer}>
           <ConfirmBtn onPress={GroupCreate}>확인</ConfirmBtn>
