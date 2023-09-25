@@ -197,12 +197,25 @@ const MainScreen = () => {
     setIsMemoDetailVisible(true);
   };
 
+  // 메모 수정을 위한 상태관리
+  const [isUpdateMemoTrue, setIsUpdateMemoTrue] = useState(false);
+
+  // 메모 수정
+  const setMemoUpdateHandler = () => {
+    setIsMemoDetailVisible(false);
+    setMemoCreateModalVisible(true);
+    setIsUpdateMemoTrue(true);
+    setOpenState("OPEN"); // 사용자 메모 정보에 따라 변경 예정.
+  };
+
   const memoInputHandler = (enteredText: string) => {
     setEnteredMemo(enteredText);
   };
 
+  // 메모 작성 및 업데이트 완료 함수
   const memoConfirmHandler = () => {
     setMemoCreateModalVisible(false);
+    setIsUpdateMemoTrue(false);
     setEnteredMemo("");
     setOpenState("OPEN");
     MemoCreate();
@@ -260,6 +273,7 @@ const MainScreen = () => {
 
   const closeMemoCreateModal = () => {
     setMemoCreateModalVisible(false);
+    setIsUpdateMemoTrue(false);
     setOpenState("OPEN");
     setToggleOpen(false);
   };
@@ -288,6 +302,7 @@ const MainScreen = () => {
     setToggleOpen(false);
     setMemoCancelModalVisible(false);
     setMemoCreateModalVisible(false);
+    setIsUpdateMemoTrue(false);
     setTagSearchText("");
     setTaggedMember([]);
   };
@@ -586,7 +601,9 @@ const MainScreen = () => {
       )}
 
       {/* 메모 상세 조회 */}
-      {isMemoDetailVisible && <MemoDetail />}
+      {isMemoDetailVisible && (
+        <MemoDetail onMemoUpdatePress={setMemoUpdateHandler} />
+      )}
 
       {/* 알림 모달 */}
       {isNotificationModalVisible && (
@@ -954,12 +971,17 @@ const MainScreen = () => {
                         />
                       </Pressable>
                     )}
-                    <TextInput
-                      style={styles.memoContent}
-                      multiline={true}
-                      onChangeText={memoInputHandler}
-                      value={enteredMemo}
-                    />
+                    {isUpdateMemoTrue ? (
+                      // 더미데이터
+                      <Text>테스트!</Text>
+                    ) : (
+                      <TextInput
+                        style={styles.memoContent}
+                        multiline={true}
+                        onChangeText={memoInputHandler}
+                        value={enteredMemo}
+                      />
+                    )}
                   </ScrollView>
                 </View>
               </LinearGradient>
