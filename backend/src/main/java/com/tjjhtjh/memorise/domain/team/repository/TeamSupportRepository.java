@@ -10,5 +10,4 @@ public interface TeamSupportRepository {
     List<InviteUserListResponse> findInviteUserList(Long teamSeq, Long userSeq, String keyword);
     List<String> findUserProfiles(Long teamSeq, Long userSeq);
     List<Team> findAllByContainsKeyword(Long userSeq, String keyword);
-//    List<TeamListResponse> findTeamList(Long userSeq, String keyword);
 }
