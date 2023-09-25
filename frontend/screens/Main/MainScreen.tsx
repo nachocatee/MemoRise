@@ -33,13 +33,12 @@ import { calculateDynamicWidth } from "../../constants/dynamicSize";
 import Colors from "../../constants/colors";
 import MemoBtnModal from "../../components/Modal/Memo/MemoBtnModal";
 import AlertModal from "../../components/Modal/AlertModal";
-import { BACKEND_URL, S3_URL } from "../../util/http";
+import { BACKEND_URL, S3_URL, SERVER_OFFER_URL } from "../../util/http";
 import MemoList from "../../components/Modal/Memo/MemoList";
 import { RootState } from "../../store/store";
 import MemoDetail from "../../components/Modal/Memo/MemoDetail";
 
 const screenHeight = Dimensions.get("window").height;
-const SERVER_OFFER_URL = "https://172.30.1.84:8082/offer";
 
 // 태그된 회원 타입
 type Member = {
@@ -428,7 +427,7 @@ const MainScreen = () => {
       const label = `Id: ${receivedData.id}, X: ${receivedData.label_x}, Y: ${receivedData.label_y}`;
 
       // 좌표 값 log 표시
-      // console.log(label);
+      console.log(label);
 
       setCoordinates({
         id: receivedData.id,
@@ -442,9 +441,9 @@ const MainScreen = () => {
       const stream = await mediaDevices.getUserMedia({
         audio: true,
         video: {
-          width: 3840,
-          height: 2160,
-          frameRate: 20,
+          width: 3840, //3840
+          height: 2160, //2160
+          frameRate: 15,
           facingMode: "environment",
         },
       });
@@ -479,6 +478,8 @@ const MainScreen = () => {
     setLocalStream(null);
     // RTCPeerConnection 종료
     pc.current?.close();
+    // 오브젝트 표시 제거
+    setCoordinates(null);
   };
 
   useEffect(() => {
