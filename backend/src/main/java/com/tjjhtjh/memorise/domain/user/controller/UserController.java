@@ -75,4 +75,9 @@ public class UserController {
     public ResponseEntity<List<MyMemoResponse>> allMyMemoList(@PathVariable Long userSeq){
         return new ResponseEntity<>(memoService.allMyMemoList(userSeq) ,HttpStatus.OK);
     }
+
+    @GetMapping("/{userSeq}/bookmarks")
+    public ResponseEntity<List<MyMemoResponse>> myBookmarkList(@PathVariable Long userSeq){
+        return new ResponseEntity<>(memoService.allBookmarkTrueList(userSeq),HttpStatus.OK);
+    }
 }
