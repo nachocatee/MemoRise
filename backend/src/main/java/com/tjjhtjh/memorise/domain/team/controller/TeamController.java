@@ -24,10 +24,10 @@ public class TeamController {
         return ResponseEntity.ok(teamService.createTeam(createTeamRequest));
     }
 
-//    @GetMapping("/{userSeq}")
-//    public ResponseEntity<List<TeamListResponse>> getTeamList(@PathVariable Long userSeq, @RequestParam(required = false) String keyword) {
-//        return ResponseEntity.ok(teamService.getTeamList(userSeq, keyword));
-//    }
+    @GetMapping("/{userSeq}")
+    public ResponseEntity<List<TeamListResponse>> getTeamList(@PathVariable Long userSeq, @RequestParam(required = false) String keyword) {
+        return ResponseEntity.ok(teamService.getTeamList(userSeq, keyword));
+    }
 
     @GetMapping("/{teamSeq}/{userSeq}")
     public ResponseEntity<TeamDetailResponse> getTeamInfo(@PathVariable Long teamSeq, @PathVariable Long userSeq) {

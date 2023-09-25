@@ -69,10 +69,19 @@ public class TeamServiceImpl implements TeamService {
         return new TeamDetailResponse(team, me, owner, members);
     }
 
-//    @Override
-//    public List<TeamListResponse> getTeamList(Long userSeq, String keyword) {
-//        return teamRepository.findTeamList(userSeq, keyword);
-//    }
+    @Override
+    public List<TeamListResponse> getTeamList(Long userSeq, String keyword) {
+        User me = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER));
+        List<Team> teams = teamRepository.findAllByContainsKeyword(userSeq, keyword);
+
+        List<TeamListResponse> teamListResponses = new ArrayList<>();
+        for (Team team : teams) {
+            User owner = userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER));
+            List<String> memberProfiles = teamRepository.findUserProfiles(team.getTeamSeq(), userSeq);
+            teamListResponses.add(new TeamListResponse(team, me, owner.getProfile(), memberProfiles, teamUserRepository.findByTeamSeqAndUserSeq(team.getTeamSeq(), userSeq) != null));
+        }
+        return teamListResponses;
+    }
 
     @Override
     @Transactional

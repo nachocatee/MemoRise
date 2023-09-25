@@ -20,13 +20,13 @@ public class TeamListResponse {
     private String ownerProfile;
     private List<String> memberProfiles;
 
-    public TeamListResponse(Long teamSeq, String teamName, Long ownerSeq, Long userSeq, String myProfile, String ownerProfile, List<String> memberProfiles, boolean isParticipated) {
-        this.teamSeq = teamSeq;
-        this.teamName = teamName;
-        this.myProfile = userSeq != null ? myProfile : null;
+    public TeamListResponse(Team team, User user, String ownerProfile, List<String> memberProfiles, boolean isParticipated) {
+        this.teamSeq = team.getTeamSeq();
+        this.teamName = team.getName();
+        this.myProfile = user != null ? user.getProfile() : null;
         this.isParticipated = isParticipated;
-        this.isOwner = ownerSeq == userSeq;
+        this.isOwner = team.getOwner().equals(user.getUserSeq());
         this.ownerProfile = isOwner ? null : ownerProfile;
-        this.memberProfiles = isParticipated ? (isOwner ? memberProfiles.subList(0, 3) : memberProfiles.subList(0, 2)) : memberProfiles;
+        this.memberProfiles = isParticipated ? (isOwner ? memberProfiles.subList(0, memberProfiles.size()) : memberProfiles.subList(0, Math.min(memberProfiles.size(), 2))) : memberProfiles;
     }
 }
