@@ -26,7 +26,9 @@ const MAX_HEIGHT = screenHeight / 2;
 
 const MemoDetail = () => {
   // 이미지 비율 축소를 위한 상태관리
-  const [memoPic, setMemoPic] = useState("");
+  const [memoPic, setMemoPic] = useState(
+    "https://b106-memorise.s3.ap-northeast-2.amazonaws.com/profile-image/dc971e2c-4a4a-4330-9dfe-ea691ad9bcdf.png"
+  );
   const [imageWidth, setImageWidth] = useState(MAX_WIDTH);
   const [imageHeight, setImageHeight] = useState(MAX_HEIGHT);
 
@@ -55,12 +57,12 @@ const MemoDetail = () => {
         const aspectRatio = width / height;
 
         // 비율 유지하면서 크기 조절
-        if (width > height) {
+        if (width >= height) {
           setImageWidth(MAX_WIDTH);
-          setImageHeight(MAX_HEIGHT / aspectRatio);
+          setImageHeight(MAX_WIDTH / aspectRatio);
         } else {
           setImageHeight(MAX_HEIGHT);
-          setImageWidth(MAX_WIDTH * aspectRatio);
+          setImageWidth(MAX_HEIGHT * aspectRatio);
         }
       });
     }

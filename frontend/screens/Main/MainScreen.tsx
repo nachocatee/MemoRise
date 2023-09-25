@@ -125,7 +125,7 @@ const MainScreen = () => {
         const aspectRatio = width / height;
 
         // 비율 유지하면서 크기 조절
-        if (width > height) {
+        if (width >= height) {
           setImageWidth(MAX_WIDTH);
           setImageHeight(MAX_WIDTH / aspectRatio);
         } else {
@@ -179,7 +179,7 @@ const MainScreen = () => {
 
   // 메모 조회 상태관리
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
-  const [memoItemVisible, setMemoItemVisible] = useState(false);
+  const [memoListVisible, setMemoListVisible] = useState(false);
 
   // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
