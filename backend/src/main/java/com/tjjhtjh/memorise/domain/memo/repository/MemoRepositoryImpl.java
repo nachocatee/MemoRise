@@ -43,10 +43,17 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
 
         return queryFactory.select(Projections.fields
                         (MemoResponse.class,
-                                memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.accessType, memo.file))
+                                memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.accessType, memo.file, memo.memoSeq
+                        ,ExpressionUtils.as(
+                                        new CaseBuilder().when(JPAExpressions.selectOne().from(bookmark)
+                                                .where(
+                                                        bookmark.memo.memoSeq.eq(memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq))
+                                                ).exists()).then(true).otherwise(false), "isBookmarked"
+                                )))
                 .from(memo)
                 .leftJoin(memo.user)
                 .leftJoin(taggedUser).on(memo.memoSeq.eq(taggedUser.memo.memoSeq))
+                .leftJoin(bookmark).on(memo.memoSeq.eq(bookmark.memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq)))
                 .where(memo.isDeleted.eq(0).and(builder))
                 .groupBy(memo.memoSeq)
                 .orderBy(memo.updatedAt.desc())
