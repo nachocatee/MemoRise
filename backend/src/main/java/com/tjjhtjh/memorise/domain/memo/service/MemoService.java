@@ -141,4 +141,8 @@ public class MemoService {
         }
         return resultList;
     }
+
+    public List<MyMemoResponse> allBookmarkTrueList(Long userSeq){
+        return bookMarkRepository.isBookmarkTrueList(userSeq);
+    }
 }
