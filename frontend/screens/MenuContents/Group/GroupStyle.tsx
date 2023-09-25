@@ -142,10 +142,19 @@ export const styles = StyleSheet.create({
     fontSize: calculateDynamicWidth(20),
     color: Colors.text,
     marginLeft: calculateDynamicWidth(18),
-    // marginBottom: calculateDynamicWidth(8),
   },
   meIcon: {
     width: calculateDynamicWidth(21),
     height: calculateDynamicWidth(21),
+  },
+
+  // 내 그룹 (not Empty)
+  groupContainer: {
+    width: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
+    justifyContent: "space-around",
+    paddingVertical: calculateDynamicWidth(30),
   },
 });

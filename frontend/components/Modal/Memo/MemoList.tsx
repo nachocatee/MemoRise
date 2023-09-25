@@ -165,10 +165,10 @@ export default MemoList;
 const styles = StyleSheet.create({
   mainContainer: {
     position: "absolute",
-    top: "40%",
+    top: "50%",
     left: "50%",
     transform: [
-      { translateY: -calculateDynamicWidth(306) / 2 },
+      { translateY: -calculateDynamicWidth(350) / 2 },
       { translateX: -calculateDynamicWidth(306) / 2 },
     ],
   },
