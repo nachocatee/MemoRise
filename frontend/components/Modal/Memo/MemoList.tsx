@@ -1,5 +1,6 @@
 // 라이브러리
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,75 +15,81 @@ import LinearGradient from "react-native-linear-gradient";
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
 import Colors from "../../../constants/colors";
 
+// 백엔드 통신
+import { BACKEND_URL } from "../../../util/http";
+
 // 메인페이지 상태관리를 위한 타입 지정
 type MemoListProp = {
   onMemoWritePress: () => void;
-  onMemoDetailPress: () => void;
+  onMemoDetailPress: (memoSeq: number) => void;
 };
 
 const MemoList: React.FC<MemoListProp> = ({
   onMemoWritePress,
   onMemoDetailPress,
 }) => {
-  // 북마크 상태관리 및 함수
-  const [memoData, setMemoData] = useState([
-    {
-      id: "1",
-      date: "2023. 09. 22",
-      content:
-        "Hate to give the satisfaction, asking how youre doing nowHows the castle built off people you pretend to care about?Just what you wantedLook at you, cool guy, you got it I see the parties and the",
-      nickname: "권소정",
-      openStatus: "전체공개",
-      isBookMark: true,
-      isphoto: "",
-    },
-    {
-      id: "2",
-      date: "2023. 09. 22",
-      content: "테스트2",
-      nickname: "김준형",
-      openStatus: "비공개",
-      isBookMark: false,
-      isphoto: "",
-    },
-    {
-      id: "3",
-      date: "2023. 09. 22",
-      content:
-        "테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3테스트3",
-      nickname: "김준형",
-      openStatus: "비공개",
-      isBookMark: false,
-      isphoto:
-        "https://b106-memorise.s3.ap-northeast-2.amazonaws.com/profile-image/dc971e2c-4a4a-4330-9dfe-ea691ad9bcdf.png",
-    },
-  ]);
+  // FlatList 사용을 위한 Type 지정
+  type MemoTypeProps = {
+    accessType: string;
+    content: string;
+    file: string;
+    isBookmarked: boolean;
+    itemImage: string;
+    memoSeq: number;
+    nickname: string;
+    updatedAt: string;
+  };
 
-  const changeBookMarkHandler = (id: string) => {
+  type MemoListItemProps = {
+    item: MemoTypeProps;
+  };
+
+  // 북마크 상태관리 및 함수
+  const [memoData, setMemoData] = useState<MemoTypeProps[]>([]);
+
+  // 사용자가 작성한 or 태그된 메모 AXIOS
+  useEffect(() => {
+    axios
+      .get(BACKEND_URL + `/user/23/memos`)
+      .then((response) => {
+        setMemoData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  // 북마크 처리 AXIOS 및 관리
+  const changeBookMarkHandler = (id: number) => {
     setMemoData((prevData) =>
-      prevData.map((item) =>
-        item.id === id ? { ...item, isBookMark: !item.isBookMark } : item
-      )
+      prevData.map((item) => {
+        if (item.memoSeq === id) {
+          if (item.isBookmarked) {
+            // isBookmarked가 true일 때, axios.delete 호출
+            axios
+              .delete(BACKEND_URL + `/memos/${item.memoSeq}/bookmarks/23`)
+              .catch((error) => {
+                console.error(error);
+              });
+          } else {
+            // isBookmarked가 false일 때, axios.post 호출
+            axios
+              .post(BACKEND_URL + `/memos/${item.memoSeq}/bookmarks/23`)
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+          return { ...item, isBookmarked: !item.isBookmarked };
+        }
+        return item;
+      })
     );
   };
 
-  // FlatList 사용을 위한 Type 지정
-  type MemoTypeProps = {
-    item: {
-      id: string;
-      date: string;
-      content: string;
-      nickname: string;
-      openStatus: string;
-      isBookMark: boolean;
-      isphoto: string;
-    };
-  };
-
   // FlatList 사용을 위한 MemoList 정리
-  const MemoList: React.FC<MemoTypeProps> = ({ item }) => (
+  const MemoList: React.FC<MemoListItemProps> = ({ item }) => (
     <View style={styles.memoContainer}>
-      <Pressable onPress={onMemoDetailPress}>
+      <Pressable onPress={() => onMemoDetailPress(item.memoSeq)}>
         <LinearGradient
           colors={["#FFFFFF", "#F5F5F5"]}
           start={{ x: 0, y: 0 }}
@@ -91,9 +98,9 @@ const MemoList: React.FC<MemoListProp> = ({
         >
           <View style={styles.innerContainer}>
             <View style={styles.calenderContainer}>
-              <Text style={styles.calendar}>{item.date}</Text>
+              <Text style={styles.calendar}>{item.updatedAt}</Text>
             </View>
-            {item.isphoto !== "" ? (
+            {item.file !== null ? (
               <View>
                 <Text
                   style={styles.content}
@@ -102,7 +109,7 @@ const MemoList: React.FC<MemoListProp> = ({
                 >
                   {item.content}
                 </Text>
-                <Image source={{ uri: item.isphoto }} style={styles.photo} />
+                <Image source={{ uri: item.file }} style={styles.photo} />
               </View>
             ) : (
               <Text
@@ -115,16 +122,22 @@ const MemoList: React.FC<MemoListProp> = ({
             )}
             <View style={styles.bottomContainer}>
               <Text style={styles.nickname}>{item.nickname}</Text>
-              <Text style={styles.open}>{item.openStatus}</Text>
+              <Text style={styles.open}>
+                {item.accessType === "OPEN"
+                  ? "전체공개"
+                  : item.accessType === "RESTRICT"
+                  ? "일부공개"
+                  : "비공개"}
+              </Text>
             </View>
           </View>
         </LinearGradient>
       </Pressable>
       <Pressable
-        onPress={() => changeBookMarkHandler(item.id)}
+        onPress={() => changeBookMarkHandler(item.memoSeq)}
         style={styles.bookmark}
       >
-        {item.isBookMark ? (
+        {item.isBookmarked ? (
           <Image
             source={require("../../../assets/icons/bookmarkblue_fill.png")}
             style={styles.bookmarkSize}
@@ -152,7 +165,7 @@ const MemoList: React.FC<MemoListProp> = ({
           <FlatList
             data={memoData}
             renderItem={({ item }) => <MemoList item={item} />}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.memoSeq.toString()}
           />
         </View>
       </View>

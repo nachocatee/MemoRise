@@ -178,7 +178,7 @@ const MainScreen = () => {
 
   // 메모 조회 상태관리
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
-  const [memoListVisible, setMemoListVisible] = useState(false);
+  const [memoListVisible, setMemoListVisible] = useState(true);
 
   // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
@@ -189,15 +189,22 @@ const MainScreen = () => {
 
   // 메모 상세 모달 상태관리
   const [isMemoDetailVisible, setIsMemoDetailVisible] = useState(false);
+  const [selectMemoSeq, setSelectMemoSeq] = useState<number | null>(null);
 
   // 메모 상세 조회 변경 함수
-  const setMemoDetailModal = () => {
+  const setMemoDetailModal = (memoSeq: number) => {
     setMemoListVisible(false);
     setIsMemoDetailVisible(true);
+    setSelectMemoSeq(memoSeq);
   };
 
   // 메모 수정을 위한 상태관리
   const [isUpdateMemoTrue, setIsUpdateMemoTrue] = useState(false);
+
+  // 메모 삭제를 위한 메모 상세 모달 상태관리 함수
+  const setMemoDeleteHandler = () => {
+    setIsMemoDetailVisible(false);
+  };
 
   // 메모 수정
   const setMemoUpdateHandler = () => {
@@ -572,7 +579,11 @@ const MainScreen = () => {
 
       {/* 메모 상세 조회 */}
       {isMemoDetailVisible && (
-        <MemoDetail onMemoUpdatePress={setMemoUpdateHandler} />
+        <MemoDetail
+          memoSeq={selectMemoSeq}
+          onMemoUpdatePress={setMemoUpdateHandler}
+          onMemoDeletePress={setMemoDeleteHandler}
+        />
       )}
 
       {/* 알림 모달 */}

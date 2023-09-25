@@ -1,4 +1,5 @@
 // 라이브러리
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -12,10 +13,16 @@ import {
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
+// 컴포넌트
+import AlertModal from "../AlertModal";
+
 // 스타일
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
 import Colors from "../../../constants/colors";
 import { styles } from "../../../screens/Main/MainStyle";
+
+// 통신
+import { BACKEND_URL } from "../../../util/http";
 
 // 스크린 높이
 const screenHeight = Dimensions.get("window").height;
@@ -26,14 +33,64 @@ const MAX_HEIGHT = screenHeight / 2;
 
 // 메인페이지 상태관리를 위한 타입 지정
 type MemoDetailProp = {
+  memoSeq: number | null;
   onMemoUpdatePress: () => void;
+  onMemoDeletePress: () => void;
 };
 
-const MemoDetail: React.FC<MemoDetailProp> = ({ onMemoUpdatePress }) => {
+const MemoDetail: React.FC<MemoDetailProp> = ({
+  memoSeq,
+  onMemoUpdatePress,
+  onMemoDeletePress,
+}) => {
+  // 타입관리
+  type MemoDetailProps = {
+    accessType: string;
+    content: string;
+    file: string;
+    nickname: string;
+    updatedAt: string;
+  };
+
+  // 메모 상세 조회 상태관리
+  const [memoDetailData, setMemoDetailData] = useState<MemoDetailProps[]>([]);
+
+  // 메모 상세 조회 날짜 상태관리
+  const [memoDetailCalendar, setMemoDetailCalendar] = useState("");
+
+  // 날짜 변경 함수
+  const formatData = (inputData: string) => {
+    const date = new Date(inputData);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    const ampm = hours >= 12 ? "오후" : "오전";
+    const formattedHours = hours > 12 ? hours - 12 : hours;
+    const formattedHoursString = String(formattedHours).padStart(2, "0");
+
+    return `${year}. ${month}. ${day}. ${ampm} ${formattedHoursString}:${minutes}`;
+  };
+
+  // 메모 상세 조회를 위한 AXIOS
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(BACKEND_URL + `/memos/${memoSeq}/23`);
+        setMemoDetailData([res.data]);
+        setMemoPic(res.data.file);
+        setMemoDetailCalendar(formatData(res.data.updatedAt));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
+
   // 이미지 비율 축소를 위한 상태관리
-  const [memoPic, setMemoPic] = useState(
-    "https://b106-memorise.s3.ap-northeast-2.amazonaws.com/profile-image/dc971e2c-4a4a-4330-9dfe-ea691ad9bcdf.png"
-  );
+  const [memoPic, setMemoPic] = useState("");
   const [imageWidth, setImageWidth] = useState(MAX_WIDTH);
   const [imageHeight, setImageHeight] = useState(MAX_HEIGHT);
 
@@ -43,9 +100,7 @@ const MemoDetail: React.FC<MemoDetailProp> = ({ onMemoUpdatePress }) => {
   // 원본 이미지 보기 함수
   const openFullImage = () => {
     setIsFullImageVisible(true);
-    setMemoPic(
-      "https://b106-memorise.s3.ap-northeast-2.amazonaws.com/profile-image/dc971e2c-4a4a-4330-9dfe-ea691ad9bcdf.png"
-    );
+    setMemoPic(memoDetailData[0].file);
   };
 
   // 이미지 모달 상태 변경 함수
@@ -83,15 +138,41 @@ const MemoDetail: React.FC<MemoDetailProp> = ({ onMemoUpdatePress }) => {
   const [isBookMark, setIsBookMark] = useState(false);
 
   // 북마크 체크에 따른 변경 함수
-  const changeIsBookMark = () => {
+  const changeIsBookMark = (id: number) => {
+    if (isBookMark) {
+      axios.delete(BACKEND_URL + `/memos/${id}/bookmarks/23`).catch((error) => {
+        console.error(error);
+      });
+    } else {
+      axios.post(BACKEND_URL + `/memos/${id}/bookmarks/23`).catch((error) => {
+        console.error(error);
+      });
+    }
     setIsBookMark(!isBookMark);
   };
 
-  // 메모 수정 함수
-  const updateMemoHandler = () => {};
+  // 메모 삭제 모달 상태관리
+  const [isDeleteMemoModalVisible, setIsDeleteMemoModalVisible] =
+    useState(false);
 
-  // 메모 삭제 함수
-  const deleteMemoHandler = () => {};
+  // 메모 삭제 물어보는 함수
+  const deleteMemoHandler = () => {
+    setIsDeleteMemoModalVisible(true);
+  };
+
+  // 메모 삭제 모달 종료 함수
+  const closeDeleteMemoModal = () => {
+    setIsDeleteMemoModalVisible(false);
+  };
+
+  // 메모 삭제
+  const memoDeleteConfirm = () => {
+    onMemoDeletePress();
+    setIsDeleteMemoModalVisible(false);
+    axios.delete(BACKEND_URL + `/memos/${memoSeq}`).catch((error) => {
+      console.log(error);
+    });
+  };
 
   return (
     <>
@@ -105,9 +186,9 @@ const MemoDetail: React.FC<MemoDetailProp> = ({ onMemoUpdatePress }) => {
           <View style={detailStyle.innerContainer}>
             <View>
               <View style={detailStyle.rowSpaceBetween}>
-                <Text style={detailStyle.calendar}>
-                  2023. 09. 24 오전 12:50
-                </Text>
+                {memoDetailData[0] && (
+                  <Text style={detailStyle.calendar}>{memoDetailCalendar}</Text>
+                )}
                 <View style={detailStyle.iconContainer}>
                   <Pressable onPress={onMemoUpdatePress}>
                     <Image
@@ -124,8 +205,16 @@ const MemoDetail: React.FC<MemoDetailProp> = ({ onMemoUpdatePress }) => {
                 </View>
               </View>
               <View style={detailStyle.rowSpaceBetween2}>
-                <Text style={detailStyle.nickname}>김준형</Text>
-                <Text style={detailStyle.open}>전체공개</Text>
+                {memoDetailData[0] && (
+                  <Text style={detailStyle.nickname}>
+                    {memoDetailData[0].nickname}
+                  </Text>
+                )}
+                {memoDetailData[0] && (
+                  <Text style={detailStyle.open}>
+                    {memoDetailData[0].accessType}
+                  </Text>
+                )}
               </View>
             </View>
             <ScrollView style={detailStyle.contentContainer}>
@@ -139,25 +228,32 @@ const MemoDetail: React.FC<MemoDetailProp> = ({ onMemoUpdatePress }) => {
                       style={detailStyle.photo}
                     />
                   </Pressable>
-                  <Text style={detailStyle.content}>
-                    Hate to give the satisfaction, asking how you're doing now.
-                    How's the castle built off people you pretend to care about?
-                    Just what you wantedLook at you, cool guy, you got it I see
-                    the parties and the
-                  </Text>
+                  {memoDetailData[0] && (
+                    <Text style={detailStyle.content}>
+                      {memoDetailData[0].content}
+                    </Text>
+                  )}
                 </>
               ) : (
-                <Text style={detailStyle.content}>
-                  Hate to give the satisfaction, asking how you're doing now.
-                  How's the castle built off people you pretend to care about?
-                  Just what you wantedLook at you, cool guy, you got it I see
-                  the parties and the
-                </Text>
+                <>
+                  {memoDetailData[0] && (
+                    <Text style={detailStyle.content}>
+                      {memoDetailData[0].content}
+                    </Text>
+                  )}
+                </>
               )}
             </ScrollView>
           </View>
         </LinearGradient>
-        <Pressable onPress={changeIsBookMark} style={detailStyle.bookmark}>
+        <Pressable
+          onPress={() => {
+            if (memoSeq !== null) {
+              changeIsBookMark(memoSeq);
+            }
+          }}
+          style={detailStyle.bookmark}
+        >
           {isBookMark ? (
             <Image
               source={require("../../../assets/icons/bookmarkblue_fill.png")}
@@ -229,6 +325,15 @@ const MemoDetail: React.FC<MemoDetailProp> = ({ onMemoUpdatePress }) => {
           </Modal>
         </View>
       )}
+      {isDeleteMemoModalVisible && (
+        <AlertModal
+          modalVisible={isDeleteMemoModalVisible}
+          closeModal={closeDeleteMemoModal}
+          onConfirm={memoDeleteConfirm}
+          contentText="정말 삭제하시겠습니까?"
+          btnText="삭제"
+        />
+      )}
     </>
   );
 };
@@ -248,7 +353,7 @@ const detailStyle = StyleSheet.create({
 
   memoContainer: {
     width: calculateDynamicWidth(306),
-    minHeight: calculateDynamicWidth(104),
+    minHeight: calculateDynamicWidth(306),
     borderRadius: calculateDynamicWidth(15),
   },
 
