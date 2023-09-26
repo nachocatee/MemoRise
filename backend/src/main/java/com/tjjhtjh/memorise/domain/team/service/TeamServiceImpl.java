@@ -132,7 +132,7 @@ public class TeamServiceImpl implements TeamService {
             List<String> memberProfiles = new ArrayList<>();
             memberProfiles.add(userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER)).getProfile());
             for (Long user : userSeqs) {
-                if (memberProfiles.size() == 4) break;
+                if (memberProfiles.size() == 3) break;
                 if (!user.equals(userSeq) && !user.equals(team.getOwner())) {
                     memberProfiles.add(userRepository.findByUserSeqAndIsDeletedFalse(user).orElseThrow(() -> new NoUserException(NO_USER)).getProfile());
                 }
