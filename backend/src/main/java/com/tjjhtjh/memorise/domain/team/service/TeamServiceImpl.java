@@ -155,6 +155,21 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     @Transactional
+    public ExitTeamResponse exitTeam(Long teamSeq, Long userSeq) {
+        Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
+        if (team.getOwner().equals(userSeq)) {
+            for (Long memberSeq: teamUserRepository.findAllUserByTeamSeq(teamSeq)) {
+                teamUserRepository.delete(teamUserRepository.findByTeamSeqAndUserSeq(teamSeq, memberSeq));
+            }
+            teamRepository.delete(team);
+        } else {
+            teamUserRepository.delete(teamUserRepository.findByTeamSeqAndUserSeq(teamSeq, userSeq));
+        }
+        return new ExitTeamResponse(true);
+    }
+
+    @Override
+    @Transactional
     public UpdateTeamResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest) {
         Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
         if (!team.getOwner().equals(updateTeamRequest.getUserSeq())) {

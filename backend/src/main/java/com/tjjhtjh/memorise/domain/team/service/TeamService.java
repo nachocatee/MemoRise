@@ -15,4 +15,5 @@ public interface TeamService {
     UpdateTeamResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest);
     List<MyTeamListResponse> getMyTeamList(Long userSeq);
     EnterTeamResponse enterTeam(Long teamSeq, EnterTeamRequest enterTeamRequest);
+    ExitTeamResponse exitTeam(Long teamSeq, Long userSeq);
 }
