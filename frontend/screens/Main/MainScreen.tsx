@@ -197,7 +197,7 @@ const MainScreen = () => {
 
   // 메모 조회 상태관리
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
-  const [memoListVisible, setMemoListVisible] = useState(true);
+  const [memoListVisible, setMemoListVisible] = useState(false);
 
   // 객체에 따른 메모 조회
   const checkMemoListHandler = () => {
@@ -288,10 +288,12 @@ const MainScreen = () => {
   const MemoCreate = () => {
     if (!enteredMemo) {
       Alert.alert("내용을 입력해 주세요!"); // 나중에 수정예정
+    } else if (!coordinates) {
+      Alert.alert("객체가 제대로 등록되지 않았습니다.");
     } else {
       axios({
         method: "POST",
-        url: BACKEND_URL + `/memos/${1}`, // 물체 ID 임시로 1로 설정
+        url: BACKEND_URL + `/memos`, // 물체 ID 임시로 1로 설정
         // headers: {
         //   "Content-Type": "application/json",
         //   Authorization: "Bearer " + token,
@@ -301,6 +303,7 @@ const MainScreen = () => {
           accessType: openState,
           userId: userId,
           newFile: uploadedPic,
+          itemName: coordinates.id,
         },
       })
         .then((res) => {
@@ -647,13 +650,13 @@ const MainScreen = () => {
       </View>
 
       {/* 메모 조회 */}
-      {memoListVisible && coordinates && (
+      {memoListVisible && (
         <>
           <Pressable style={styles.memoClose} onPress={closeMemoList} />
           <MemoList
             onMemoWritePress={checkMemoHandler}
             onMemoDetailPress={setMemoDetailModal}
-            id={coordinates?.id}
+            // id={coordinates?.id}
           />
         </>
       )}

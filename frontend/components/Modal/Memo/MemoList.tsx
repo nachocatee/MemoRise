@@ -10,6 +10,7 @@ import {
   Pressable,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import { useSelector } from "react-redux";
 
 // 스타일
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
@@ -20,19 +21,23 @@ import { BACKEND_URL } from "../../../util/http";
 
 // 컴포넌트
 import BookMarkBtn from "../../Button/BookMarkBtn";
+import { RootState } from "../../../store/store";
 
 // 메인페이지 상태관리를 위한 타입 지정
 type MemoListProp = {
   onMemoWritePress: () => void;
   onMemoDetailPress: (memoSeq: number) => void;
-  id: string;
+  // id: string;
 };
 
 const MemoList: React.FC<MemoListProp> = ({
   onMemoWritePress,
   onMemoDetailPress,
-  id,
+  // id,
 }) => {
+  // 유저ID
+  const userId = useSelector((state: RootState) => state.userInfo.id);
+
   // FlatList 사용을 위한 Type 지정
   type MemoTypeProps = {
     accessType: string;
@@ -55,7 +60,7 @@ const MemoList: React.FC<MemoListProp> = ({
   // 사용자가 작성한 or 태그된 메모 AXIOS
   useEffect(() => {
     axios
-      // .get(BACKEND_URL + `/memos/${id}/list/23`)
+      // .get(BACKEND_URL + `/memos/${id}/list/${userId}`)
       .get(BACKEND_URL + `/memos/8ef97a8a0be/list/23`)
       .then((response) => {
         console.log(response);

@@ -12,10 +12,12 @@ import {
   Modal,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import { useSelector } from "react-redux";
 
 // 컴포넌트
 import AlertModal from "../AlertModal";
 import BookMarkBtn from "../../Button/BookMarkBtn";
+import { RootState } from "../../../store/store";
 
 // 스타일
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
@@ -39,7 +41,7 @@ export type MemoDetailProps = {
   file: string;
   isBookmarked: boolean;
   itemImage: string;
-  itemSeq: number;
+  itemName: string;
   nickname: string;
   taggedUserList: [
     {
@@ -61,6 +63,9 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
   onMemoUpdatePress,
   onMemoDeletePress,
 }) => {
+  // 유저ID
+  const userId = useSelector((state: RootState) => state.userInfo.id);
+
   // 메모 상세 조회 상태관리
   const [memoDetailData, setMemoDetailData] = useState<MemoDetailProps[]>([]);
 
@@ -87,7 +92,9 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(BACKEND_URL + `/memos/${memoSeq}/23`);
+        const res = await axios.get(
+          BACKEND_URL + `/memos/${memoSeq}/${userId}`
+        );
         setMemoDetailData([res.data]);
         setMemoPic(res.data.file);
         setMemoDetailCalendar(formatData(res.data.updatedAt));
@@ -161,9 +168,14 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
   const memoDeleteConfirm = () => {
     onMemoDeletePress();
     setIsDeleteMemoModalVisible(false);
-    axios.delete(BACKEND_URL + `/memos/${memoSeq}/`).catch((error) => {
-      console.log(error);
-    });
+    axios({
+      method: "delete",
+      url: BACKEND_URL + `/memos/${memoSeq}`,
+      data: {
+        userId: userId,
+        itemName: memoDetailData[0].itemName,
+      },
+    }).catch((error) => console.log(error));
   };
 
   return (
