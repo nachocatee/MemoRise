@@ -49,7 +49,6 @@ public class TeamSupportRepositoryImpl implements TeamSupportRepository {
             .where(teamUser.team.teamSeq.eq(teamSeq)
                     .and(teamUser.user.userSeq.ne(userSeq))
                     .and(teamUser.user.userSeq.ne(team.owner)))
-//                    .and(teamUser.user.isDeleted.eq(0)))
             .limit(4)
             .fetch();
     }
