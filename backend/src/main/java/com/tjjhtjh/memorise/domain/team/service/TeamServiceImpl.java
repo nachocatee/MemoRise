@@ -145,9 +145,14 @@ public class TeamServiceImpl implements TeamService {
         return myTeamListResponses;
     }
 
-//    @Override
-//    @Transactional
-//    public TeamDetailResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest) {
-//        return null;
-//    }
+    @Override
+    @Transactional
+    public UpdateTeamResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest) {
+        Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
+        if (!team.getOwner().equals(updateTeamRequest.getUserSeq())) {
+            throw new NoAuthorityException(NO_AUTHORITY);
+        }
+        team.update(updateTeamRequest.getName(), updateTeamRequest.getPassword());
+        return new UpdateTeamResponse(true);
+    }
 }
