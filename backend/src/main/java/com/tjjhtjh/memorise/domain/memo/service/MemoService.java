@@ -15,6 +15,7 @@ import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoCountResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MyMemoResponse;
+import com.tjjhtjh.memorise.domain.tag.repository.TaggedTeamRepository;
 import com.tjjhtjh.memorise.domain.tag.repository.TaggedUserRepository;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
@@ -39,6 +40,7 @@ public class MemoService {
     private final BookmarkRepository bookMarkRepository;
     private final ItemRepository itemRepository;
     private final TaggedUserRepository taggedUserRepository;
+    private final TaggedTeamRepository taggedTeamRepository;
 
     private static final String NO_USER_EMAIL = "이메일에 해당하는 유저가 없습니다";
     private static final String NO_USER = "해당하는 유저가 존재하지 않습니다";
@@ -132,7 +134,8 @@ public class MemoService {
         return new MemoDetailResponse().detailResponse(
                 memoDetailResponse,
                 bookMarkRepository.bookmarkBoolean(memoId,userSeq),
-                taggedUserRepository.findByTaggedUserList(memoId));
+                taggedUserRepository.findByTaggedUserList(memoId),
+                taggedTeamRepository.findByTaggedTeamList(memoId));
     }
 
     public List<MyMemoResponse> myMemoList(Long userSeq) {
@@ -143,7 +146,6 @@ public class MemoService {
         return memoRepository.findByAllMyMemoIsDeletedFalse(userSeq);
     }
 
-    // TODO
     public List<MemoCountResponse> countOfMemoList(Long userSeq){
         List<MemoCountResponse> resultList = new ArrayList<>();
         List<Long> itemSeqList = itemRepository.itemSeqList();
