@@ -3,7 +3,6 @@ package com.tjjhtjh.memorise.domain.tag.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
-import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.domain.tag.repository.entity.TaggedUser;
 import com.tjjhtjh.memorise.domain.tag.service.dto.response.TaggedUserResponse;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
