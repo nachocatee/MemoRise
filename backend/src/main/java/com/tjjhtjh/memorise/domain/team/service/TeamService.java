@@ -1,9 +1,6 @@
 package com.tjjhtjh.memorise.domain.team.service;
 
-import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.UpdateTeamRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.request.*;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.*;
 
 import java.util.List;
@@ -17,4 +14,5 @@ public interface TeamService {
     void kickMember(Long teamSeq, KickMemberRequest kickMemberRequest);
     UpdateTeamResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest);
     List<MyTeamListResponse> getMyTeamList(Long userSeq);
+    EnterTeamResponse enterTeam(Long teamSeq, EnterTeamRequest enterTeamRequest);
 }

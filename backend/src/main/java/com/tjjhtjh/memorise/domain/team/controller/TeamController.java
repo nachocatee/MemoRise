@@ -1,10 +1,7 @@
 package com.tjjhtjh.memorise.domain.team.controller;
 
 import com.tjjhtjh.memorise.domain.team.service.TeamService;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.UpdateTeamRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.request.*;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,5 +50,10 @@ public class TeamController {
     public ResponseEntity<KickMemberResponse> kickMember(@PathVariable Long teamSeq, @RequestBody KickMemberRequest kickMemberRequest) {
         teamService.kickMember(teamSeq, kickMemberRequest);
         return ResponseEntity.ok(new KickMemberResponse(true));
+    }
+
+    @PostMapping("/{teamSeq}")
+    public ResponseEntity<EnterTeamResponse> enterTeam(@PathVariable Long teamSeq, @RequestBody EnterTeamRequest enterTeamRequest) {
+        return ResponseEntity.ok(teamService.enterTeam(teamSeq, enterTeamRequest));
     }
 }
