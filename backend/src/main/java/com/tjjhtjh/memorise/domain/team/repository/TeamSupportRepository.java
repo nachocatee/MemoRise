@@ -5,9 +5,11 @@ import com.tjjhtjh.memorise.domain.team.service.dto.response.InviteUserListRespo
 import com.tjjhtjh.memorise.domain.team.service.dto.response.TeamListResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TeamSupportRepository {
     List<InviteUserListResponse> findInviteUserList(Long teamSeq, Long userSeq, String keyword);
     List<String> findUserProfiles(Long teamSeq, Long userSeq);
     List<Team> findAllByContainsKeyword(Long userSeq, String keyword);
+    Optional<Team> findByTeamSeqAndIsDeletedFalse(Long teamSeq);
 }

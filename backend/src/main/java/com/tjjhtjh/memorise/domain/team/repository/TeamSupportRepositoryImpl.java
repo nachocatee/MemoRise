@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.tjjhtjh.memorise.domain.team.repository.entity.QTeam.team;
 import static com.tjjhtjh.memorise.domain.team.repository.entity.QTeamUser.teamUser;
@@ -65,5 +66,10 @@ public class TeamSupportRepositoryImpl implements TeamSupportRepository {
             .where(builder)
             .orderBy(team.createdAt.desc())
             .fetch();
+    }
+
+    @Override
+    public Optional<Team> findByTeamSeqAndIsDeletedFalse(Long teamSeq) {
+        return jpaQueryFactory.selectFrom(team).where(team.teamSeq.eq(teamSeq)).stream().findAny();
     }
 }
