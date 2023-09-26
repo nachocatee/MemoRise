@@ -233,10 +233,10 @@ const MainScreen = () => {
   // 메모 상세 주변 클릭 시, 모달 종료
   const closeMemoDetail = () => {
     setIsMemoDetailVisible(false);
-    startRTCConnection("track1");
+    setMemoListVisible(true);
   };
 
-  // 메모 수정을 위한 상태관리
+  // 메모 수정을 위한 상태관리 (나중에 필요없다고 판단되면 삭제할 것!)
   const [isUpdateMemoTrue, setIsUpdateMemoTrue] = useState(false);
 
   // 메모 삭제를 위한 메모 상세 모달 상태관리 함수
@@ -244,7 +244,7 @@ const MainScreen = () => {
     setIsMemoDetailVisible(false);
   };
 
-  // 메모 수정을 위한 데이터 상태관리
+  // 메모 수정을 위한 데이터 상태관리 (나중에 필요없다고 판단되면 삭제할 것!)
   const [checkMemoDetailData, setCheckMemoDetailData] = useState<
     MemoDetailProps[]
   >([]);
@@ -256,6 +256,8 @@ const MainScreen = () => {
     setIsUpdateMemoTrue(true);
     setOpenState("OPEN"); // 사용자 메모 정보에 따라 변경 예정.
     setCheckMemoDetailData(data);
+    setEnteredMemo(data[0].content);
+    setOpenState(data[0].accessType);
   };
 
   const memoInputHandler = (enteredText: string) => {
@@ -1013,7 +1015,6 @@ const MainScreen = () => {
                           </Pressable>
                         </View>
                       )}
-
                       <Text style={styles.currentDate}>{currentDate}</Text>
                     </View>
                     <View style={styles.memoInnerBtnContainer}>
@@ -1045,17 +1046,12 @@ const MainScreen = () => {
                         />
                       </Pressable>
                     )}
-                    {isUpdateMemoTrue ? (
-                      // 더미데이터
-                      <Text>테스트!</Text>
-                    ) : (
-                      <TextInput
-                        style={styles.memoContent}
-                        multiline={true}
-                        onChangeText={memoInputHandler}
-                        value={enteredMemo}
-                      />
-                    )}
+                    <TextInput
+                      style={styles.memoContent}
+                      multiline={true}
+                      onChangeText={memoInputHandler}
+                      value={enteredMemo}
+                    />
                   </ScrollView>
                 </View>
               </LinearGradient>
