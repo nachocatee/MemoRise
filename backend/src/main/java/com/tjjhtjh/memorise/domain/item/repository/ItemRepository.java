@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> , ItemRepositoryCustom{
     Optional<Item> findByItemSeq(Long itemSeq);
+    Optional<Item> findByItemName(String itemName);
 }

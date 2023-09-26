@@ -19,6 +19,7 @@ public class MemoRequest {
     private User user;
     private Long userId;
     private String newFile;
+    private String itemName;
 
     public Memo registToEntity(User addUser, Item item1) {
         return Memo.builder()
@@ -64,11 +65,10 @@ public class MemoRequest {
                 .build();
     }
 
-    public Memo deleteToEntity(Memo memo,User writeUser, Item item1){
+    public Memo deleteToEntity(Memo memo,User writeUser){
         return Memo.builder()
                 .memoSeq(memo.getMemoSeq())
                 .isDeleted(1)
-                .item(item1)
                 .file(memo.getFile())
                 .accessType(memo.getAccessType())
                 .content(memo.getContent())
