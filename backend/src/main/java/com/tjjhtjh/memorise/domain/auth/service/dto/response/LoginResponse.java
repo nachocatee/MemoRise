@@ -1,5 +1,6 @@
 package com.tjjhtjh.memorise.domain.auth.service.dto.response;
 
+import com.tjjhtjh.memorise.domain.user.repository.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,9 +9,15 @@ import lombok.Setter;
 public class LoginResponse {
     boolean isSuccess;
     Long userSeq;
+    String email;
+    String nickName;
+    String profile;
 
-    public LoginResponse(boolean isSuccess, Long userSeq) {
+    public LoginResponse(boolean isSuccess, User user) {
         this.isSuccess = isSuccess;
-        this.userSeq = userSeq;
+        this.userSeq = user.getUserSeq();
+        this.email = user.getEmail();
+        this.nickName = user.getNickname();
+        this.profile = user.getProfile();
     }
 }

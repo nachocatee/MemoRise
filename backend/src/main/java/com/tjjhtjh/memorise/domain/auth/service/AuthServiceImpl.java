@@ -2,8 +2,10 @@ package com.tjjhtjh.memorise.domain.auth.service;
 
 import com.tjjhtjh.memorise.domain.auth.service.dto.request.LoginRequest;
 import com.tjjhtjh.memorise.domain.auth.service.dto.response.LoginResponse;
+import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
+import com.tjjhtjh.memorise.domain.user.service.dto.response.UserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
-        if(userRepository.findByEmailAndIsDeletedFalse(loginRequest.getEmail()).isEmpty()) {
-            return new LoginResponse(false, null);
-        }
-        User user = userRepository.findByEmailAndIsDeletedFalse(loginRequest.getEmail()).orElseThrow();
-        return new LoginResponse(true, user.getUserSeq());
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+            .orElseThrow(() -> new NoUserException("존재하지 않는 유저입니다."));
+        return new LoginResponse(true, user);
     }
 }
