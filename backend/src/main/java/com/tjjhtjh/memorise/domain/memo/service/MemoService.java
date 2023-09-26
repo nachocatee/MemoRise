@@ -1,5 +1,6 @@
 package com.tjjhtjh.memorise.domain.memo.service;
 
+import com.tjjhtjh.memorise.domain.item.exception.NoItemException;
 import com.tjjhtjh.memorise.domain.item.repository.ItemRepository;
 import com.tjjhtjh.memorise.domain.item.repository.entity.Item;
 import com.tjjhtjh.memorise.domain.memo.exception.BookmarkException;
@@ -41,16 +42,17 @@ public class MemoService {
 
     private static final String NO_USER_EMAIL = "이메일에 해당하는 유저가 없습니다";
     private static final String NO_USER = "해당하는 유저가 존재하지 않습니다";
+    private static final String NO_ITEM = "해당하는 아이템이 존재하지 않습니다";
     private static final String NO_MEMO = "해당하는 메모가 없습니다";
     private static final String NO_FIND_BOOKMARK = "해당하는 북마크를 찾을 수 없습니다";
     private static final String NO_FIND_ITEM = "해당하는 아이템을 찾을 수 없습니다";
 
     @Transactional
-    public void createMemo(MemoRequest memoRequest, Long itemSeq) {
+    public void createMemo(MemoRequest memoRequest,String itemName) {
         User user = userRepository.findByUserSeqAndIsDeletedFalse(memoRequest.getUserId())
                 .orElseThrow(() -> new NoUserException(NO_USER_EMAIL));
         // TODO : itemException 생성 후 exception 변경 예정
-        Item item = itemRepository.findByItemSeq(itemSeq)
+        Item item = itemRepository.findByItemName(itemName)
                 .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
         // 파일 있을 때 없을 때 저장 로직
         if(memoRequest.getNewFile() == null) {
@@ -61,13 +63,13 @@ public class MemoService {
     }
 
     @Transactional
-    public void updateMemo(MemoRequest memoRequest, Long memoId, Long itemSeq) throws MemoException {
+    public void updateMemo(MemoRequest memoRequest, Long memoId, String itemName) throws MemoException {
         Memo memo = memoRepository.findById(memoId)
                 .orElseThrow(() -> new MemoException(NO_MEMO));
         User user = userRepository.findByUserSeqAndIsDeletedFalse(memo.getUser().getUserSeq())
                 .orElseThrow(() -> new NoUserException(NO_USER_EMAIL));
         // TODO : itemException 생성 후 exception 변경 예정
-        Item item = itemRepository.findByItemSeq(itemSeq)
+        Item item = itemRepository.findByItemName(itemName)
                 .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
 
         if(memo.getFile() == null || (memoRequest.getNewFile() != null && memo.getFile() != null )){
@@ -79,16 +81,13 @@ public class MemoService {
     }
 
     @Transactional
-    public void fakeDeleteMemo(Long memoId, MemoRequest memoRequest, Long itemSeq) throws MemoException {
+    public void fakeDeleteMemo(Long memoId, MemoRequest memoRequest) throws MemoException {
         Memo memo = memoRepository.findById(memoId)
                 .orElseThrow(() -> new MemoException(NO_MEMO));
         User user = userRepository.findByUserSeqAndIsDeletedFalse(memo.getUser().getUserSeq())
                 .orElseThrow(() -> new NoUserException(NO_USER_EMAIL));
-        // TODO : itemException 생성 후 exception 변경 예정
-        Item item = itemRepository.findByItemSeq(itemSeq)
-                .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
 
-        memoRepository.save(memoRequest.deleteToEntity(memo, user,item));
+        memoRepository.save(memoRequest.deleteToEntity(memo, user));
         List<Bookmark> bookmarkList = bookMarkRepository.bookmarkExistCheck(memoId,user.getUserSeq());
         if(!bookmarkList.isEmpty()) {
             deleteBookmark(memoId, user.getUserSeq());
@@ -114,8 +113,9 @@ public class MemoService {
         bookMarkRepository.delete(bookmark);
     }
 
-    public List<MemoResponse> itemMemoView(Long itemSeq, Long userSeq){
-        return memoRepository.findWrittenByMeOrOpenMemoOrTaggedMemo(itemSeq,userSeq);
+    public List<MemoResponse> itemMemoView(String itemName , Long userSeq){
+        Item item = itemRepository.findByItemName(itemName).orElseThrow(() -> new NoItemException(NO_ITEM));
+        return memoRepository.findWrittenByMeOrOpenMemoOrTaggedMemo(item.getItemSeq(),userSeq);
     }
 
     public MemoDetailResponse detailMemo(Long memoId, Long userSeq) throws MemoException {

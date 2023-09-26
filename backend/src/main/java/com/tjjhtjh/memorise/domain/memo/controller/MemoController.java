@@ -32,25 +32,25 @@ public class MemoController {
         return ResponseEntity.ok(awsS3Service.uploadMultiFile(file, dirName));
     }
 
-    @PostMapping("/{itemSeq}")
-    public ResponseEntity<Object> registMemo(@PathVariable Long itemSeq, @RequestBody MemoRequest memoRequest){
-        memoService.createMemo(memoRequest, itemSeq);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping
+    public ResponseEntity<Object> registMemo(@RequestBody MemoRequest memoRequest){
+        memoService.createMemo(memoRequest, memoRequest.getItemName());
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
-    @PutMapping("/{memoId}/{itemSeq}")
+    @PutMapping("/{memoId}")
     public ResponseEntity<Object> updateMemo(
-            @PathVariable Long memoId, @RequestBody MemoRequest memoRequest, @PathVariable Long itemSeq
-    ) throws MemoException {
-        memoService.updateMemo(memoRequest, memoId,itemSeq);
+            @PathVariable Long memoId, @RequestBody MemoRequest memoRequest) throws MemoException {
+        memoService.updateMemo(memoRequest, memoId,memoRequest.getItemName());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{memoId}/{itemSeq}")
+    @DeleteMapping("/{memoId}")
     public ResponseEntity<Object> deleteMemo(
             @PathVariable Long memoId,@RequestBody MemoRequest memoRequest , @PathVariable Long itemSeq
     ) throws MemoException {
-        memoService.fakeDeleteMemo(memoId,memoRequest,itemSeq);
+
+        memoService.fakeDeleteMemo(memoId,memoRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -66,9 +66,9 @@ public class MemoController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{itemSeq}/list/{userSeq}")
-    public ResponseEntity<List<MemoResponse>> myMemoListOfItem(@PathVariable Long itemSeq ,@PathVariable Long userSeq){
-        return new ResponseEntity<>(memoService.itemMemoView(itemSeq,userSeq),HttpStatus.OK);
+    @GetMapping("/{itemName}/list/{userSeq}")
+    public ResponseEntity<List<MemoResponse>> myMemoListOfItem(@PathVariable String itemName ,@PathVariable Long userSeq){
+        return new ResponseEntity<>(memoService.itemMemoView(itemName,userSeq),HttpStatus.OK);
     }
 
     @GetMapping("/{memoId}/{userSeq}")
