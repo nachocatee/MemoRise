@@ -68,16 +68,22 @@ public class MemoService {
                 .orElseThrow(() -> new MemoException(NO_MEMO));
         User user = userRepository.findByUserSeqAndIsDeletedFalse(memo.getUser().getUserSeq())
                 .orElseThrow(() -> new NoUserException(NO_USER_EMAIL));
-        // TODO : itemException 생성 후 exception 변경 예정
         Item item = itemRepository.findByItemName(itemName)
-                .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
+                .orElseThrow(() -> new NoItemException(NO_ITEM));
 
-        if(memo.getFile() == null || (memoRequest.getNewFile() != null && memo.getFile() != null )){
+        if(memo.getFile() == null && memoRequest.getNewFile() == null){
+            memoRepository.save(memoRequest.updateToNullFileEntity(memoId,memoRequest,user,item));
+        }
+        else if(memo.getFile() == null && memoRequest.getNewFile() != null) {
             memoRepository.save(memoRequest.updateToEntity(memoId,memoRequest,user,item));
         }
-        else {
-            memoRepository.save(memoRequest.updateToNoChangeFileEntity(memoId,memoRequest,user,item, memo.getFile()));
+        else if(memo.getFile() != null && memoRequest.getNewFile() == null) {
+            memoRepository.save(memoRequest.updateToNoChangeFileEntity(memoId,memoRequest,user,item,memoRequest.getNewFile()));
         }
+        else if(memo.getFile() != null && memoRequest.getNewFile() != null) {
+            memoRepository.save(memoRequest.updateToEntity(memoId,memoRequest,user,item));
+        }
+
     }
 
     @Transactional
@@ -136,6 +142,7 @@ public class MemoService {
         return memoRepository.findByAllMyMemoIsDeletedFalse(userSeq);
     }
 
+    // TODO
     public List<MemoCountResponse> countOfMemoList(Long userSeq){
         List<MemoCountResponse> resultList = new ArrayList<>();
         List<Long> itemSeqList = itemRepository.itemSeqList();
