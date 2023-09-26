@@ -10,5 +10,6 @@ public interface BookmarkRepositoryCustom {
    Optional<Bookmark> findByMemoAndUser(Long memoId, String email);
    List<Bookmark> bookmarkExistCheck(Long memoId, Long userSeq);
    List<MyMemoResponse> isBookmarkTrueList(Long userSeq);
+   Boolean bookmarkBoolean(Long memoId, Long userSeq);
 
 }

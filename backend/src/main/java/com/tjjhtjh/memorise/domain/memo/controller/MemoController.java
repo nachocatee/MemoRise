@@ -73,11 +73,11 @@ public class MemoController {
 
     @GetMapping("/{memoId}/{userSeq}")
     public ResponseEntity<MemoDetailResponse> detailMemo(@PathVariable Long memoId, @PathVariable Long userSeq) throws MemoException {
-        return new ResponseEntity<>(memoService.detailMemo(memoId), HttpStatus.OK);
+        return new ResponseEntity<>(memoService.detailMemo(memoId,userSeq), HttpStatus.OK);
     }
 
-    @PostMapping("/all/{userSeq}")
-    public ResponseEntity<List<Long>> countMemo(@PathVariable Long userSeq, @RequestBody MemoCountRequest memoCountRequest){
-        return new ResponseEntity<>(memoService.countOfMemoList(memoCountRequest.getItemSeqList(), userSeq) ,HttpStatus.OK);
+    @GetMapping ("/all/{userSeq}")
+    public ResponseEntity<List<Long[]>> countMemo(@PathVariable Long userSeq){
+        return new ResponseEntity<>(memoService.countOfMemoList(userSeq) ,HttpStatus.OK);
     }
 }
