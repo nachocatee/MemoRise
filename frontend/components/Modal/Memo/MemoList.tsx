@@ -55,9 +55,10 @@ const MemoList: React.FC<MemoListProp> = ({
   // 사용자가 작성한 or 태그된 메모 AXIOS
   useEffect(() => {
     axios
-      .get(BACKEND_URL + `/memos/${id}/list/23`)
+      // .get(BACKEND_URL + `/memos/${id}/list/23`)
+      .get(BACKEND_URL + `/memos/8ef97a8a0be/list/23`)
       .then((response) => {
-        console.log(response.data);
+        console.log(response);
         setMemoData(response.data);
       })
       .catch((error) => {
