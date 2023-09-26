@@ -74,8 +74,17 @@ public class TeamServiceImpl implements TeamService {
         List<TeamListResponse> teamListResponses = new ArrayList<>();
         for (Team team : teams) {
             User owner = userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER));
-            List<String> memberProfiles = teamRepository.findUserProfiles(team.getTeamSeq(), userSeq);
-            teamListResponses.add(new TeamListResponse(team, me, owner.getProfile(), memberProfiles, teamUserRepository.findByTeamSeqAndUserSeq(team.getTeamSeq(), userSeq) != null));
+            List<String> profiles = teamRepository.findUserProfiles(team.getTeamSeq(), userSeq);
+            boolean isParticipated = teamUserRepository.findByTeamSeqAndUserSeq(team.getTeamSeq(), userSeq) != null;
+            if (userSeq == team.getOwner()) {
+                profiles.add(0, owner.getProfile());
+            } else if (isParticipated) {
+                profiles.add(0, me.getProfile());
+                profiles.add(1, owner.getProfile());
+            } else {
+                profiles.add(0, owner.getProfile());
+            }
+            teamListResponses.add(new TeamListResponse(team, profiles.subList(0, Math.min(profiles.size(), 4))));
         }
         return teamListResponses;
     }

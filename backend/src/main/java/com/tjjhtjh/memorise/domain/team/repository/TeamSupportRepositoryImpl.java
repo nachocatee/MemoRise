@@ -46,11 +46,9 @@ public class TeamSupportRepositoryImpl implements TeamSupportRepository {
         return jpaQueryFactory
             .select(user.profile)
             .from(teamUser)
-            .join(user).on(teamUser.user.userSeq.eq(user.userSeq))
             .where(teamUser.team.teamSeq.eq(teamSeq)
-                    .and(user.userSeq.ne(userSeq))
-                    .and(user.userSeq.ne(team.owner))
-                    .and(user.isDeleted.eq(0)))
+                    .and(teamUser.user.userSeq.ne(userSeq))
+                    .and(teamUser.user.userSeq.ne(team.owner)))
             .limit(4)
             .fetch();
     }
