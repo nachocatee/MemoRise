@@ -8,7 +8,6 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.AccessType;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
-import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoCountRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MyMemoResponse;
@@ -61,7 +60,7 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
     public Optional<MemoDetailResponse> detailMemo(Long memoId, Long userSeq) {
         return queryFactory.select(Projections.fields(MemoDetailResponse.class,
                         memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.file, memo.accessType
-                        ,memo.item.itemSeq,memo.item.itemImage))
+                        ,memo.item.itemName ,memo.item.itemImage))
                 .from(memo)
                 .leftJoin(memo.user)
                 .leftJoin(memo.item)

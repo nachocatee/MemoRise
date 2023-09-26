@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MemoCountResponse {
 
-    private Long itemSeq;
+    private  String itemName;
     private Long countMemo;
 
-    public MemoCountResponse countResponse(Long itemSeq, Long countMemo) {
+    public MemoCountResponse countResponse(String itemName, Long countMemo) {
         return MemoCountResponse.builder()
-                .itemSeq(itemSeq)
+                .itemName(itemName)
                 .countMemo(countMemo)
                 .build();
     }
