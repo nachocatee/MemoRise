@@ -17,9 +17,11 @@ import java.time.LocalDateTime;
 public class Item {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_seq")
     private Long itemSeq;
 
+    private String itemName;
     private String itemImage;
 
     @CreatedDate
@@ -27,8 +29,8 @@ public class Item {
     private LocalDateTime createdAt;
 
     @Builder
-    public Item(Long itemSeq, String itemImage) {
-        this.itemSeq = itemSeq;
+    public Item(String itemName, String itemImage) {
+        this.itemName = itemName;
         this.itemImage = itemImage;
     }
 }
