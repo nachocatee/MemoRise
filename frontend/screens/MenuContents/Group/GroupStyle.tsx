@@ -179,4 +179,14 @@ export const styles = StyleSheet.create({
     marginVertical: calculateDynamicWidth(10),
     width: screenWidth - 60,
   },
+  // 그룹 찾기
+  lockIcon: {
+    width: calculateDynamicWidth(30),
+    height: calculateDynamicWidth(30),
+  },
+  lockIconContainer: {
+    position: "absolute",
+    right: 0,
+    top: -calculateDynamicWidth(10),
+  },
 });

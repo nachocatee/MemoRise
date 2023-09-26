@@ -53,8 +53,7 @@ const MyGroupScreen = () => {
   const exitGroupHandler = () => {
     axios({
       method: "DELETE",
-      // url: BACKEND_URL + `/teams/${exitTeamSeq}/${userId}`,
-      url: BACKEND_URL + `/teams/${exitTeamSeq}/31`,
+      url: BACKEND_URL + `/teams/${exitTeamSeq}/${userId}`,
     })
       .then((res) => {
         console.log(res);
