@@ -338,4 +338,9 @@ export const styles = StyleSheet.create({
     color: "white",
     fontSize: 50,
   },
+  memoClose: {
+    flex: 1,
+    backgroundColor: "transparent",
+    marginTop: -screenHeight,
+  },
 });

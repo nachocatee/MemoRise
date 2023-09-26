@@ -184,7 +184,12 @@ const MainScreen = () => {
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
   const checkMemoHandler = () => {
     setMemoListVisible(false);
-    setMemoCreateModalVisible((prev) => !prev);
+    setMemoCreateModalVisible(!isMemoCreateModalVisible);
+  };
+
+  // 메모 리스트 주변 클릭 시, 모달 종료
+  const closeMemoList = () => {
+    setMemoListVisible(false);
   };
 
   // 메모 상세 모달 상태관리
@@ -196,6 +201,11 @@ const MainScreen = () => {
     setMemoListVisible(false);
     setIsMemoDetailVisible(true);
     setSelectMemoSeq(memoSeq);
+  };
+
+  // 메모 상세 주변 클릭 시, 모달 종료
+  const closeMemoDetail = () => {
+    setIsMemoDetailVisible(false);
   };
 
   // 메모 수정을 위한 상태관리
@@ -571,19 +581,25 @@ const MainScreen = () => {
 
       {/* 메모 조회 */}
       {memoListVisible && (
-        <MemoList
-          onMemoWritePress={checkMemoHandler}
-          onMemoDetailPress={setMemoDetailModal}
-        />
+        <>
+          <Pressable style={styles.memoClose} onPress={closeMemoList} />
+          <MemoList
+            onMemoWritePress={checkMemoHandler}
+            onMemoDetailPress={setMemoDetailModal}
+          />
+        </>
       )}
 
       {/* 메모 상세 조회 */}
       {isMemoDetailVisible && (
-        <MemoDetail
-          memoSeq={selectMemoSeq}
-          onMemoUpdatePress={setMemoUpdateHandler}
-          onMemoDeletePress={setMemoDeleteHandler}
-        />
+        <>
+          <Pressable style={styles.memoClose} onPress={closeMemoDetail} />
+          <MemoDetail
+            memoSeq={selectMemoSeq}
+            onMemoUpdatePress={setMemoUpdateHandler}
+            onMemoDeletePress={setMemoDeleteHandler}
+          />
+        </>
       )}
 
       {/* 알림 모달 */}
