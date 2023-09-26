@@ -40,6 +40,18 @@ public class MemoRequest {
                 .build();
     }
 
+    public Memo updateToNullFileEntity(Long memoId, MemoRequest memoRequest,User user,Item item1){
+        return Memo.builder()
+                .memoSeq(memoId)
+                .content(memoRequest.getContent())
+                .item(item1)
+                .file(null)
+                .accessType(memoRequest.getAccessType())
+                .user(user)
+                .isDeleted(0)
+                .build();
+    }
+
     public Memo updateToEntity(Long memoId, MemoRequest memoRequest,User user,Item item1){
         return Memo.builder()
                 .memoSeq(memoId)
