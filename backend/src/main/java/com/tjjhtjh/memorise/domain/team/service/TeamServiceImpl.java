@@ -84,7 +84,7 @@ public class TeamServiceImpl implements TeamService {
             } else {
                 profiles.add(0, owner.getProfile());
             }
-            teamListResponses.add(new TeamListResponse(team, profiles.subList(0, Math.min(profiles.size(), 4))));
+            teamListResponses.add(new TeamListResponse(team, profiles.subList(0, Math.min(profiles.size(), 4)), isParticipated));
         }
         return teamListResponses;
     }

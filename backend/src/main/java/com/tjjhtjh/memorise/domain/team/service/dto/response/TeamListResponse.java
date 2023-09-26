@@ -16,11 +16,13 @@ public class TeamListResponse {
     private String teamName;
     private List<String> profiles;
     private boolean isPassword;
+    private boolean isParticipated;
 
-    public TeamListResponse(Team team, List<String> profiles) {
+    public TeamListResponse(Team team, List<String> profiles, boolean isParticipated) {
         this.teamSeq = team.getTeamSeq();
         this.teamName = team.getName();
         this.profiles = profiles;
         this.isPassword = team.getPassword() != null;
+        this.isParticipated = isParticipated;
     }
 }
