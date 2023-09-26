@@ -39,7 +39,7 @@ public class TeamServiceImpl implements TeamService {
     @Transactional
     public CreateTeamResponse createTeam(CreateTeamRequest createTeamRequest) {
         User owner = userRepository.findByUserSeqAndIsDeletedFalse(createTeamRequest.getOwner()).orElseThrow(() -> new NoUserException(NO_USER));
-        Team team = (createTeamRequest.getPassword() == null) ? new Team(createTeamRequest.getName(), owner.getUserSeq()) : new Team(createTeamRequest.getName(), owner.getUserSeq(), createTeamRequest.getPassword());
+        Team team = (createTeamRequest.getPassword().equals("")) ? new Team(createTeamRequest.getName(), owner.getUserSeq()) : new Team(createTeamRequest.getName(), owner.getUserSeq(), createTeamRequest.getPassword());
         teamRepository.save(team);
         teamUserRepository.save(new TeamUser(team, owner));
         return new CreateTeamResponse(true, team.getTeamSeq());
