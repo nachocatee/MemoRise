@@ -15,6 +15,7 @@ import LinearGradient from "react-native-linear-gradient";
 
 // 컴포넌트
 import AlertModal from "../AlertModal";
+import BookMarkBtn from "../../Button/BookMarkBtn";
 
 // 스타일
 import { calculateDynamicWidth } from "../../../constants/dynamicSize";
@@ -31,10 +32,27 @@ const screenHeight = Dimensions.get("window").height;
 const MAX_WIDTH = calculateDynamicWidth(286);
 const MAX_HEIGHT = screenHeight / 2;
 
+// 타입관리
+export type MemoDetailProps = {
+  accessType: string;
+  content: string;
+  file: string;
+  isBookmarked: boolean;
+  itemImage: string;
+  itemSeq: number;
+  nickname: string;
+  taggedUserList: [
+    {
+      nickname: string;
+    }
+  ];
+  updatedAt: string;
+};
+
 // 메인페이지 상태관리를 위한 타입 지정
 type MemoDetailProp = {
   memoSeq: number | null;
-  onMemoUpdatePress: () => void;
+  onMemoUpdatePress: (data: MemoDetailProps[]) => void;
   onMemoDeletePress: () => void;
 };
 
@@ -43,15 +61,6 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
   onMemoUpdatePress,
   onMemoDeletePress,
 }) => {
-  // 타입관리
-  type MemoDetailProps = {
-    accessType: string;
-    content: string;
-    file: string;
-    nickname: string;
-    updatedAt: string;
-  };
-
   // 메모 상세 조회 상태관리
   const [memoDetailData, setMemoDetailData] = useState<MemoDetailProps[]>([]);
 
@@ -134,23 +143,6 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
     setIsFullImageVisible(false);
   };
 
-  // 북마크 체크 여부 파악을 위한 상태관리
-  const [isBookMark, setIsBookMark] = useState(false);
-
-  // 북마크 체크에 따른 변경 함수
-  const changeIsBookMark = (id: number) => {
-    if (isBookMark) {
-      axios.delete(BACKEND_URL + `/memos/${id}/bookmarks/23`).catch((error) => {
-        console.error(error);
-      });
-    } else {
-      axios.post(BACKEND_URL + `/memos/${id}/bookmarks/23`).catch((error) => {
-        console.error(error);
-      });
-    }
-    setIsBookMark(!isBookMark);
-  };
-
   // 메모 삭제 모달 상태관리
   const [isDeleteMemoModalVisible, setIsDeleteMemoModalVisible] =
     useState(false);
@@ -169,7 +161,7 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
   const memoDeleteConfirm = () => {
     onMemoDeletePress();
     setIsDeleteMemoModalVisible(false);
-    axios.delete(BACKEND_URL + `/memos/${memoSeq}`).catch((error) => {
+    axios.delete(BACKEND_URL + `/memos/${memoSeq}/`).catch((error) => {
       console.log(error);
     });
   };
@@ -190,7 +182,7 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
                   <Text style={detailStyle.calendar}>{memoDetailCalendar}</Text>
                 )}
                 <View style={detailStyle.iconContainer}>
-                  <Pressable onPress={onMemoUpdatePress}>
+                  <Pressable onPress={() => onMemoUpdatePress(memoDetailData)}>
                     <Image
                       source={require("../../../assets/icons/update.png")}
                       style={detailStyle.icon}
@@ -246,26 +238,12 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
             </ScrollView>
           </View>
         </LinearGradient>
-        <Pressable
-          onPress={() => {
-            if (memoSeq !== null) {
-              changeIsBookMark(memoSeq);
-            }
-          }}
-          style={detailStyle.bookmark}
-        >
-          {isBookMark ? (
-            <Image
-              source={require("../../../assets/icons/bookmarkblue_fill.png")}
-              style={detailStyle.bookmarkSize}
-            />
-          ) : (
-            <Image
-              source={require("../../../assets/icons/bookmarkblue.png")}
-              style={detailStyle.bookmarkSize}
-            />
-          )}
-        </Pressable>
+        <BookMarkBtn
+          memoSeq={memoSeq}
+          detailStyle={[detailStyle.bookmark, detailStyle.bookmarkSize]}
+          // 하드코딩 : false부분을 isbookmarked로 바꿀 것!
+          bookmarkType={memoDetailData[0] && memoDetailData[0].isBookmarked}
+        />
       </View>
       {isFullImageVisible && (
         <View style={[styles.background, { zIndex: 2 }]}>

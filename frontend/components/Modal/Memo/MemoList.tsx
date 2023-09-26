@@ -18,21 +18,26 @@ import Colors from "../../../constants/colors";
 // 백엔드 통신
 import { BACKEND_URL } from "../../../util/http";
 
+// 컴포넌트
+import BookMarkBtn from "../../Button/BookMarkBtn";
+
 // 메인페이지 상태관리를 위한 타입 지정
 type MemoListProp = {
   onMemoWritePress: () => void;
   onMemoDetailPress: (memoSeq: number) => void;
+  id: string;
 };
 
 const MemoList: React.FC<MemoListProp> = ({
   onMemoWritePress,
   onMemoDetailPress,
+  id,
 }) => {
   // FlatList 사용을 위한 Type 지정
   type MemoTypeProps = {
     accessType: string;
     content: string;
-    file: string;
+    file: string | null;
     isBookmarked: boolean;
     itemImage: string;
     memoSeq: number;
@@ -50,41 +55,15 @@ const MemoList: React.FC<MemoListProp> = ({
   // 사용자가 작성한 or 태그된 메모 AXIOS
   useEffect(() => {
     axios
-      .get(BACKEND_URL + `/user/23/memos`)
+      .get(BACKEND_URL + `/memos/${id}/list/23`)
       .then((response) => {
+        console.log(response.data);
         setMemoData(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
-
-  // 북마크 처리 AXIOS 및 관리
-  const changeBookMarkHandler = (id: number) => {
-    setMemoData((prevData) =>
-      prevData.map((item) => {
-        if (item.memoSeq === id) {
-          if (item.isBookmarked) {
-            // isBookmarked가 true일 때, axios.delete 호출
-            axios
-              .delete(BACKEND_URL + `/memos/${item.memoSeq}/bookmarks/23`)
-              .catch((error) => {
-                console.error(error);
-              });
-          } else {
-            // isBookmarked가 false일 때, axios.post 호출
-            axios
-              .post(BACKEND_URL + `/memos/${item.memoSeq}/bookmarks/23`)
-              .catch((error) => {
-                console.error(error);
-              });
-          }
-          return { ...item, isBookmarked: !item.isBookmarked };
-        }
-        return item;
-      })
-    );
-  };
 
   // FlatList 사용을 위한 MemoList 정리
   const MemoList: React.FC<MemoListItemProps> = ({ item }) => (
@@ -133,22 +112,11 @@ const MemoList: React.FC<MemoListProp> = ({
           </View>
         </LinearGradient>
       </Pressable>
-      <Pressable
-        onPress={() => changeBookMarkHandler(item.memoSeq)}
-        style={styles.bookmark}
-      >
-        {item.isBookmarked ? (
-          <Image
-            source={require("../../../assets/icons/bookmarkblue_fill.png")}
-            style={styles.bookmarkSize}
-          />
-        ) : (
-          <Image
-            source={require("../../../assets/icons/bookmarkblue.png")}
-            style={styles.bookmarkSize}
-          />
-        )}
-      </Pressable>
+      <BookMarkBtn
+        memoSeq={item.memoSeq}
+        detailStyle={[styles.bookmark, styles.bookmarkSize]}
+        bookmarkType={item.isBookmarked}
+      />
     </View>
   );
 

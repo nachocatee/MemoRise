@@ -37,6 +37,7 @@ import { BACKEND_URL, S3_URL, SERVER_OFFER_URL } from "../../util/http";
 import MemoList from "../../components/Modal/Memo/MemoList";
 import { RootState } from "../../store/store";
 import MemoDetail from "../../components/Modal/Memo/MemoDetail";
+import { MemoDetailProps } from "../../components/Modal/Memo/MemoDetail";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -178,7 +179,12 @@ const MainScreen = () => {
 
   // 메모 조회 상태관리
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
-  const [memoListVisible, setMemoListVisible] = useState(false);
+  const [memoListVisible, setMemoListVisible] = useState(true);
+
+  // 객체에 따른 메모 조회
+  const checkMemoListHandler = () => {
+    setMemoListVisible(true);
+  };
 
   // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
@@ -216,12 +222,18 @@ const MainScreen = () => {
     setIsMemoDetailVisible(false);
   };
 
+  // 메모 수정을 위한 데이터 상태관리
+  const [checkMemoDetailData, setCheckMemoDetailData] = useState<
+    MemoDetailProps[]
+  >([]);
+
   // 메모 수정
-  const setMemoUpdateHandler = () => {
+  const setMemoUpdateHandler = (data: MemoDetailProps[]) => {
     setIsMemoDetailVisible(false);
     setMemoCreateModalVisible(true);
     setIsUpdateMemoTrue(true);
     setOpenState("OPEN"); // 사용자 메모 정보에 따라 변경 예정.
+    setCheckMemoDetailData(data);
   };
 
   const memoInputHandler = (enteredText: string) => {
@@ -563,8 +575,8 @@ const MainScreen = () => {
             onPress={() => {
               if (coordinates.id !== "0") {
                 // 메모 개수
-
-                Alert.alert("Notification", "메모 개수 표시하기");
+                checkMemoListHandler();
+                // Alert.alert("Notification", "메모 개수 표시하기");
               } else {
                 // 미등록 물체 알림 표시
                 setUnregisteredNotification(true);
@@ -617,12 +629,13 @@ const MainScreen = () => {
       </View>
 
       {/* 메모 조회 */}
-      {memoListVisible && (
+      {memoListVisible && coordinates && (
         <>
           <Pressable style={styles.memoClose} onPress={closeMemoList} />
           <MemoList
             onMemoWritePress={checkMemoHandler}
             onMemoDetailPress={setMemoDetailModal}
+            id={coordinates?.id}
           />
         </>
       )}
