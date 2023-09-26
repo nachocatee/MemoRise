@@ -1,6 +1,7 @@
 package com.tjjhtjh.memorise.domain.memo.service.dto.response;
 
 import com.tjjhtjh.memorise.domain.memo.repository.entity.AccessType;
+import com.tjjhtjh.memorise.domain.tag.service.dto.response.TaggedTeamResponse;
 import com.tjjhtjh.memorise.domain.tag.service.dto.response.TaggedUserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +27,10 @@ public class MemoDetailResponse {
     private String itemImage;
     private Boolean isBookmarked;
     private List<TaggedUserResponse> taggedUserList;
+    private List<TaggedTeamResponse> taggedTeamList;
 
-    public MemoDetailResponse detailResponse(MemoDetailResponse reponse, Boolean bookmarkCheck, List<TaggedUserResponse> userList) {
+    public MemoDetailResponse detailResponse(
+            MemoDetailResponse reponse, Boolean bookmarkCheck, List<TaggedUserResponse> userList, List<TaggedTeamResponse> teamList) {
         return MemoDetailResponse.builder()
                 .content(reponse.getContent())
                 .nickname(reponse.getNickname())
@@ -38,6 +41,7 @@ public class MemoDetailResponse {
                 .itemImage(reponse.getItemImage())
                 .isBookmarked(bookmarkCheck)
                 .taggedUserList(userList)
+                .taggedTeamList(teamList)
                 .build();
     }
 
