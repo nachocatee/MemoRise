@@ -5,10 +5,7 @@ import com.tjjhtjh.memorise.domain.team.repository.TeamRepository;
 import com.tjjhtjh.memorise.domain.team.repository.TeamUserRepository;
 import com.tjjhtjh.memorise.domain.team.repository.entity.Team;
 import com.tjjhtjh.memorise.domain.team.repository.entity.TeamUser;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.CreateTeamRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.InviteMemberRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.KickMemberRequest;
-import com.tjjhtjh.memorise.domain.team.service.dto.request.UpdateTeamRequest;
+import com.tjjhtjh.memorise.domain.team.service.dto.request.*;
 import com.tjjhtjh.memorise.domain.team.service.dto.response.*;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
@@ -143,6 +140,17 @@ public class TeamServiceImpl implements TeamService {
             myTeamListResponses.add(new MyTeamListResponse(team, me, memberProfiles));
         }
         return myTeamListResponses;
+    }
+
+    @Override
+    @Transactional
+    public EnterTeamResponse enterTeam(Long teamSeq, EnterTeamRequest enterTeamRequest) {
+        Team team = teamRepository.findById(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM));
+        if (team.getPassword() != null && !team.getPassword().equals(enterTeamRequest.getPassword())) {
+            throw new WrongCodeException(WRONG_REQUEST);
+        }
+        teamUserRepository.save(new TeamUser(team, userRepository.findByUserSeqAndIsDeletedFalse(enterTeamRequest.getUserSeq()).orElseThrow(() -> new NoUserException(NO_USER))));
+        return new EnterTeamResponse(true);
     }
 
     @Override
