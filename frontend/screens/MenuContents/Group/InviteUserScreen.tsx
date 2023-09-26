@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { RouteProp } from "@react-navigation/native";
-import { View, Text, Image, Alert, ScrollView, FlatList } from "react-native";
+import { View, Text, Image, Alert, FlatList, Pressable } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import { RootStackParamList } from "../../../App";
 import GoBackHeader from "../../../components/Header/GoBackHeader";
@@ -16,6 +17,7 @@ import UserList from "../../../components/UserList";
 
 type InviteUserScreenProps = {
   route: RouteProp<RootStackParamList, "InviteUser">;
+  navigation: StackNavigationProp<RootStackParamList, "InviteUser">;
 };
 
 type UserData = [
@@ -28,9 +30,35 @@ type UserData = [
   }
 ];
 
-const InviteUserScreen: React.FC<InviteUserScreenProps> = ({ route }) => {
+const InviteUserScreen: React.FC<InviteUserScreenProps> = ({
+  route,
+  navigation,
+}) => {
   const { teamSeq, teamName } = route.params;
   const userId = useSelector((state: RootState) => state.userInfo.id);
+
+  // 유저 초대
+  const inviteUserHandler = (targetSeq: number) => {
+    axios({
+      method: "PUT",
+      url: BACKEND_URL + `/teams/${teamSeq}/invite`,
+      data: {
+        // userSeq: userId,
+        userSeq: 26, // 더미 데이터
+        targetSeq: targetSeq,
+      },
+    })
+      .then((res) => {
+        navigation.navigate("GroupDetail", {
+          teamSeq: teamSeq,
+          // userSeq: userId,
+          userSeq: 26, // 더미 데이터
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   // 유저 검색
   const [userList, setUserList] = useState<UserData | null>(null);
@@ -86,7 +114,31 @@ const InviteUserScreen: React.FC<InviteUserScreenProps> = ({ route }) => {
             data={userList}
             keyExtractor={(item) => item.userSeq.toString()}
             renderItem={({ item }) => (
-              <UserList profileUri={item.profile} nickname={item.nickname} />
+              <View style={styles.userListContainer}>
+                <UserList
+                  profileUri={item.profile}
+                  nickname={item.nickname}
+                  email={item.email}
+                />
+                <View style={{ paddingRight: 5, elevation: 4 }}>
+                  {item.invited ? (
+                    <View style={[styles.inviteBtn, styles.pressed]}>
+                      <Text style={styles.inviteBtnText}>참가중</Text>
+                    </View>
+                  ) : (
+                    <Pressable
+                      onPress={() => inviteUserHandler(item.userSeq)}
+                      style={({ pressed }) =>
+                        pressed
+                          ? [styles.inviteBtn, styles.pressed]
+                          : styles.inviteBtn
+                      }
+                    >
+                      <Text style={styles.inviteBtnText}>초대</Text>
+                    </Pressable>
+                  )}
+                </View>
+              </View>
             )}
           />
         ) : (

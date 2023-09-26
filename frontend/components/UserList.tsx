@@ -7,9 +7,10 @@ import { calculateDynamicWidth } from "../constants/dynamicSize";
 type UserListProps = {
   profileUri: string;
   nickname: string;
+  email: string;
 };
 
-const UserList: React.FC<UserListProps> = ({ profileUri, nickname }) => {
+const UserList: React.FC<UserListProps> = ({ profileUri, nickname, email }) => {
   return (
     <View style={styles.memberInnerContainer}>
       <View style={styles.memberImageContainer}>
@@ -19,7 +20,10 @@ const UserList: React.FC<UserListProps> = ({ profileUri, nickname }) => {
         />
         <Image style={styles.memberImage} source={{ uri: profileUri }} />
       </View>
-      <Text style={styles.memberText}>{nickname}</Text>
+      <View>
+        <Text style={styles.memberText}>{nickname}</Text>
+        <Text style={styles.memberEmail}>{email}</Text>
+      </View>
     </View>
   );
 };
@@ -52,5 +56,12 @@ const styles = StyleSheet.create({
     fontSize: calculateDynamicWidth(20),
     color: Colors.text,
     marginLeft: calculateDynamicWidth(18),
+  },
+  memberEmail: {
+    fontFamily: "Pretendard-Light",
+    fontSize: calculateDynamicWidth(13),
+    color: Colors.text,
+    marginLeft: calculateDynamicWidth(18),
+    opacity: 0.5,
   },
 });
