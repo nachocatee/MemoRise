@@ -75,14 +75,12 @@ public class TeamServiceImpl implements TeamService {
         for (Team team : teams) {
             User owner = userRepository.findByUserSeqAndIsDeletedFalse(team.getOwner()).orElseThrow(() -> new NoUserException(NO_USER));
             List<String> profiles = teamRepository.findUserProfiles(team.getTeamSeq(), userSeq);
-            log.info("{}", profiles);
             boolean isParticipated = teamUserRepository.findByTeamSeqAndUserSeq(team.getTeamSeq(), userSeq) != null;
             if (userSeq == team.getOwner()) {
                 profiles.add(0, owner.getProfile());
             } else if (isParticipated) {
                 profiles.add(0, me.getProfile());
                 profiles.add(1, owner.getProfile());
-                log.info("{}", profiles);
             } else {
                 profiles.add(0, owner.getProfile());
             }
