@@ -20,7 +20,7 @@ public class MemoDetailResponse {
     private String content;
     private String nickname;
     private LocalDateTime updatedAt;
-    private Long itemSeq;
+    private String itemName;
     private AccessType accessType;
     private String file;
     private String itemImage;
@@ -29,9 +29,9 @@ public class MemoDetailResponse {
 
     public MemoDetailResponse detailResponse(MemoDetailResponse reponse, Boolean bookmarkCheck, List<TaggedUserResponse> userList) {
         return MemoDetailResponse.builder()
-                .itemSeq(reponse.getItemSeq())
                 .content(reponse.getContent())
                 .nickname(reponse.getNickname())
+                .itemName(reponse.getItemName())
                 .updatedAt(reponse.getUpdatedAt())
                 .accessType(reponse.getAccessType())
                 .file(reponse.getFile())

@@ -77,11 +77,12 @@ public class MemoRequest {
                 .build();
     }
 
-    public Memo deleteToEntity(Memo memo,User writeUser){
+    public Memo deleteToEntity(Memo memo,User writeUser, Item item1){
         return Memo.builder()
                 .memoSeq(memo.getMemoSeq())
                 .isDeleted(1)
                 .file(memo.getFile())
+                .item(item1)
                 .accessType(memo.getAccessType())
                 .content(memo.getContent())
                 .deletedAt(LocalDateTime.now())
