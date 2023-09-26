@@ -38,26 +38,23 @@ const InviteUserScreen: React.FC<InviteUserScreenProps> = ({
   const userId = useSelector((state: RootState) => state.userInfo.id);
 
   // 유저 초대
-  const inviteUserHandler = (targetSeq: number) => {
-    axios({
-      method: "PUT",
-      url: BACKEND_URL + `/teams/${teamSeq}/invite`,
-      data: {
-        // userSeq: userId,
-        userSeq: 26, // 더미 데이터
-        targetSeq: targetSeq,
-      },
-    })
-      .then((res) => {
-        navigation.navigate("GroupDetail", {
-          teamSeq: teamSeq,
-          // userSeq: userId,
-          userSeq: 26, // 더미 데이터
-        });
-      })
-      .catch((err) => {
-        console.log(err);
+  const inviteUserHandler = async (targetSeq: number) => {
+    try {
+      const res = await axios({
+        method: "PUT",
+        url: BACKEND_URL + `/teams/${teamSeq}/invite`,
+        data: {
+          userSeq: userId,
+          targetSeq: targetSeq,
+        },
       });
+      navigation.navigate("GroupDetail", {
+        teamSeq: teamSeq,
+        userSeq: userId,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   // 유저 검색
@@ -69,8 +66,7 @@ const InviteUserScreen: React.FC<InviteUserScreenProps> = ({
       try {
         const res = await axios({
           method: "GET",
-          // url: BACKEND_URL + `/teams/${teamSeq}/invite/${userId}`,
-          url: BACKEND_URL + `/teams/${teamSeq}/invite/26`, // 더미 데이터
+          url: BACKEND_URL + `/teams/${teamSeq}/invite/${userId}`,
           params: {
             keyword: searchKeyword,
           },
@@ -109,7 +105,7 @@ const InviteUserScreen: React.FC<InviteUserScreenProps> = ({
             onSubmitEditing={getUserList}
           />
         </View>
-        {userList ? (
+        {userList && userList[0] ? (
           <FlatList
             data={userList}
             keyExtractor={(item) => item.userSeq.toString()}

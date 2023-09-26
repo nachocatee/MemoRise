@@ -41,6 +41,24 @@ import { MemoDetailProps } from "../../components/Modal/Memo/MemoDetail";
 
 const screenHeight = Dimensions.get("window").height;
 
+type DataChannel = {
+  current: {
+    _bufferedAmount: number;
+    _id: number | null;
+    _label: string;
+    _maxPacketLifeTime?: number;
+    _maxRetransmits?: number;
+    _negotiated: boolean;
+    _ordered: boolean;
+    _peerConnectionId: number;
+    _protocol: string | null;
+    _reactTag: string;
+    _readyState: string;
+    binaryType: string;
+    bufferedAmountLowThreshold: number;
+  };
+};
+
 // 태그된 회원 타입
 type Member = {
   [name: string]: string;
@@ -487,7 +505,7 @@ const MainScreen = () => {
 
     // 데이터 채널 생성 및 메시지 수신 리스너 설정
     const dataChannel = pc.current.createDataChannel("data");
-    dataChannelRef.current = dataChannel;
+    dataChannelRef.current = { current: dataChannel };
     dataChannel.onmessage = (event: any) => {
       // 서버에서 받은 데이터 처리
 

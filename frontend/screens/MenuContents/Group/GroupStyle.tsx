@@ -123,6 +123,10 @@ export const styles = StyleSheet.create({
     height: calculateDynamicWidth(11),
     marginRight: calculateDynamicWidth(5),
   },
+  biggerMeIcon: {
+    width: calculateDynamicWidth(45),
+    height: calculateDynamicWidth(21),
+  },
 
   // 내 그룹 (not Empty)
   groupContainer: {

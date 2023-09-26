@@ -9,6 +9,7 @@ type GroupBoxProps = {
   teamName: string;
   myProfile: string;
   memberProfiles: [string];
+  ownerProfile: string | null;
   owner: boolean;
   teamSeq: number;
   goDetailHandler: (teamSeq: number) => void;
@@ -18,6 +19,7 @@ const GroupBox: React.FC<GroupBoxProps> = ({
   teamName,
   myProfile,
   memberProfiles,
+  ownerProfile,
   owner,
   teamSeq,
   goDetailHandler,
@@ -42,6 +44,11 @@ const GroupBox: React.FC<GroupBoxProps> = ({
             />
           )}
         </View>
+        {ownerProfile && (
+          <View>
+            <Image style={styles.profileImg} source={{ uri: ownerProfile }} />
+          </View>
+        )}
         {memberProfiles.map((member, idx) => (
           <View key={idx}>
             {member !== myProfile && (

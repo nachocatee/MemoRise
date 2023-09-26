@@ -39,7 +39,6 @@ const MakeGroupScreen = () => {
       data: {
         name: name,
         owner: userId,
-        // owner: 26, // 더미 데이터
         password: password,
       },
     })
@@ -47,7 +46,7 @@ const MakeGroupScreen = () => {
         console.log("그룹 생성 완료");
         navigation.navigate("GroupDetail", {
           teamSeq: res.data.teamSeq,
-          userSeq: userId, // 더미 데이터
+          userSeq: userId,
         });
       })
       .catch((err) => {
