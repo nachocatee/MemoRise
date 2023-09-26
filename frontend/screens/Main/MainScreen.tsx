@@ -178,7 +178,7 @@ const MainScreen = () => {
 
   // 메모 조회 상태관리
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
-  const [memoListVisible, setMemoListVisible] = useState(true);
+  const [memoListVisible, setMemoListVisible] = useState(false);
 
   // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
@@ -340,52 +340,68 @@ const MainScreen = () => {
 
   // WebRTC 로직
 
-  // 미등록 물체 알림 표시 여부
+  // 데이터 전송을 위한 데이터 채널 참조
+  const dataChannelRef = useRef<DataChannel | null>(null);
+
+  // 미등록된 물체에 대한 알림 여부
   const [unregisteredNotification, setUnregisteredNotification] =
     useState(false);
 
-  // 물체 등록 로직
-  const objectRegister = () => {
-    console.log("물체 등록 로직 구현");
-    setUnregisteredNotification(false);
+  // 물체 등록(현재의 RTC 연결을 종료하고 새 연결(track2)을 시작)
+  const objectRegister = async () => {
+    try {
+      // 현재의 RTC 연결을 종료
+      stopRTCConnection();
+
+      // 새로운 서버에 연결을 시작
+      await startRTCConnection("track2");
+
+      // 미등록 물체 모달 닫기
+      setUnregisteredNotification(false);
+    } catch (error) {
+      Alert.alert("Error", (error as Error).message);
+    }
   };
 
+  // 미등록 물체 모달 닫기
   const cancelObjectRegister = () => {
     setUnregisteredNotification(false);
   };
 
-  // 인식 된 객체 위치 값 저장
+  // 인식 된 객체 위치 저장
   const [coordinates, setCoordinates] = useState<{
     id: string;
     x: number;
     y: number;
   } | null>(null);
 
-  //RTC 서버와 연결
+  // RTC 서버와의 연결 상태
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  //로컬의 미디어 스트림을 저장(앱 카메라)
+
+  // 로컬의 미디어 스트림(앱의 카메라)
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  // RTCPeerConnection 객체를 참조하기 위한 ref 변수
+
+  // RTCPeerConnection 객체 참조
   const pc = useRef<RTCPeerConnection | null>(null);
 
   // SDP를 교환하는 함수
   // (비디오의 해상도, 오디오 전송 또는 수신 여부)
-  const negotiate = async (): Promise<void> => {
+  const negotiate = async (trackType: string): Promise<void> => {
     try {
-      // send only(송신) 방향의 비디오 트랜시버를 추가
+      // 송신 전용(sendonly)의 비디오 트랜시버 추가
       pc.current?.addTransceiver("video", { direction: "sendonly" }); //await 삭제함
       const offerOptions = {
         offerToReceiveVideo: true, // 비디오 송신
       };
 
-      // Offer SDP를 생성
+      // 오퍼 생성
       const offer = await pc.current?.createOffer(offerOptions);
       if (!offer) throw new Error("Unable to create offer");
 
-      // 생성된 Offer를 로컬 설명으로 설정
+      // 로컬 SDP 설정
       await pc.current?.setLocalDescription(offer);
 
-      // 생성된 Offer SDP를 서버에 전송
+      // 생성된 Offer를 서버에 전송
       const response = await RNFetchBlob.config({
         //Android에서 SSL/TLS의 "Trusty" 시스템을 사용하여 보안 연결을 활성화(인증서 대체)
         trusty: true,
@@ -398,13 +414,14 @@ const MainScreen = () => {
         JSON.stringify({
           sdp: offer.sdp,
           type: offer.type,
+          trackType: trackType,
         })
       );
 
       // 서버로부터의 응답을 파싱하여 Answer SDP를 가져옴.
       const answer = await response.json();
       if (pc.current) {
-        // Answer SDP를 원격 설명으로 설정
+        // 원격 SDP 설정
         await pc.current.setRemoteDescription(
           new RTCSessionDescription(answer)
         );
@@ -414,7 +431,7 @@ const MainScreen = () => {
     }
   };
 
-  // WebRTC 연결을 시작
+  // 카메라 초기화
   const initializeCamera = async (): Promise<void> => {
     try {
       const stream = await mediaDevices.getUserMedia({
@@ -432,7 +449,10 @@ const MainScreen = () => {
     }
   };
 
-  const startRTCConnection = async (): Promise<void> => {
+  // WebRTC 연결 시작(물체 조회, 학습)
+  const startRTCConnection = async (
+    trackType: string = "default"
+  ): Promise<void> => {
     if (!localStream) {
       Alert.alert("Error", "Please initialize the camera first.");
       return;
@@ -453,28 +473,38 @@ const MainScreen = () => {
 
     pc.current = new RTCPeerConnection(configuration);
 
+    // 데이터 채널 생성 및 메시지 수신 리스너 설정
     const dataChannel = pc.current.createDataChannel("data");
+    dataChannelRef.current = dataChannel;
     dataChannel.onmessage = (event: any) => {
+      // 서버에서 받은 데이터 처리
+
       const receivedData = JSON.parse(event.data);
-      const label = `Id: ${receivedData.id}, X: ${receivedData.label_x}, Y: ${receivedData.label_y}`;
-      console.log(label);
-      setCoordinates({
-        id: receivedData.id,
-        x: receivedData.label_x,
-        y: receivedData.label_y,
-      });
+      if (trackType != "track2") {
+        const label = `Id: ${receivedData.id}, X: ${receivedData.label_x}, Y: ${receivedData.label_y}`;
+        console.log(label);
+        setCoordinates({
+          id: receivedData.id,
+          x: receivedData.label_x,
+          y: receivedData.label_y,
+        });
+      } else {
+        console.log(receivedData);
+      }
     };
 
+    // 미디어 트랙 추가
     localStream.getTracks().forEach((track) => {
       pc.current?.addTrack(track, localStream);
     });
 
-    await negotiate();
+    await negotiate(trackType); // trackType을 negotiate 함수로 전달
 
     setIsConnected(true);
   };
 
-  const stop = (): void => {
+  // WebRTC 연결 종료
+  const stopRTCConnection = (): void => {
     setIsConnected(false);
 
     if (localStream && pc.current) {
@@ -492,8 +522,9 @@ const MainScreen = () => {
 
   useEffect(() => {
     initializeCamera();
+    // setUnregisteredNotification(true); // 작업을 위해 true 해놓음 추후 완전 삭제
     return () => {
-      stop();
+      stopRTCConnection();
     };
   }, []);
 
@@ -532,6 +563,7 @@ const MainScreen = () => {
             onPress={() => {
               if (coordinates.id !== "0") {
                 // 메모 개수
+
                 Alert.alert("Notification", "메모 개수 표시하기");
               } else {
                 // 미등록 물체 알림 표시
@@ -556,17 +588,22 @@ const MainScreen = () => {
         <AlertModal
           modalVisible={unregisteredNotification}
           closeModal={cancelObjectRegister}
-          onConfirm={objectRegister}
+          onConfirm={objectRegister} //=> 나중에 주석 해제해야함. 진짜 학습 실행
+          // onConfirm={tempRegister} // 학습 실행할 시 생길 이펙트들 실행
           contentText={`미등록된 물체입니다.\n등록해주세요!`}
           btnText="확인"
         />
         <View style={styles.rtcButton}>
           <Button
             title="Start"
-            onPress={startRTCConnection}
+            onPress={() => startRTCConnection("track1")}
             disabled={isConnected}
           />
-          <Button title="Stop" onPress={stop} disabled={!isConnected} />
+          <Button
+            title="Stop"
+            onPress={stopRTCConnection}
+            disabled={!isConnected}
+          />
         </View>
         <Pressable
           style={styles.btnContainer}
