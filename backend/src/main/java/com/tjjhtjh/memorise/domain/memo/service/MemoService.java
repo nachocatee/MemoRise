@@ -130,14 +130,12 @@ public class MemoService {
         return memoRepository.findByAllMyMemoIsDeletedFalse(userSeq);
     }
 
-    public void myBookmarkList(Long userSeq) {
+    public List<MemoCountResponse> countOfMemoList(Long userSeq){
+        List<MemoCountResponse> resultList = new ArrayList<>();
+        List<Long> itemSeqList = itemRepository.itemSeqList();
 
-    }
-
-    public List<Long> countOfMemoList(List<Long> itemSeqList, Long userSeq){
-        List<Long> resultList = new ArrayList<>();
         for (Long itemSeq: itemSeqList) {
-            resultList.add(memoRepository.countMemoOfItem(itemSeq,userSeq));
+            resultList.add(new MemoCountResponse().countResponse(itemSeq,memoRepository.countMemoOfItem(itemSeq,userSeq)));
         }
         return resultList;
     }
