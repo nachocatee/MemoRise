@@ -15,6 +15,6 @@ public interface TeamService {
     InviteMemberResponse inviteMember(Long teamSeq, InviteMemberRequest inviteMemberRequest);
     List<InviteUserListResponse> getInviteUserList(Long teamSeq, Long userSeq, String keyword);
     void kickMember(Long teamSeq, KickMemberRequest kickMemberRequest);
-//    TeamDetailResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest);
+    UpdateTeamResponse updateTeam(Long teamSeq, UpdateTeamRequest updateTeamRequest);
     List<MyTeamListResponse> getMyTeamList(Long userSeq);
 }
