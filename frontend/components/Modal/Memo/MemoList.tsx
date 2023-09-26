@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
 
   memoWriteContainer: {
     alignItems: "flex-end",
-    marginBottom: 3,
+    marginBottom: calculateDynamicWidth(3),
   },
 
   memoWrite: {
@@ -204,14 +204,15 @@ const styles = StyleSheet.create({
   calendar: {
     color: Colors.hover,
     fontFamily: "Pretendard-Regular",
+    fontSize: calculateDynamicWidth(14),
   },
 
   content: {
     color: Colors.text,
-    fontSize: 18,
+    fontSize: calculateDynamicWidth(18),
     fontFamily: "Pretendard-Regular",
-    marginVertical: 5,
-    marginHorizontal: 10,
+    marginVertical: calculateDynamicWidth(5),
+    marginHorizontal: calculateDynamicWidth(10),
   },
 
   photo: {
@@ -229,10 +230,12 @@ const styles = StyleSheet.create({
   nickname: {
     color: Colors.blue500,
     fontFamily: "Pretendard-Medium",
+    fontSize: calculateDynamicWidth(14),
   },
 
   open: {
     color: "rgba(76, 106, 255, 0.6)",
     fontFamily: "Pretendard-Medium",
+    fontSize: calculateDynamicWidth(14),
   },
 });

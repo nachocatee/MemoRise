@@ -48,6 +48,11 @@ export type MemoDetailProps = {
       nickname: string;
     }
   ];
+  taggedTeamList: [
+    {
+      nickname: string;
+    }
+  ];
   updatedAt: string;
 };
 
@@ -95,6 +100,7 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
         const res = await axios.get(
           BACKEND_URL + `/memos/${memoSeq}/${userId}`
         );
+        console.log(res.data);
         setMemoDetailData([res.data]);
         setMemoPic(res.data.file);
         setMemoDetailCalendar(formatData(res.data.updatedAt));
@@ -178,6 +184,17 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
     }).catch((error) => console.log(error));
   };
 
+  // 태그된 사람 목록 보여주기
+  // 상태관리
+  const [showAllTagged, setShowAllTagged] = useState(false);
+
+  // 상태관리 변경함수
+  const changeShowAllTagged = (num: number) => {
+    if (num !== 0) {
+      setShowAllTagged(!showAllTagged);
+    }
+  };
+
   return (
     <>
       <View style={detailStyle.mainContainer}>
@@ -215,9 +232,90 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
                   </Text>
                 )}
                 {memoDetailData[0] && (
-                  <Text style={detailStyle.open}>
-                    {memoDetailData[0].accessType}
-                  </Text>
+                  <View>
+                    <Text style={detailStyle.open}>
+                      {memoDetailData[0].accessType === "OPEN" ? (
+                        "전체공개"
+                      ) : memoDetailData[0].accessType === "CLOSED" ? (
+                        "비공개"
+                      ) : memoDetailData[0].taggedTeamList.length > 0 ? (
+                        <Pressable
+                          onPress={() =>
+                            changeShowAllTagged(
+                              memoDetailData[0].taggedTeamList.length - 1
+                            )
+                          }
+                        >
+                          <Text>
+                            {memoDetailData[0].taggedTeamList[0].nickname}
+                            {memoDetailData[0].taggedTeamList.length - 1 !==
+                              0 && (
+                              <Text style={detailStyle.plusText}>
+                                {` +${
+                                  memoDetailData[0].taggedTeamList.length - 1
+                                }`}
+                              </Text>
+                            )}
+                          </Text>
+                        </Pressable>
+                      ) : (
+                        <Pressable
+                          onPress={() =>
+                            changeShowAllTagged(
+                              memoDetailData[0].taggedUserList.length - 1
+                            )
+                          }
+                        >
+                          <Text style={detailStyle.open}>
+                            {memoDetailData[0].taggedUserList[0].nickname}
+                            {memoDetailData[0].taggedUserList.length - 1 !==
+                              0 && (
+                              <Text style={detailStyle.plusText}>
+                                {` +${
+                                  memoDetailData[0].taggedUserList.length - 1
+                                }`}
+                              </Text>
+                            )}
+                          </Text>
+                        </Pressable>
+                      )}
+                    </Text>
+                    {showAllTagged && (
+                      <Pressable
+                        onPress={() => changeShowAllTagged(1)}
+                        style={detailStyle.tagged}
+                      >
+                        {memoDetailData[0].taggedTeamList.length > 0 &&
+                          memoDetailData[0].taggedTeamList.map(
+                            (team, index) => (
+                              <Text
+                                key={`team-${index}`}
+                                style={{
+                                  color: "#FFFFFF",
+                                  marginLeft: calculateDynamicWidth(8),
+                                }}
+                              >
+                                {team.nickname}
+                              </Text>
+                            )
+                          )}
+                        {memoDetailData[0].taggedUserList.length > 0 &&
+                          memoDetailData[0].taggedUserList.map(
+                            (user, index) => (
+                              <Text
+                                key={`user-${index}`}
+                                style={{
+                                  color: "#FFFFFF",
+                                  marginLeft: calculateDynamicWidth(8),
+                                }}
+                              >
+                                {user.nickname}
+                              </Text>
+                            )
+                          )}
+                      </Pressable>
+                    )}
+                  </View>
                 )}
               </View>
             </View>
@@ -355,19 +453,20 @@ const detailStyle = StyleSheet.create({
   rowSpaceBetween: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 12,
-    marginBottom: 3,
+    marginTop: calculateDynamicWidth(12),
+    marginBottom: calculateDynamicWidth(3),
   },
 
   rowSpaceBetween2: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 3,
+    marginBottom: calculateDynamicWidth(3),
   },
 
   calendar: {
     color: Colors.hover,
     fontFamily: "Pretendard-Regular",
+    fontSize: calculateDynamicWidth(14),
   },
 
   iconContainer: {
@@ -377,17 +476,35 @@ const detailStyle = StyleSheet.create({
   icon: {
     width: calculateDynamicWidth(14),
     height: calculateDynamicWidth(14),
-    marginLeft: 10,
+    marginLeft: calculateDynamicWidth(10),
   },
 
   nickname: {
     color: Colors.blue500,
     fontFamily: "Pretendard-Medium",
+    fontSize: calculateDynamicWidth(14),
   },
 
   open: {
     color: "rgba(76, 106, 255, 0.6)",
     fontFamily: "Pretendard-Medium",
+    fontSize: calculateDynamicWidth(14),
+  },
+
+  plusText: {
+    color: "rgba(76, 106, 255, 0.6)",
+    fontSize: calculateDynamicWidth(10),
+  },
+
+  tagged: {
+    position: "absolute",
+    backgroundColor: "#A4B3FE",
+    zIndex: 2,
+    top: calculateDynamicWidth(22),
+    right: calculateDynamicWidth(0),
+    borderRadius: calculateDynamicWidth(5),
+    minWidth: calculateDynamicWidth(106),
+    minHeight: calculateDynamicWidth(22),
   },
 
   contentContainer: {
@@ -403,10 +520,10 @@ const detailStyle = StyleSheet.create({
 
   content: {
     color: Colors.text,
-    fontSize: 18,
+    fontSize: calculateDynamicWidth(18),
     fontFamily: "Pretendard-Regular",
-    marginVertical: 5,
-    marginHorizontal: 10,
+    marginVertical: calculateDynamicWidth(5),
+    marginHorizontal: calculateDynamicWidth(10),
   },
 
   bookmark: {
