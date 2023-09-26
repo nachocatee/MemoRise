@@ -27,7 +27,7 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<RegistItemResponse> registItem(@RequestBody RegistItemRequest registItemRequest) {
-        itemService.registItem(registItemRequest.getItemSeq(), registItemRequest.getItemImage());
+        itemService.registItem(registItemRequest.getItemName(), registItemRequest.getItemImage());
         return ResponseEntity.ok(new RegistItemResponse(true));
     }
 }

@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class RegistItemRequest {
-    private Long itemSeq;
+    private String itemName;
     private String itemImage;
 }

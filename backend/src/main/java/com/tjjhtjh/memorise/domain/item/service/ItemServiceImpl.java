@@ -15,7 +15,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
 
     @Override
-    public Item registItem(Long itemSeq, String itemImage) {
-        return itemRepository.save(new Item(itemSeq, itemImage));
+    public Item registItem(String itemName, String itemImage) {
+        return itemRepository.save(new Item(itemName, itemImage));
     }
 }
