@@ -2,8 +2,8 @@ package com.tjjhtjh.memorise.domain.memo.controller;
 
 import com.tjjhtjh.memorise.domain.memo.exception.MemoException;
 import com.tjjhtjh.memorise.domain.memo.service.MemoService;
-import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoCountRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoCountResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.global.file.service.AwsS3Service;
@@ -77,7 +77,7 @@ public class MemoController {
     }
 
     @GetMapping ("/all/{userSeq}")
-    public ResponseEntity<List<Long[]>> countMemo(@PathVariable Long userSeq){
+    public ResponseEntity<List<MemoCountResponse>> countMemo(@PathVariable Long userSeq){
         return new ResponseEntity<>(memoService.countOfMemoList(userSeq) ,HttpStatus.OK);
     }
 }
