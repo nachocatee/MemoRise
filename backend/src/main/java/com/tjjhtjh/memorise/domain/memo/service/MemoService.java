@@ -10,6 +10,7 @@ import com.tjjhtjh.memorise.domain.memo.repository.entity.Bookmark;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.BookmarkRequest;
 import com.tjjhtjh.memorise.domain.memo.service.dto.request.MemoRequest;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoCountResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoDetailResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MyMemoResponse;
@@ -117,9 +118,14 @@ public class MemoService {
         return memoRepository.findWrittenByMeOrOpenMemoOrTaggedMemo(itemSeq,userSeq);
     }
 
-    public MemoDetailResponse detailMemo(Long memoId) throws MemoException {
-        return memoRepository.detailMemo(memoId)
+    public MemoDetailResponse detailMemo(Long memoId, Long userSeq) throws MemoException {
+        MemoDetailResponse memoDetailResponse = memoRepository.detailMemo(memoId, userSeq)
                 .orElseThrow(() -> new MemoException(NO_MEMO));
+
+        return new MemoDetailResponse().detailResponse(
+                memoDetailResponse,
+                bookMarkRepository.bookmarkBoolean(memoId,userSeq),
+                taggedUserRepository.findByTaggedUserList(memoId));
     }
 
     public List<MyMemoResponse> myMemoList(Long userSeq) {
@@ -133,7 +139,6 @@ public class MemoService {
     public List<MemoCountResponse> countOfMemoList(Long userSeq){
         List<MemoCountResponse> resultList = new ArrayList<>();
         List<Long> itemSeqList = itemRepository.itemSeqList();
-
         for (Long itemSeq: itemSeqList) {
             resultList.add(new MemoCountResponse().countResponse(itemSeq,memoRepository.countMemoOfItem(itemSeq,userSeq)));
         }

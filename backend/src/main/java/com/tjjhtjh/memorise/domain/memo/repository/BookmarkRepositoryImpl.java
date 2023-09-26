@@ -8,6 +8,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Bookmark;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MyMemoResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
@@ -15,9 +16,8 @@ import java.util.Optional;
 
 import static com.tjjhtjh.memorise.domain.memo.repository.entity.QBookmark.bookmark;
 import static com.tjjhtjh.memorise.domain.memo.repository.entity.QMemo.memo;
-import static com.tjjhtjh.memorise.domain.tag.repository.entity.QTaggedUser.taggedUser;
 
-
+@Slf4j
 public class BookmarkRepositoryImpl extends QuerydslRepositorySupport implements BookmarkRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
@@ -59,5 +59,12 @@ public class BookmarkRepositoryImpl extends QuerydslRepositorySupport implements
                 .having(isBookmarkedTrue.eq(true))
                 .orderBy(memo.updatedAt.desc())
                 .fetch();
+    }
+
+    @Override
+    public Boolean bookmarkBoolean(Long memoId, Long userSeq) {
+        Integer count =  queryFactory.selectFrom(bookmark).where(bookmark.user.userSeq.eq(userSeq).and(bookmark.memo.memoSeq.eq(memoId)))
+                .fetch().size();
+        return count > 0 ;
     }
 }
