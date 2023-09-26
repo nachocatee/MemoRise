@@ -27,13 +27,11 @@ import { RootState } from "../../../store/store";
 type MemoListProp = {
   onMemoWritePress: () => void;
   onMemoDetailPress: (memoSeq: number) => void;
-  // id: string;
 };
 
 const MemoList: React.FC<MemoListProp> = ({
   onMemoWritePress,
   onMemoDetailPress,
-  // id,
 }) => {
   // 유저ID
   const userId = useSelector((state: RootState) => state.userInfo.id);
@@ -63,7 +61,6 @@ const MemoList: React.FC<MemoListProp> = ({
       // .get(BACKEND_URL + `/memos/${id}/list/${userId}`)
       .get(BACKEND_URL + `/memos/8ef97a8a0be/list/23`)
       .then((response) => {
-        console.log(response);
         setMemoData(response.data);
       })
       .catch((error) => {
