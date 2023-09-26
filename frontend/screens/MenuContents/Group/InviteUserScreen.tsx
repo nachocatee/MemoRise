@@ -78,7 +78,7 @@ const InviteUserScreen: React.FC<InviteUserScreenProps> = ({
         console.log(err);
       }
     } else {
-      Alert.alert("검색어를 입력해 주세요!");
+      Alert.alert("닉네임이나 이메일을 입력해 주세요!");
     }
   };
 

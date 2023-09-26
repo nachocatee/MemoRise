@@ -52,7 +52,11 @@ export type RootStackParamList = {
     teamSeq: number;
     userSeq: number;
   };
-  GroupSetting: undefined;
+  GroupSetting: {
+    name: string;
+    password: string;
+    teamSeq: number;
+  };
   InviteUser: {
     teamSeq: number;
     teamName: string;

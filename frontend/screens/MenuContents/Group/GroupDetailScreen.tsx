@@ -121,7 +121,13 @@ const GroupDetailScreen: React.FC<GroupDetailScreenProps> = ({
             <View style={styles.titleContainer}>
               <Text style={styles.title}>{groupData.name}</Text>
               <Pressable
-                onPress={() => navigation.navigate("GroupSetting")}
+                onPress={() =>
+                  navigation.navigate("GroupSetting", {
+                    name: groupData.name,
+                    password: groupData.password,
+                    teamSeq: teamSeq,
+                  })
+                }
                 style={styles.settingContainer}
               >
                 <Image
