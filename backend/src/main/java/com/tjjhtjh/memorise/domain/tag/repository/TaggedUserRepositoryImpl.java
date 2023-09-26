@@ -1,8 +1,11 @@
 package com.tjjhtjh.memorise.domain.tag.repository;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tjjhtjh.memorise.domain.memo.repository.entity.Memo;
+import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.domain.tag.repository.entity.TaggedUser;
+import com.tjjhtjh.memorise.domain.tag.service.dto.response.TaggedUserResponse;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
@@ -24,7 +27,8 @@ public class TaggedUserRepositoryImpl extends QuerydslRepositorySupport implemen
     }
 
     @Override
-    public List<Long> findByTaggedListOfMe(Long userSeq) {
-        return queryFactory.select(taggedUser.memo.memoSeq).from(taggedUser).where(taggedUser.user.userSeq.eq(userSeq)).fetch();
+    public List<TaggedUserResponse> findByTaggedUserList(Long memoSeq) {
+        return queryFactory.select(Projections.fields(TaggedUserResponse.class,taggedUser.user.nickname))
+                .from(taggedUser).where(taggedUser.memo.memoSeq.eq(memoSeq)).fetch();
     }
 }
