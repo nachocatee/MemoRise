@@ -100,7 +100,6 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
         const res = await axios.get(
           BACKEND_URL + `/memos/${memoSeq}/${userId}`
         );
-        console.log(res.data);
         setMemoDetailData([res.data]);
         setMemoPic(res.data.file);
         setMemoDetailCalendar(formatData(res.data.updatedAt));
