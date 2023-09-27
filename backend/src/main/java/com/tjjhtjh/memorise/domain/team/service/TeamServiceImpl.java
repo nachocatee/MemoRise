@@ -1,5 +1,6 @@
 package com.tjjhtjh.memorise.domain.team.service;
 
+import com.tjjhtjh.memorise.domain.tag.repository.TaggedTeamRepository;
 import com.tjjhtjh.memorise.domain.team.exception.*;
 import com.tjjhtjh.memorise.domain.team.repository.TeamRepository;
 import com.tjjhtjh.memorise.domain.team.repository.TeamUserRepository;
@@ -28,6 +29,7 @@ public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final TeamUserRepository teamUserRepository;
+    private final TaggedTeamRepository taggedTeamRepository;
 
     private static final String NO_USER = "회원 정보가 존재하지 않습니다";
     private static final String NO_TEAM = "팀 정보가 존재하지 않습니다";
@@ -170,6 +172,7 @@ public class TeamServiceImpl implements TeamService {
             for (Long memberSeq: teamUserRepository.findAllUserByTeamSeq(teamSeq)) {
                 teamUserRepository.delete(teamUserRepository.findByTeamSeqAndUserSeq(teamSeq, memberSeq));
             }
+            taggedTeamRepository.deleteAllByTeamSeq(teamSeq);
             teamRepository.delete(team);
         } else {
             teamUserRepository.delete(teamUserRepository.findByTeamSeqAndUserSeq(teamSeq, userSeq));

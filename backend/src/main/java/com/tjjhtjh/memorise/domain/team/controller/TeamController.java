@@ -58,7 +58,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/{teamSeq}/{userSeq}")
-    public ResponseEntity<ExitTeamResponse> deleteTeam(@PathVariable Long teamSeq, @PathVariable Long userSeq) {
+    public ResponseEntity<ExitTeamResponse> exitTeam(@PathVariable Long teamSeq, @PathVariable Long userSeq) {
         teamService.exitTeam(teamSeq, userSeq);
         return ResponseEntity.ok(new ExitTeamResponse(true));
     }

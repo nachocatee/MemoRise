@@ -8,4 +8,5 @@ import java.util.List;
 public interface TaggedTeamRepositoryCustom {
     List<TaggedTeam> findByTaggedTeamWithMemoSeq(Long memoSeq);
     List<TaggedTeamResponse> findByTaggedTeamList(Long memoSeq);
+    void deleteAllByTeamSeq(Long teamSeq);
 }
