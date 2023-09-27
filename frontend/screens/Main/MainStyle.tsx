@@ -316,31 +316,55 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "90%",
   },
-  // 물체 상단에 띄울 원형 표시
   ObjCircle: {
     position: "absolute",
     width: 100,
     height: 100,
-    backgroundColor: "blue",
-    borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
   },
-  ObjCircleLinear: {
-    width: "100%", // TouchableOpacity의 크기를 전부 차지하게 설정
-    height: "100%", // TouchableOpacity의 크기를 전부 차지하게 설정
-    borderRadius: 50,
+  imageContainer: {
+    width: "100%",
+    height: "100%",
+    position: "relative",
+  },
+  ObjImg: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+  textContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   ObjCircleText: {
     color: "white",
-    fontSize: 50,
+    fontSize: 30,
+    fontWeight: "bold",
   },
   memoClose: {
     flex: 1,
     backgroundColor: "transparent",
     marginTop: -screenHeight,
+  },
+
+  // 물체 학습 시 가운데 포커스 표시
+  focusBox: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [
+      { translateY: -calculateDynamicWidth(80) / 2 },
+      { translateX: -calculateDynamicWidth(80) / 2 },
+    ],
+  },
+  focusImg: {
+    width: calculateDynamicWidth(80),
+    height: calculateDynamicWidth(80),
   },
 });

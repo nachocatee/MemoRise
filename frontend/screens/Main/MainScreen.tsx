@@ -219,6 +219,8 @@ const MainScreen = () => {
   // 여기다가 물체 조회 추가해야함
   const closeMemoList = () => {
     setMemoListVisible(false);
+    // 다시 물체 표시 생성
+    setIsVisible(true);
   };
 
   // 메모 상세 모달 상태관리
@@ -340,6 +342,8 @@ const MainScreen = () => {
         .then((res) => {
           if (res.request.status === 200) {
             console.log("메모 생성 성공");
+            //물체 표시 생성
+            setIsVisible(true);
           }
         })
         .catch((err) => {
@@ -386,6 +390,8 @@ const MainScreen = () => {
     setTagSearchText("");
     setTaggedMember([]);
     setMyGroupVisible(false);
+    //물체 표시 생성
+    setIsVisible(true);
   };
 
   // 알림 모달
@@ -440,6 +446,9 @@ const MainScreen = () => {
 
   // 선택 된 객체 ID 값 저장
   const [pickItem, setPickItem] = useState("");
+
+  // 메모 조회 시 객체 표시 가리기
+  const [isVisible, setIsVisible] = useState(true);
 
   // RTC 서버와의 연결 상태
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -623,6 +632,7 @@ const MainScreen = () => {
 
         {/* 인식된 객체에 표시할 오브젝트 */}
         {coordinates.length > 0 &&
+          isVisible &&
           coordinates.map((coordinate, index) => (
             <TouchableOpacity
               key={index}
@@ -633,32 +643,36 @@ const MainScreen = () => {
                   top: coordinate.y,
                 },
               ]}
-              activeOpacity={0.7} // 눌렀을 때 투명도 조절
+              activeOpacity={0.7}
               onPress={() => {
                 if (coordinate.id !== "0") {
-                  // 메모 보여줌
+                  setIsVisible(false);
                   setPickItem(coordinate.id);
                   setMemoListVisible(true);
                 } else {
-                  // 미등록 물체 알림 표시
                   setUnregisteredNotification(true);
                 }
               }}
             >
-              <LinearGradient
-                colors={["#339af0", "blue"]}
-                style={styles.ObjCircleLinear}
-              >
-                {coordinate.id === "0" ? (
-                  // 등록 되지 않은 물채 표시할 텍스트
-                  <Text style={styles.ObjCircleText}>+</Text>
-                ) : (
-                  // 메모 개수 표시
-                  <Text style={styles.ObjCircleText}>2</Text>
-                )}
-              </LinearGradient>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={require("../../assets/focus/star.png")}
+                  style={styles.ObjImg}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.ObjCircleText}>
+                    {coordinate.id === "0" ? "+" : "2"}
+                  </Text>
+                </View>
+              </View>
             </TouchableOpacity>
           ))}
+        {/* <View style={styles.focusBox}>
+          <Image
+            source={require("../../assets/focus/focus2new.png")}
+            style={styles.focusImg}
+          />
+        </View> */}
         <AlertModal
           modalVisible={unregisteredNotification}
           closeModal={cancelObjectRegister}
