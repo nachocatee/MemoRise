@@ -64,7 +64,7 @@ public class MemoController {
     }
 
     @GetMapping("/{itemName}/list/{userSeq}")
-    public ResponseEntity<List<MemoResponse>> myMemoListOfItem(@PathVariable String itemName ,@PathVariable Long userSeq){
+    public ResponseEntity<List<MemoResponse>> myMemoListOfItem(@PathVariable String itemName , @PathVariable Long userSeq){
         return new ResponseEntity<>(memoService.itemMemoView(itemName,userSeq),HttpStatus.OK);
     }
 
