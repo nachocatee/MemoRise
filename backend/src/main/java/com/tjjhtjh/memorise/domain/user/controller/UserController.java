@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<UserListResponse> getUserList(@RequestParam(required = false) String keyword) {
+    public ResponseEntity<List<UserListResponse>> getUserList(@RequestParam(required = false) String keyword) {
         return ResponseEntity.ok(userService.getUserList(keyword));
     }
 

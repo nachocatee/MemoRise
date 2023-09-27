@@ -12,6 +12,6 @@ public interface UserService {
     User join(JoinRequest joinRequest);
     void updateUserInfo(Long userSeq, UpdateUserInfoRequest updateUserInfoRequest);
     User getUserInfo(Long userSeq);
-    UserListResponse getUserList(String nickname);
+    List<UserListResponse> getUserList(String keyword);
 
 }

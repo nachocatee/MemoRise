@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 
+import java.util.List;
+
 import static com.tjjhtjh.memorise.domain.user.repository.entity.QUser.user;
 
 @Repository
@@ -18,10 +20,10 @@ public class UserSupportRepositoryImpl implements UserSupportRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public UserListResponse findByNicknameContainingAndIsDeletedFalse(String nickname) {
+    public List<UserListResponse> findByKeywordAndIsDeletedFalse(String keyword) {
         BooleanBuilder builder = new BooleanBuilder();
-        if(nickname != null) {
-            builder.and(user.nickname.contains(nickname));
+        if(keyword != null) {
+            builder.and(user.nickname.contains(keyword).or(user.email.contains(keyword)));
         }
 
         return jpaQueryFactory
@@ -29,7 +31,7 @@ public class UserSupportRepositoryImpl implements UserSupportRepository {
                 user.userSeq, user.nickname, user.email))
             .from(user)
             .where(user.isDeleted.eq(0).and(builder))
-            .fetchOne();
+            .fetch();
     }
 
 }
