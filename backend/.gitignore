@@ -222,3 +222,4 @@ gradle-app.setting
 
 /.idea/
 /src/main/generated/
+/src/main/resources/external/
