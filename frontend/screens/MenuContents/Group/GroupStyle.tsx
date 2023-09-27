@@ -189,4 +189,9 @@ export const styles = StyleSheet.create({
     right: 0,
     top: -calculateDynamicWidth(10),
   },
+  emptyResultContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: screenHeight / 4 - calculateDynamicWidth(69),
+  },
 });
