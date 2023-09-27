@@ -29,4 +29,9 @@ public class TaggedTeamRepositoryImpl extends QuerydslRepositorySupport implemen
         return queryFactory.select(Projections.fields(TaggedTeamResponse.class,taggedTeam.team.name))
                 .from(taggedTeam).where(taggedTeam.memo.memoSeq.eq(memoSeq)).fetch();
     }
+
+    @Override
+    public List<TaggedTeam> findByTeamSeq(Long teamSeq) {
+        return queryFactory.selectFrom(taggedTeam).where(taggedTeam.team.teamSeq.eq(teamSeq)).fetch();
+    }
 }
