@@ -17,6 +17,11 @@ import com.tjjhtjh.memorise.domain.memo.service.dto.response.MemoResponse;
 import com.tjjhtjh.memorise.domain.memo.service.dto.response.MyMemoResponse;
 import com.tjjhtjh.memorise.domain.tag.repository.TaggedTeamRepository;
 import com.tjjhtjh.memorise.domain.tag.repository.TaggedUserRepository;
+import com.tjjhtjh.memorise.domain.tag.service.dto.request.TaggedTeamRequest;
+import com.tjjhtjh.memorise.domain.tag.service.dto.request.TaggedUserRequest;
+import com.tjjhtjh.memorise.domain.team.exception.NoTeamException;
+import com.tjjhtjh.memorise.domain.team.repository.TeamRepository;
+import com.tjjhtjh.memorise.domain.team.repository.entity.Team;
 import com.tjjhtjh.memorise.domain.user.exception.NoUserException;
 import com.tjjhtjh.memorise.domain.user.repository.UserRepository;
 import com.tjjhtjh.memorise.domain.user.repository.entity.User;
@@ -41,6 +46,7 @@ public class MemoService {
     private final ItemRepository itemRepository;
     private final TaggedUserRepository taggedUserRepository;
     private final TaggedTeamRepository taggedTeamRepository;
+    private final TeamRepository teamRepository;
 
     private static final String NO_USER_EMAIL = "이메일에 해당하는 유저가 없습니다";
     private static final String NO_USER = "해당하는 유저가 존재하지 않습니다";
@@ -48,23 +54,40 @@ public class MemoService {
     private static final String NO_MEMO = "해당하는 메모가 없습니다";
     private static final String NO_FIND_BOOKMARK = "해당하는 북마크를 찾을 수 없습니다";
     private static final String NO_FIND_ITEM = "해당하는 아이템을 찾을 수 없습니다";
+    private static final String NO_TEAM_EXCEPTION = "해당하는 팀을 찾을 수 없습니다";
 
     @Transactional
-    public void createMemo(MemoRequest memoRequest,String itemName) {
+    public void createMemo(MemoRequest memoRequest,String itemName) throws MemoException {
         User user = userRepository.findByUserSeqAndIsDeletedFalse(memoRequest.getUserId())
-                .orElseThrow(() -> new NoUserException(NO_USER_EMAIL));
-        // TODO : itemException 생성 후 exception 변경 예정
-        Item item = itemRepository.findByItemName(itemName)
-                .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
-        // 파일 있을 때 없을 때 저장 로직
-        if(memoRequest.getNewFile() == null) {
-            memoRepository.save(memoRequest.registToEntity(user, item));
-        }
-        else if(memoRequest.getNewFile().isBlank()){
-            memoRepository.save(memoRequest.registToEntity(user,item));
-        }
-        else {
-            memoRepository.save(memoRequest.registToEntity(user, item, memoRequest.getNewFile()));
+                    .orElseThrow(() -> new NoUserException(NO_USER_EMAIL));
+            // TODO : itemException 생성 후 exception 변경 예정
+            Item item = itemRepository.findByItemName(itemName)
+                    .orElseThrow(() -> new NullPointerException(NO_FIND_ITEM));
+            // 파일 있을 때 없을 때 저장 로직
+            if(memoRequest.getNewFile() == null) {
+                memoRepository.save(memoRequest.registToEntity(user, item));
+            }
+            else if(memoRequest.getNewFile().isBlank()){
+                memoRepository.save(memoRequest.registToEntity(user,item));
+            }
+            else {
+                memoRepository.save(memoRequest.registToEntity(user, item, memoRequest.getNewFile()));
+            }
+
+            Memo memo = memoRepository.findByLastSaveData().orElseThrow(()->new MemoException(NO_MEMO));
+            List<Long> userList = memoRequest.getTaggedUserList();
+            for (Long userSeq : userList) {
+                User tagUser = userRepository.findByUserSeqAndIsDeletedFalse(userSeq)
+                        .orElseThrow(()-> new NoUserException(NO_USER));
+                TaggedUserRequest taggedUserRequest = new TaggedUserRequest();
+                taggedUserRepository.save(taggedUserRequest.saveUserToEntity(memo,tagUser));
+            }
+
+            List<Long> teamList = memoRequest.getTaggedTeamList();
+            for (Long teamSeq : teamList) {
+                Team tagTeam = teamRepository.findByTeamSeqAndIsDeletedFalse(teamSeq).orElseThrow(() -> new NoTeamException(NO_TEAM_EXCEPTION));
+            TaggedTeamRequest taggedTeamRequest = new TaggedTeamRequest();
+            taggedTeamRepository.save(taggedTeamRequest.saveTeamToEntity(memo,tagTeam));
         }
     }
 

@@ -33,7 +33,7 @@ public class MemoController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> registMemo(@RequestBody MemoRequest memoRequest){
+    public ResponseEntity<Object> registMemo(@RequestBody MemoRequest memoRequest) throws MemoException {
         memoService.createMemo(memoRequest, memoRequest.getItemName());
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }

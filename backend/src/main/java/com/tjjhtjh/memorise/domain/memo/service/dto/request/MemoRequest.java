@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -20,6 +21,8 @@ public class MemoRequest {
     private Long userId;
     private String newFile;
     private String itemName;
+    private List<Long> taggedUserList;
+    private List<Long> taggedTeamList;
 
     public Memo registToEntity(User addUser, Item item1) {
         return Memo.builder()
