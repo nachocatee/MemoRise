@@ -208,12 +208,6 @@ const MainScreen = () => {
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
   const [memoListVisible, setMemoListVisible] = useState(false);
 
-  // 객체에 따른 메모 조회
-  const checkMemoListHandler = () => {
-    stopRTCConnection();
-    setMemoListVisible(true);
-  };
-
   // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
   const checkMemoHandler = () => {
@@ -225,7 +219,6 @@ const MainScreen = () => {
   // 여기다가 물체 조회 추가해야함
   const closeMemoList = () => {
     setMemoListVisible(false);
-    startRTCConnection("track1");
   };
 
   // 메모 상세 모달 상태관리
@@ -322,13 +315,14 @@ const MainScreen = () => {
   };
 
   // 메모 생성 axios
-  const MemoCreate = () => {
+  const MemoCreate = async () => {
     if (!enteredMemo) {
       Alert.alert("내용을 입력해 주세요!"); // 나중에 수정예정
     } else if (!coordinates) {
       Alert.alert("객체가 제대로 등록되지 않았습니다.");
     } else {
-      axios({
+      console.log(enteredMemo, openState, userId, uploadedPic, pickItem);
+      await axios({
         method: "POST",
         url: BACKEND_URL + `/memos`, // 물체 ID 임시로 1로 설정
         // headers: {
@@ -340,7 +334,7 @@ const MainScreen = () => {
           accessType: openState,
           userId: userId,
           newFile: uploadedPic,
-          itemName: coordinates.id,
+          itemName: pickItem,
         },
       })
         .then((res) => {
@@ -374,13 +368,11 @@ const MainScreen = () => {
 
   const openMemoCancelModal = () => {
     setMemoCancelModalVisible(true);
-    startRTCConnection("track1");
   };
 
   // 취소 버튼 눌렀을 때
   const closeMemoCancelModal = () => {
     setMemoCancelModalVisible(false);
-    startRTCConnection("track1");
   };
 
   // 확인 버튼 눌렀을 때
@@ -442,11 +434,12 @@ const MainScreen = () => {
   };
 
   // 인식 된 객체 위치 저장
-  const [coordinates, setCoordinates] = useState<{
-    id: string;
-    x: number;
-    y: number;
-  } | null>(null);
+  const [coordinates, setCoordinates] = useState<
+    Array<{ id: string; x: number; y: number }>
+  >([]);
+
+  // 선택 된 객체 ID 값 저장
+  const [pickItem, setPickItem] = useState("");
 
   // RTC 서버와의 연결 상태
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -551,18 +544,24 @@ const MainScreen = () => {
     dataChannelRef.current = { current: dataChannel };
     dataChannel.onmessage = (event: any) => {
       // 서버에서 받은 데이터 처리
-
       const receivedData = JSON.parse(event.data);
-      if (trackType != "track2") {
-        const label = `Id: ${receivedData.id}, X: ${receivedData.label_x}, Y: ${receivedData.label_y}`;
-        console.log(label);
-        setCoordinates({
-          id: receivedData.id,
-          x: receivedData.label_x,
-          y: receivedData.label_y,
-        });
+
+      // 'receivedData'의 형식을 확인하고 'objects' 배열이 존재하는지 확인
+      if (
+        trackType != "track2" &&
+        receivedData.objects &&
+        Array.isArray(receivedData.objects)
+      ) {
+        // 각 객체의 'id', 'label_x', 'label_y'를 사용하여 'coordinates'를 설정
+        const newCoordinates = receivedData.objects.map((obj: any) => ({
+          id: obj.id,
+          x: obj.label_x,
+          y: obj.label_y,
+        }));
+        console.log(newCoordinates);
+        setCoordinates(newCoordinates); // 여기에서 setCoordinates를 사용하여 상태를 업데이트
       } else {
-        console.log(receivedData);
+        console.log(receivedData); // 그 외의 경우 로깅
       }
     };
 
@@ -590,7 +589,7 @@ const MainScreen = () => {
     }
 
     pc.current?.close();
-    setCoordinates(null);
+    setCoordinates([]);
   };
 
   useEffect(() => {
@@ -623,46 +622,47 @@ const MainScreen = () => {
         )}
 
         {/* 인식된 객체에 표시할 오브젝트 */}
-        {coordinates && (
-          <TouchableOpacity
-            style={[
-              styles.ObjCircle,
-              {
-                left: coordinates.x,
-                top: coordinates.y,
-              },
-            ]}
-            activeOpacity={0.7} // 눌렀을 때 투명도 조절
-            onPress={() => {
-              if (coordinates.id !== "0") {
-                // 메모 개수
-                checkMemoListHandler();
-                // Alert.alert("Notification", "메모 개수 표시하기");
-              } else {
-                // 미등록 물체 알림 표시
-                setUnregisteredNotification(true);
-              }
-            }}
-          >
-            <LinearGradient
-              colors={["#339af0", "blue"]}
-              style={styles.ObjCircleLinear}
+        {coordinates.length > 0 &&
+          coordinates.map((coordinate, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.ObjCircle,
+                {
+                  left: coordinate.x,
+                  top: coordinate.y,
+                },
+              ]}
+              activeOpacity={0.7} // 눌렀을 때 투명도 조절
+              onPress={() => {
+                if (coordinate.id !== "0") {
+                  // 메모 보여줌
+                  setPickItem(coordinate.id);
+                  setMemoListVisible(true);
+                } else {
+                  // 미등록 물체 알림 표시
+                  setUnregisteredNotification(true);
+                }
+              }}
             >
-              {coordinates.id === "0" ? (
-                // 등록 되지 않은 물채 표시할 텍스트
-                <Text style={styles.ObjCircleText}>+</Text>
-              ) : (
-                // 메모 개수 표시
-                <Text style={styles.ObjCircleText}>2</Text>
-              )}
-            </LinearGradient>
-          </TouchableOpacity>
-        )}
+              <LinearGradient
+                colors={["#339af0", "blue"]}
+                style={styles.ObjCircleLinear}
+              >
+                {coordinate.id === "0" ? (
+                  // 등록 되지 않은 물채 표시할 텍스트
+                  <Text style={styles.ObjCircleText}>+</Text>
+                ) : (
+                  // 메모 개수 표시
+                  <Text style={styles.ObjCircleText}>2</Text>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+          ))}
         <AlertModal
           modalVisible={unregisteredNotification}
           closeModal={cancelObjectRegister}
-          onConfirm={objectRegister} //=> 나중에 주석 해제해야함. 진짜 학습 실행
-          // onConfirm={tempRegister} // 학습 실행할 시 생길 이펙트들 실행
+          onConfirm={objectRegister}
           contentText={`미등록된 물체입니다.\n등록해주세요!`}
           btnText="확인"
         />
@@ -690,13 +690,13 @@ const MainScreen = () => {
       </View>
 
       {/* 메모 조회 */}
-      {memoListVisible && (
+      {coordinates && memoListVisible && (
         <>
           <Pressable style={styles.memoClose} onPress={closeMemoList} />
           <MemoList
             onMemoWritePress={checkMemoHandler}
             onMemoDetailPress={setMemoDetailModal}
-            id={coordinates?.id}
+            id={pickItem}
           />
         </>
       )}
