@@ -21,7 +21,9 @@ import SavedMemoScreen from "./screens/MenuContents/Memo/SavedMemoScreen";
 import AllMemoScreen from "./screens/MenuContents/Memo/AllMemoScreen";
 import MyMemoScreen from "./screens/MenuContents/Memo/MyMemoScreen";
 import MyGroupScreen from "./screens/MenuContents/Group/MyGroupScreen";
-import FindGroupScreen from "./screens/MenuContents/Group/FindGroupScreen";
+import FindGroupScreen, {
+  GroupData,
+} from "./screens/MenuContents/Group/FindGroupScreen";
 import ModifyInfoScreen from "./screens/User/ModifyInfoScreen";
 import { store } from "./store/store";
 import MakeGroupScreen from "./screens/MenuContents/Group/MakeGroupScreen";
@@ -32,6 +34,7 @@ import GroupDetailScreen from "./screens/MenuContents/Group/GroupDetailScreen";
 import GroupSettingScreen from "./screens/MenuContents/Group/GroupSettingScreen";
 import InviteUserScreen from "./screens/MenuContents/Group/InviteUserScreen";
 import CamTestScreen from "./screens/Main/CamTestScreen";
+import GroupSearchResultScreen from "./screens/MenuContents/Group/GroupSearchResultScreen";
 
 export type RootStackParamList = {
   Landing: undefined;
@@ -63,6 +66,7 @@ export type RootStackParamList = {
     teamName: string;
   };
   CamTestScreen: undefined;
+  GroupSearchResult: { searchResults?: GroupData };
 };
 
 LogBox.ignoreLogs([
@@ -100,6 +104,10 @@ function App(): JSX.Element {
             <Stack.Screen name="GroupDetail" component={GroupDetailScreen} />
             <Stack.Screen name="GroupSetting" component={GroupSettingScreen} />
             <Stack.Screen name="InviteUser" component={InviteUserScreen} />
+            <Stack.Screen
+              name="GroupSearchResult"
+              component={GroupSearchResultScreen}
+            />
             {/* 404에러 */}
             <Stack.Screen name="NotFound" component={NotFoundScreen} />
           </Stack.Navigator>

@@ -29,14 +29,15 @@ import PasswordInputModal from "../../../components/Modal/Group/PasswordInputMod
 type RootStackParamList = {
   MakeGroup: undefined;
   GroupDetail: GroupDetailParams;
+  GroupSearchResult: { searchResults: GroupData };
 };
 
-type GroupDetailParams = {
+export type GroupDetailParams = {
   teamSeq: number;
   userSeq: number;
 };
 
-type GroupData = [
+export type GroupData = [
   {
     teamSeq: number;
     teamName: string;
@@ -73,7 +74,10 @@ const FindGroupScreen = () => {
             keyword: searchKeyword,
           },
         });
-        console.log(res);
+        console.log(res.data);
+        setSearchResultList(res.data);
+        setSearchKeyword("");
+        navigation.navigate("GroupSearchResult", { searchResults: res.data });
       } catch (err) {
         console.log(err);
       }
