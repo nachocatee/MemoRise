@@ -61,5 +61,5 @@ public class TeamController {
     public ResponseEntity<ExitTeamResponse> exitTeam(@PathVariable Long teamSeq, @PathVariable Long userSeq) {
         teamService.exitTeam(teamSeq, userSeq);
         return ResponseEntity.ok(new ExitTeamResponse(true));
-    }
+    } 
 }
