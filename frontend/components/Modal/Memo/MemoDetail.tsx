@@ -285,33 +285,37 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
                         style={detailStyle.tagged}
                       >
                         {memoDetailData[0].taggedTeamList.length > 0 &&
-                          memoDetailData[0].taggedTeamList.map(
-                            (team, index) => (
+                          memoDetailData[0].taggedTeamList
+                            .slice(1)
+                            .map((team, index) => (
                               <Text
                                 key={`team-${index}`}
                                 style={{
                                   color: "#FFFFFF",
                                   marginLeft: calculateDynamicWidth(8),
+                                  fontFamily: "Pretendard-Medium",
+                                  fontSize: calculateDynamicWidth(14),
                                 }}
                               >
                                 {team.nickname}
                               </Text>
-                            )
-                          )}
+                            ))}
                         {memoDetailData[0].taggedUserList.length > 0 &&
-                          memoDetailData[0].taggedUserList.map(
-                            (user, index) => (
+                          memoDetailData[0].taggedUserList
+                            .slice(1)
+                            .map((user, index) => (
                               <Text
                                 key={`user-${index}`}
                                 style={{
                                   color: "#FFFFFF",
                                   marginLeft: calculateDynamicWidth(8),
+                                  fontFamily: "Pretendard-Medium",
+                                  fontSize: calculateDynamicWidth(14),
                                 }}
                               >
                                 {user.nickname}
                               </Text>
-                            )
-                          )}
+                            ))}
                       </Pressable>
                     )}
                   </View>

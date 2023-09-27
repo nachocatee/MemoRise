@@ -27,11 +27,13 @@ import { RootState } from "../../../store/store";
 type MemoListProp = {
   onMemoWritePress: () => void;
   onMemoDetailPress: (memoSeq: number) => void;
+  id: string | undefined;
 };
 
 const MemoList: React.FC<MemoListProp> = ({
   onMemoWritePress,
   onMemoDetailPress,
+  id,
 }) => {
   // 유저ID
   const userId = useSelector((state: RootState) => state.userInfo.id);
@@ -58,8 +60,8 @@ const MemoList: React.FC<MemoListProp> = ({
   // 사용자가 작성한 or 태그된 메모 AXIOS
   useEffect(() => {
     axios
-      // .get(BACKEND_URL + `/memos/${id}/list/${userId}`)
-      .get(BACKEND_URL + `/memos/8ef97a8a0be/list/23`)
+      .get(BACKEND_URL + `/memos/${id}/list/${userId}`)
+      // .get(BACKEND_URL + `/memos/8ef97a8a0be/list/23`)
       .then((response) => {
         setMemoData(response.data);
       })

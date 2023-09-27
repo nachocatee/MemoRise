@@ -664,7 +664,7 @@ const MainScreen = () => {
           <MemoList
             onMemoWritePress={checkMemoHandler}
             onMemoDetailPress={setMemoDetailModal}
-            // id={coordinates?.id}
+            id={coordinates?.id}
           />
         </>
       )}

@@ -78,8 +78,7 @@ const LoginScreen = () => {
     await login()
       .then((response) => {
         // 사용자 토큰
-        // 여기에다가 코드 작성
-        // 사용자 프로필 정보 조회
+        console.log(response);
         getProfileHandler();
       })
       .catch((error) => {
