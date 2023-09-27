@@ -49,8 +49,6 @@ const GroupSearchResultScreen: React.FC<Props> = ({ route, navigation }) => {
 
   // 비밀번호 입력
   const [groupPassword, setGroupPassword] = useState("");
-  const [enteredPassword, setEnteredPassword] = useState("");
-  const [invalid, setInvalid] = useState(false);
 
   const passwordModalHandler = () => {
     setPasswordModalVisible(true);
@@ -291,7 +289,7 @@ const GroupSearchResultScreen: React.FC<Props> = ({ route, navigation }) => {
                 onChangeText={passwordInputHandler}
                 value={groupPassword}
                 onConfirm={passwordConfirmHandler}
-                invalid={invalid}
+                invalid={false}
               />
             </View>
           </Modal>

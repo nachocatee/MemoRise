@@ -2,15 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  Image,
-  Modal,
-  Alert,
-} from "react-native";
+import { View, Text, FlatList, Image, Modal, Alert } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { useSelector } from "react-redux";
 
@@ -110,8 +102,6 @@ const FindGroupScreen = () => {
 
   // 비밀번호 입력
   const [groupPassword, setGroupPassword] = useState("");
-  const [enteredPassword, setEnteredPassword] = useState("");
-  const [invalid, setInvalid] = useState(false);
 
   const passwordModalHandler = () => {
     setPasswordModalVisible(true);
@@ -300,7 +290,7 @@ const FindGroupScreen = () => {
                 onChangeText={passwordInputHandler}
                 value={groupPassword}
                 onConfirm={passwordConfirmHandler}
-                invalid={invalid}
+                invalid={false}
               />
             </View>
           </Modal>
