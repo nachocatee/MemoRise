@@ -59,7 +59,11 @@ public class MemoService {
         // 파일 있을 때 없을 때 저장 로직
         if(memoRequest.getNewFile() == null) {
             memoRepository.save(memoRequest.registToEntity(user, item));
-        } else {
+        }
+        else if(memoRequest.getNewFile().isBlank()){
+            memoRepository.save(memoRequest.registToEntity(user,item));
+        }
+        else {
             memoRepository.save(memoRequest.registToEntity(user, item, memoRequest.getNewFile()));
         }
     }
