@@ -8,7 +8,7 @@ import { calculateDynamicWidth } from "../constants/dynamicSize";
 type GroupBoxProps = {
   teamName: string;
   myProfile: string;
-  memberProfiles: [string];
+  memberProfiles: string[];
   ownerProfile: string | null;
   owner: boolean;
   teamSeq: number;

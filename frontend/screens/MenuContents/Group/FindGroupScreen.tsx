@@ -52,6 +52,36 @@ const FindGroupScreen = () => {
   const userId = useSelector((state: RootState) => state.userInfo.id);
   const [groupData, setGroupData] = useState<GroupData | null>(null);
 
+  // 그룹 검색
+  const [searchResultList, setSearchResultList] = useState<GroupData | null>(
+    null
+  );
+  const [searchKeyword, setSearchKeyword] = useState("");
+
+  const searchInputHandler = (enteredText: string) => {
+    setSearchKeyword(enteredText);
+  };
+
+  const getSearchGroupList = async () => {
+    if (searchKeyword) {
+      try {
+        const res = await axios({
+          method: "GET",
+          // url: BACKEND_URL + `/teams/${userId}`,
+          url: BACKEND_URL + `/teams/30`, // 더미 데이터
+          params: {
+            keyword: searchKeyword,
+          },
+        });
+        console.log(res);
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      Alert.alert("검색어를 입력해 주세요!");
+    }
+  };
+
   // 그룹 참가 확인 모달
   const [isAlertModalVisible, setAlertModalVisible] = useState(false);
   const [targetTeamSeq, setTargetTeamSeq] = useState(0);
@@ -111,7 +141,8 @@ const FindGroupScreen = () => {
       method: "POST",
       url: BACKEND_URL + `/teams/${teamSeq}`,
       data: {
-        userSeq: userId,
+        // userSeq: userId,
+        userSeq: 30, // 더미 데이터
         password: password,
       },
     })
@@ -123,7 +154,8 @@ const FindGroupScreen = () => {
           // 디테일로
           navigation.navigate("GroupDetail", {
             teamSeq: teamSeq,
-            userSeq: userId,
+            // userSeq: userId,
+            userSeq: 30, // 더미 데이터
           });
         }
       })
@@ -143,7 +175,8 @@ const FindGroupScreen = () => {
     if (participated) {
       navigation.navigate("GroupDetail", {
         teamSeq: teamSeq,
-        userSeq: userId,
+        // userSeq: userId,
+        userSeq: 30, // 더미 데이터
       });
     } else {
       setTargetTeamName(teamName);
@@ -157,7 +190,8 @@ const FindGroupScreen = () => {
       try {
         const res = await axios({
           method: "GET",
-          url: BACKEND_URL + `/teams/${userId}`,
+          // url: BACKEND_URL + `/teams/${userId}`,
+          url: BACKEND_URL + `/teams/30`, // 더미 데이터
         });
         setGroupData(res.data);
       } catch (err) {
@@ -166,8 +200,6 @@ const FindGroupScreen = () => {
     };
     fetchData();
   }, []);
-
-  console.log(groupData);
 
   return (
     <LinearGradient
@@ -183,7 +215,11 @@ const FindGroupScreen = () => {
           <SmallBtn onPress={MakeGroupHandler}>만들기</SmallBtn>
         </View>
         <View style={{ marginTop: calculateDynamicWidth(25) }}>
-          {/* <SeachInput /> */}
+          <SeachInput
+            onChangeText={searchInputHandler}
+            value={searchKeyword}
+            onSubmitEditing={getSearchGroupList}
+          />
         </View>
         {groupData && (
           <FlatList

@@ -20,22 +20,21 @@ import { RootState } from "../../../store/store";
 import { BACKEND_URL } from "../../../util/http";
 import { styles } from "./GroupStyle";
 import AlertModal from "../../../components/Modal/AlertModal";
+import { BlurView } from "@react-native-community/blur";
 
 type RootStackParamList = {
   FindGroup: undefined;
   GroupDetail: GroupDetailParams;
 };
 
-type GroupData = [
-  {
-    teamSeq: number;
-    teamName: string;
-    myProfile: string;
-    ownerProfile: string;
-    memberProfiles: [string];
-    owner: boolean;
-  }
-];
+type GroupData = {
+  teamSeq: number;
+  teamName: string;
+  myProfile: string;
+  ownerProfile: string;
+  memberProfiles: string[];
+  owner: boolean;
+}[];
 
 type GroupDetailParams = {
   teamSeq: number;
@@ -56,7 +55,12 @@ const MyGroupScreen = () => {
       url: BACKEND_URL + `/teams/${exitTeamSeq}/${userId}`,
     })
       .then((res) => {
-        console.log(res);
+        setGroupData((prevData) => {
+          if (prevData) {
+            return prevData.filter((group) => group.teamSeq !== exitTeamSeq);
+          }
+          return null;
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -117,7 +121,7 @@ const MyGroupScreen = () => {
       }
     };
     fetchData();
-  }, [isHostExitModal, isMemberExitModal]);
+  }, []);
 
   //  그룹 편집 버튼
   const [isEditGroup, setEditGroup] = useState(false);
@@ -243,23 +247,47 @@ const MyGroupScreen = () => {
       </View>
       {/* (그룹장) 그룹 나가기 확인 모달 */}
       {isHostExitModal && (
-        <AlertModal
-          modalVisible={isHostExitModal}
-          closeModal={closeExitModal}
-          onConfirm={exitConfirm}
-          contentText={`그룹장이 나가면\n그룹이 해체됩니다.\n정말 나가시겠습니까?`}
-          btnText="나가기"
-        />
+        <BlurView
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          blurType="light"
+          blurAmount={4}
+        >
+          <AlertModal
+            modalVisible={isHostExitModal}
+            closeModal={closeExitModal}
+            onConfirm={exitConfirm}
+            contentText={`그룹장이 나가면\n그룹이 해체됩니다.\n정말 나가시겠습니까?`}
+            btnText="나가기"
+          />
+        </BlurView>
       )}
       {/* (참가자) 그룹 나가기 확인 모달 */}
       {isMemberExitModal && (
-        <AlertModal
-          modalVisible={isMemberExitModal}
-          closeModal={closeExitModal}
-          onConfirm={exitConfirm}
-          contentText="정말 나가시겠습니까?"
-          btnText="나가기"
-        />
+        <BlurView
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          blurType="light"
+          blurAmount={4}
+        >
+          <AlertModal
+            modalVisible={isMemberExitModal}
+            closeModal={closeExitModal}
+            onConfirm={exitConfirm}
+            contentText="정말 나가시겠습니까?"
+            btnText="나가기"
+          />
+        </BlurView>
       )}
     </LinearGradient>
   );

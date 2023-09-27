@@ -10,6 +10,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { SafeAreaView, StatusBar } from "react-native";
 import { Provider } from "react-redux";
+import { LogBox } from "react-native";
 
 import LandingScreen from "./screens/Landing/LandingScreen";
 import LoginScreen from "./screens/User/LoginScreen";
@@ -63,6 +64,10 @@ export type RootStackParamList = {
   };
   CamTestScreen: undefined;
 };
+
+LogBox.ignoreLogs([
+  "`flexWrap: `wrap`` is not supported with the `VirtualizedList` components.Consider using `numColumns` with `FlatList` instead.",
+]);
 
 const Stack = createStackNavigator<RootStackParamList>();
 
