@@ -78,7 +78,7 @@ const LoginScreen = () => {
     await login()
       .then((response) => {
         // 사용자 토큰
-        console.log(response);
+        AsyncStorage.setItem("LoginToken", response.accessToken);
         getProfileHandler();
       })
       .catch((error) => {

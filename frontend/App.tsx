@@ -11,6 +11,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { SafeAreaView, StatusBar } from "react-native";
 import { Provider } from "react-redux";
 import { LogBox } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import LandingScreen from "./screens/Landing/LandingScreen";
 import LoginScreen from "./screens/User/LoginScreen";
@@ -76,40 +77,56 @@ LogBox.ignoreLogs([
 const Stack = createStackNavigator<RootStackParamList>();
 
 function App(): JSX.Element {
+  const TOKEN = AsyncStorage.getItem("LoginToken");
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar />
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Landing" component={LandingScreen} />
-            <Stack.Screen name="Main" component={MainScreen} />
-            <Stack.Screen name="CamTestScreen" component={CamTestScreen} />
-            <Stack.Screen name="ObjectDetection" component={ObjectDetection} />
-            <Stack.Screen
-              name="ObjectRegistration"
-              component={ObjectRegistration}
-            />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            {/* 메뉴 */}
-            <Stack.Screen name="Menu" component={MenuScreen} />
-            <Stack.Screen name="SavedMemo" component={SavedMemoScreen} />
-            <Stack.Screen name="AllMemo" component={AllMemoScreen} />
-            <Stack.Screen name="MyMemo" component={MyMemoScreen} />
-            <Stack.Screen name="MyGroup" component={MyGroupScreen} />
-            <Stack.Screen name="FindGroup" component={FindGroupScreen} />
-            <Stack.Screen name="ModifyInfo" component={ModifyInfoScreen} />
-            <Stack.Screen name="MakeGroup" component={MakeGroupScreen} />
-            <Stack.Screen name="GroupDetail" component={GroupDetailScreen} />
-            <Stack.Screen name="GroupSetting" component={GroupSettingScreen} />
-            <Stack.Screen name="InviteUser" component={InviteUserScreen} />
-            <Stack.Screen
-              name="GroupSearchResult"
-              component={GroupSearchResultScreen}
-            />
-            {/* 404에러 */}
-            <Stack.Screen name="NotFound" component={NotFoundScreen} />
+            {TOKEN === null ? (
+              <Stack.Screen name="Landing" component={LandingScreen} />
+            ) : (
+              <>
+                <Stack.Screen name="Main" component={MainScreen} />
+                <Stack.Screen name="CamTestScreen" component={CamTestScreen} />
+                <Stack.Screen
+                  name="ObjectDetection"
+                  component={ObjectDetection}
+                />
+                <Stack.Screen
+                  name="ObjectRegistration"
+                  component={ObjectRegistration}
+                />
+                <Stack.Screen name="SignUp" component={SignUpScreen} />
+                <Stack.Screen name="Login" component={LoginScreen} />
+                {/* 메뉴 */}
+                <Stack.Screen name="Menu" component={MenuScreen} />
+                <Stack.Screen name="SavedMemo" component={SavedMemoScreen} />
+                <Stack.Screen name="AllMemo" component={AllMemoScreen} />
+                <Stack.Screen name="MyMemo" component={MyMemoScreen} />
+                <Stack.Screen name="MyGroup" component={MyGroupScreen} />
+                <Stack.Screen name="FindGroup" component={FindGroupScreen} />
+                <Stack.Screen name="ModifyInfo" component={ModifyInfoScreen} />
+                <Stack.Screen name="MakeGroup" component={MakeGroupScreen} />
+                <Stack.Screen
+                  name="GroupDetail"
+                  component={GroupDetailScreen}
+                />
+                <Stack.Screen
+                  name="GroupSetting"
+                  component={GroupSettingScreen}
+                />
+                <Stack.Screen name="InviteUser" component={InviteUserScreen} />
+                <Stack.Screen
+                  name="GroupSearchResult"
+                  component={GroupSearchResultScreen}
+                />
+                {/* 404에러 */}
+                <Stack.Screen name="NotFound" component={NotFoundScreen} />
+              </>
+            )}
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
