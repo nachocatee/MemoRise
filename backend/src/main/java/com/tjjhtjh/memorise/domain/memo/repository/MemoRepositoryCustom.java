@@ -14,5 +14,5 @@ public interface MemoRepositoryCustom {
     List<MyMemoResponse> findByMyMemoIsDeletedFalse(Long userSeq);
     List<MyMemoResponse> findByAllMyMemoIsDeletedFalse(Long userSeq);
     Long countMemoOfItem(Long itemSeq, Long userSeq);
-    Optional<Memo> findByLastSaveData();
+    Optional<Memo> findByLastSaveData(Long userSeq);
 }

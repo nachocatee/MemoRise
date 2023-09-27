@@ -74,7 +74,7 @@ public class MemoService {
                 memoRepository.save(memoRequest.registToEntity(user, item, memoRequest.getNewFile()));
             }
 
-            Memo memo = memoRepository.findByLastSaveData().orElseThrow(()->new MemoException(NO_MEMO));
+            Memo memo = memoRepository.findByLastSaveData(user.getUserSeq()).orElseThrow(()->new MemoException(NO_MEMO));
             List<Long> userList = memoRequest.getTaggedUserList();
             for (Long userSeq : userList) {
                 User tagUser = userRepository.findByUserSeqAndIsDeletedFalse(userSeq)

@@ -133,8 +133,9 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
     }
 
     @Override
-    public Optional<Memo> findByLastSaveData() {
-        return queryFactory.selectFrom(memo).orderBy(memo.memoSeq.desc()).limit(1).stream().findAny();
+    public Optional<Memo> findByLastSaveData(Long userSeq) {
+        return queryFactory.selectFrom(memo).where(memo.user.userSeq.eq(userSeq))
+                .orderBy(memo.memoSeq.desc()).limit(1).stream().findAny();
     }
 
 }
