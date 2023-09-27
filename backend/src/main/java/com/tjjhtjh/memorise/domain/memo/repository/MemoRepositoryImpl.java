@@ -17,9 +17,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.querydsl.jpa.JPAExpressions.select;
 import static com.tjjhtjh.memorise.domain.memo.repository.entity.QBookmark.bookmark;
 import static com.tjjhtjh.memorise.domain.memo.repository.entity.QMemo.memo;
+import static com.tjjhtjh.memorise.domain.tag.repository.entity.QTaggedTeam.taggedTeam;
 import static com.tjjhtjh.memorise.domain.tag.repository.entity.QTaggedUser.taggedUser;
+import static com.tjjhtjh.memorise.domain.team.repository.entity.QTeamUser.teamUser;
 
 @Repository
 public class MemoRepositoryImpl extends QuerydslRepositorySupport implements MemoRepositoryCustom {
@@ -89,20 +92,25 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
     @Override
     public List<MyMemoResponse> findByAllMyMemoIsDeletedFalse(Long userSeq) {
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(memo.user.userSeq.eq(userSeq)).or(memo.accessType.eq(AccessType.RESTRICT).and(taggedUser.user.userSeq.eq(userSeq)));
+        builder.and(memo.user.userSeq.eq(userSeq))  // 내가 작성했거나
+                .or(memo.accessType.eq(AccessType.OPEN))  // 공개된 메모거나
+                .or(memo.accessType.eq(AccessType.RESTRICT)  // 일부 공개에 내가 태그됐거나
+                        .and(taggedUser.user.userSeq.eq(userSeq).and(taggedUser.memo.memoSeq.eq(memo.memoSeq))))
+                .or(memo.accessType.eq(AccessType.RESTRICT) // 일부 공개에 내 그룹이 태그됐거나
+                        .and(teamUser.team.teamSeq.in(JPAExpressions.select(taggedTeam.team.teamSeq).from(taggedTeam)
+                                        .where(taggedTeam.memo.memoSeq.eq(memo.memoSeq))).and(teamUser.user.userSeq.eq(userSeq))));
 
-        return queryFactory.select(Projections.fields
-                        (MyMemoResponse.class, memo.memoSeq, memo.user.nickname, memo.updatedAt, memo.content, memo.accessType, memo.file, memo.item.itemImage
-                        ,ExpressionUtils.as(new CaseBuilder().when(JPAExpressions.selectOne().from(bookmark)
-                                        .where(bookmark.memo.memoSeq.eq(memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq)))
-                                        .exists()).then(true).otherwise(false), "isBookmarked")))
+        return queryFactory.selectDistinct(Projections.fields(MyMemoResponse.class,
+                        memo.memoSeq, memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.accessType, memo.file,
+                        memo.item.itemImage.as("itemImage"), ExpressionUtils.as(JPAExpressions.selectOne()
+                                        .from(bookmark).where(bookmark.memo.memoSeq.eq(memo.memoSeq)
+                                        .and(bookmark.user.userSeq.eq(userSeq))).exists(), "isBookmarked")))
                 .from(memo)
-                .leftJoin(memo.user)
                 .leftJoin(taggedUser).on(memo.memoSeq.eq(taggedUser.memo.memoSeq))
-                .leftJoin(memo.item)
-                .leftJoin(bookmark).on(memo.memoSeq.eq(bookmark.memo.memoSeq).and(bookmark.user.userSeq.eq(userSeq)))
+                .leftJoin(teamUser).on(teamUser.team.teamSeq
+                        .in(JPAExpressions.select(taggedTeam.team.teamSeq).from(taggedTeam)
+                                .where(taggedTeam.memo.memoSeq.eq(memo.memoSeq))).and(teamUser.user.userSeq.eq(userSeq)))
                 .where(memo.isDeleted.eq(0).and(builder))
-                .groupBy(memo.memoSeq)
                 .orderBy(memo.updatedAt.desc())
                 .fetch();
     }
