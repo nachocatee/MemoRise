@@ -38,6 +38,7 @@ import MemoList from "../../components/Modal/Memo/MemoList";
 import { RootState } from "../../store/store";
 import MemoDetail from "../../components/Modal/Memo/MemoDetail";
 import { MemoDetailProps } from "../../components/Modal/Memo/MemoDetail";
+import { GroupData } from "../MenuContents/Group/MyGroupScreen";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -62,6 +63,11 @@ type DataChannel = {
 // 태그된 회원 타입
 type Member = {
   [name: string]: string;
+};
+
+// 태그된 그룹 타입
+type Group = {
+  teamTaggedList: string[];
 };
 
 // 첨부 이미지 크기
@@ -172,6 +178,9 @@ const MainScreen = () => {
   // 더미 데이터
   const [taggedMember, setTaggedMember] = useState<Member[]>([]);
 
+  // 태그된 그룹 리스트
+  const [taggedGroup, setTaggedGroup] = useState<Group[]>([]);
+
   // 검색 결과에서 태그할 유저 터치 시 실행
   const addTaggedMember = () => {
     setTaggedMember((prevData) => [
@@ -276,10 +285,12 @@ const MainScreen = () => {
   // 메모 작성 내용
   const [enteredMemo, setEnteredMemo] = useState("");
 
-  // 공개 범위 설정
+  // 공개 범위 설정 & 태그 시 내 그룹 목록 불러오기
   // OPEN: 전체공개, RESTRICT: 일부공개, CLOSED: 비공개
   const [openState, setOpenState] = useState("OPEN");
   const [isToggleOpen, setToggleOpen] = useState(false);
+  const [groupList, setGroupList] = useState<GroupData | null>(null);
+  const [isMyGroupVisible, setMyGroupVisible] = useState(false);
 
   const selectOpenState = () => {
     setToggleOpen(!isToggleOpen);
@@ -288,6 +299,26 @@ const MainScreen = () => {
   const chooseOpenState = (state: string) => {
     setOpenState(state);
     setToggleOpen(false);
+  };
+
+  // 내 그룹 보여주기
+  const openMyGroupList = () => {
+    setMyGroupVisible(true);
+    getGroupList();
+  };
+
+  // 태그 시 내 그룹 목록 불러오기
+  const getGroupList = async () => {
+    try {
+      const res = await axios({
+        method: "GET",
+        url: BACKEND_URL + `/user/${userId}/my-teams`,
+      });
+      console.log("조회 성공");
+      setGroupList(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   // 메모 생성 axios
@@ -362,6 +393,7 @@ const MainScreen = () => {
     setIsUpdateMemoTrue(false);
     setTagSearchText("");
     setTaggedMember([]);
+    setMyGroupVisible(false);
   };
 
   // 알림 모달
@@ -793,20 +825,64 @@ const MainScreen = () => {
             />
             {/* 유저 태그(empty) */}
             {openState === "RESTRICT" && !isSearchResultVisible && (
-              <View style={styles.tagContainer}>
-                <View style={styles.tagSearchContainer}>
-                  <Text style={styles.tagText}>@</Text>
-                  <TextInput
-                    style={styles.tagText}
-                    placeholder="태그할 닉네임이나 그룹명을 입력해 주세요  "
-                    placeholderTextColor="rgba(44, 44, 44, 0.5)"
-                    value={tagSearchText}
-                    onChangeText={setTagSearchText}
-                    returnKeyType="search"
-                    onSubmitEditing={tagSearchHandler}
-                  />
-                </View>
-              </View>
+              <>
+                {isMyGroupVisible ? (
+                  <>
+                    <Pressable
+                      style={styles.closeTagSearch}
+                      onPress={closeTagSearch}
+                    />
+                    <View style={styles.tagResultContainer}>
+                      <View
+                        style={[
+                          styles.tagSearchContainer,
+                          {
+                            borderBottomWidth: 1,
+                            borderBottomColor: "rgba(44, 44, 44, 0.5)",
+                          },
+                        ]}
+                      >
+                        <Text style={styles.tagText}>@</Text>
+                        <TextInput
+                          style={styles.tagText}
+                          placeholder="태그할 그룹을 선택하거나 유저를 검색해 주세요  "
+                          placeholderTextColor="rgba(44, 44, 44, 0.5)"
+                          value={tagSearchText}
+                          onChangeText={setTagSearchText}
+                          returnKeyType="search"
+                          onSubmitEditing={tagSearchHandler}
+                        />
+                      </View>
+                      {groupList?.map((group, idx) => (
+                        <Pressable
+                          style={styles.tagResultInnerContainer}
+                          onPress={addTaggedMember}
+                          key={idx}
+                        >
+                          <Text style={styles.tagText}>
+                            {group.teamName}{" "}
+                            <Text style={styles.email}> #{group.teamSeq}</Text>
+                          </Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                  </>
+                ) : (
+                  <View style={styles.tagContainer}>
+                    <Pressable
+                      onPress={openMyGroupList}
+                      style={styles.tagSearchContainer}
+                    >
+                      <Text style={styles.tagText}>
+                        @{" "}
+                        <Text style={{ color: "rgba(44, 44, 44, 0.5)" }}>
+                          태그할 그룹을 선택하거나 유저를 검색해 주세요
+                        </Text>
+                      </Text>
+                    </Pressable>
+                  </View>
+                )}
+              </>
             )}
             {/* 유저 태그(결과값 O) */}
             {/* 더미 데이터 */}
@@ -908,7 +984,7 @@ const MainScreen = () => {
                     <Text style={styles.tagText}>@</Text>
                     <TextInput
                       style={styles.tagText}
-                      placeholder="태그할 닉네임이나 그룹명을 입력해 주세요  "
+                      placeholder="태그할 그룹을 선택하거나 유저를 검색해 주세요  "
                       placeholderTextColor="rgba(44, 44, 44, 0.5)"
                       value={tagSearchText}
                       onChangeText={setTagSearchText}

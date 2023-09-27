@@ -27,7 +27,7 @@ type RootStackParamList = {
   GroupDetail: GroupDetailParams;
 };
 
-type GroupData = {
+export type GroupData = {
   teamSeq: number;
   teamName: string;
   myProfile: string;

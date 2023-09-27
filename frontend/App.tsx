@@ -86,9 +86,10 @@ function App(): JSX.Element {
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {TOKEN === null ? (
-              <Stack.Screen name="Landing" component={LandingScreen} />
+              <></>
             ) : (
               <>
+                <Stack.Screen name="Landing" component={LandingScreen} />
                 <Stack.Screen name="Main" component={MainScreen} />
                 <Stack.Screen name="CamTestScreen" component={CamTestScreen} />
                 <Stack.Screen
