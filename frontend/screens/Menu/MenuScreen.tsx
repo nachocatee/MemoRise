@@ -12,16 +12,20 @@ import { styles } from "./MenuStyle";
 import { RootState } from "../../store/store";
 
 type RootStackParamList = {
-  SavedMemo: undefined;
-  AllMemo: undefined;
-  MyMemo: undefined;
+  Menu: undefined;
   MyGroup: undefined;
   FindGroup: undefined;
   ModifyInfo: undefined;
+  MenuMemo: MemuMemoParams;
+};
+
+type MemuMemoParams = {
+  menuStatus: string;
 };
 
 const MenuScreen = () => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackParamList, "Menu">>();
   const userInfo = useSelector((state: RootState) => state.userInfo);
 
   return (
@@ -68,7 +72,11 @@ const MenuScreen = () => {
                 styles.menuItem,
                 { marginBottom: calculateDynamicWidth(7) },
               ]}
-              onPress={() => navigation.navigate("SavedMemo")}
+              onPress={() =>
+                navigation.navigate("MenuMemo", {
+                  menuStatus: "saved",
+                })
+              }
             >
               {({ pressed }) => (
                 <>
@@ -85,7 +93,11 @@ const MenuScreen = () => {
             </Pressable>
             <Pressable
               style={styles.menuItem}
-              onPress={() => navigation.navigate("AllMemo")}
+              onPress={() =>
+                navigation.navigate("MenuMemo", {
+                  menuStatus: "all",
+                })
+              }
             >
               {({ pressed }) => (
                 <>
@@ -105,7 +117,11 @@ const MenuScreen = () => {
             </Pressable>
             <Pressable
               style={styles.menuItem}
-              onPress={() => navigation.navigate("MyMemo")}
+              onPress={() =>
+                navigation.navigate("MenuMemo", {
+                  menuStatus: "my",
+                })
+              }
             >
               {({ pressed }) => (
                 <>

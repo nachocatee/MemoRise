@@ -17,9 +17,6 @@ import LoginScreen from "./screens/User/LoginScreen";
 import SignUpScreen from "./screens/User/SignUpScreen";
 import MainScreen from "./screens/Main/MainScreen";
 import MenuScreen from "./screens/Menu/MenuScreen";
-import SavedMemoScreen from "./screens/MenuContents/Memo/SavedMemoScreen";
-import AllMemoScreen from "./screens/MenuContents/Memo/AllMemoScreen";
-import MyMemoScreen from "./screens/MenuContents/Memo/MyMemoScreen";
 import MyGroupScreen from "./screens/MenuContents/Group/MyGroupScreen";
 import FindGroupScreen, {
   GroupData,
@@ -32,6 +29,7 @@ import GroupDetailScreen from "./screens/MenuContents/Group/GroupDetailScreen";
 import GroupSettingScreen from "./screens/MenuContents/Group/GroupSettingScreen";
 import InviteUserScreen from "./screens/MenuContents/Group/InviteUserScreen";
 import GroupSearchResultScreen from "./screens/MenuContents/Group/GroupSearchResultScreen";
+import MemuMemo from "./screens/MenuContents/Memo/MenuMemo";
 
 export type RootStackParamList = {
   Landing: undefined;
@@ -39,14 +37,14 @@ export type RootStackParamList = {
   SignUp: undefined;
   Main: undefined;
   Menu: undefined;
-  SavedMemo: undefined;
-  AllMemo: undefined;
-  MyMemo: undefined;
   MyGroup: undefined;
   FindGroup: undefined;
   ModifyInfo: undefined;
   MakeGroup: undefined;
   NotFound: undefined;
+  MenuMemo: {
+    menuStatus: string;
+  };
   GroupDetail: {
     teamSeq: number;
     userSeq: number;
@@ -76,15 +74,12 @@ function App(): JSX.Element {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Landing" component={LandingScreen} />
             <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen name="Landing" component={LandingScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             {/* 메뉴 */}
             <Stack.Screen name="Menu" component={MenuScreen} />
-            <Stack.Screen name="SavedMemo" component={SavedMemoScreen} />
-            <Stack.Screen name="AllMemo" component={AllMemoScreen} />
-            <Stack.Screen name="MyMemo" component={MyMemoScreen} />
             <Stack.Screen name="MyGroup" component={MyGroupScreen} />
             <Stack.Screen name="FindGroup" component={FindGroupScreen} />
             <Stack.Screen name="ModifyInfo" component={ModifyInfoScreen} />
@@ -92,6 +87,7 @@ function App(): JSX.Element {
             <Stack.Screen name="GroupDetail" component={GroupDetailScreen} />
             <Stack.Screen name="GroupSetting" component={GroupSettingScreen} />
             <Stack.Screen name="InviteUser" component={InviteUserScreen} />
+            <Stack.Screen name="MenuMemo" component={MemuMemo} />
             <Stack.Screen
               name="GroupSearchResult"
               component={GroupSearchResultScreen}
