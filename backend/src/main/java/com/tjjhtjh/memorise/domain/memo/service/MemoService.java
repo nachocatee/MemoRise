@@ -131,9 +131,12 @@ public class MemoService {
         Item item = itemRepository.findByItemName(memoRequest.getItemName()).orElseThrow(() -> new NoItemException(NO_FIND_ITEM));
 
         memoRepository.save(memoRequest.deleteToEntity(memo, user, item));
-        List<Bookmark> bookmarkList = bookMarkRepository.bookmarkExistCheck(memoId, user.getUserSeq());
-        if (!bookmarkList.isEmpty()) {
-            deleteBookmark(memoId, user.getUserSeq());
+        List<Bookmark> bookmarkList = bookMarkRepository.fakeDeleteMemoBookmarkList(memoId);
+
+        if (bookmarkList.size()>0) {
+            for (Bookmark bookmark : bookmarkList) {
+                bookMarkRepository.delete(bookmark);
+            }
         }
     }
 
@@ -150,9 +153,8 @@ public class MemoService {
     public void deleteBookmark(Long memoId, Long userSeq) {
         User user = userRepository.findByUserSeqAndIsDeletedFalse(userSeq)
                 .orElseThrow(() -> new NoUserException(NO_USER));
-        Bookmark bookmark = bookMarkRepository.findByMemoAndUser(memoId, user.getEmail())
+        Bookmark bookmark = bookMarkRepository.findByMemoAndUser(memoId,userSeq)
                 .orElseThrow(() -> new BookmarkException(NO_FIND_BOOKMARK));
-
         bookMarkRepository.delete(bookmark);
     }
 

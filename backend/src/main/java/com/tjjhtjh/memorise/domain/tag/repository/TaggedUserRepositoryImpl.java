@@ -27,7 +27,7 @@ public class TaggedUserRepositoryImpl extends QuerydslRepositorySupport implemen
 
     @Override
     public List<TaggedUserResponse> findByTaggedUserList(Long memoSeq) {
-        return queryFactory.select(Projections.fields(TaggedUserResponse.class,taggedUser.user.nickname))
+        return queryFactory.select(Projections.fields(TaggedUserResponse.class,taggedUser.user.nickname,taggedUser.taggedUserSeq, taggedUser.user.userSeq))
                 .from(taggedUser).where(taggedUser.memo.memoSeq.eq(memoSeq)).fetch();
     }
 }

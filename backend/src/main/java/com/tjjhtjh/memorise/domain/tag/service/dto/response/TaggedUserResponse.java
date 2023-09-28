@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TaggedUserResponse {
     private String nickname;
+    private Long taggedUserSeq;
+    private Long userSeq;
 
     public TaggedUserResponse nicknameResponse(String nickname) {
         return TaggedUserResponse.builder()

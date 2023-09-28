@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookmarkRepositoryCustom {
-   Optional<Bookmark> findByMemoAndUser(Long memoId, String email);
-   List<Bookmark> bookmarkExistCheck(Long memoId, Long userSeq);
+   Optional<Bookmark> findByMemoAndUser(Long memoId, Long userSeq);
+   List<Bookmark> fakeDeleteMemoBookmarkList(Long memoId);
    List<MyMemoResponse> isBookmarkTrueList(Long userSeq);
    Boolean bookmarkBoolean(Long memoId, Long userSeq);
 

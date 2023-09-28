@@ -28,16 +28,15 @@ public class BookmarkRepositoryImpl extends QuerydslRepositorySupport implements
     }
 
     @Override
-    public Optional<Bookmark> findByMemoAndUser(Long memoId, String email) {
+    public Optional<Bookmark> findByMemoAndUser(Long memoId, Long userSeq) {
         return queryFactory.selectFrom(bookmark)
-                .where(bookmark.user.email.eq(email).and(bookmark.memo.memoSeq.eq(memoId)))
+                .where(bookmark.user.userSeq.eq(userSeq).and(bookmark.memo.memoSeq.eq(memoId)))
                 .stream().findAny();
     }
 
     @Override
-    public List<Bookmark> bookmarkExistCheck(Long memoId, Long userSeq) {
-        return queryFactory.selectFrom(bookmark).where(bookmark.user.userSeq.eq(userSeq).and(bookmark.memo.memoSeq.eq(memoId)))
-                .fetch();
+    public List<Bookmark> fakeDeleteMemoBookmarkList(Long memoId) {
+        return queryFactory.selectFrom(bookmark).where(bookmark.memo.memoSeq.eq(memoId)).fetch();
     }
 
     @Override

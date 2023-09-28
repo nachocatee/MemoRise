@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 public class TaggedTeamResponse {
 
     private String name;
+    private Long taggedTeamSeq;
+    private Long teamSeq;
 
     public TaggedTeamResponse teamNameResponse(String teamName) {
         return TaggedTeamResponse.builder()
