@@ -85,6 +85,8 @@ function getFormattedDate(): string {
 const currentDate = getFormattedDate();
 
 const MainScreen = () => {
+  // 메모 조회에서 생성하는지 학습에서 생성하는지 여부 확인
+  const [check, setCheck] = useState(false);
   const isFocused = useIsFocused();
   // const token = useSelector((state: RootState) => state.userInfo.)
   const userId = useSelector((state: RootState) => state.userInfo.id);
@@ -351,6 +353,9 @@ const MainScreen = () => {
     setEnteredMemo("");
     setOpenState("OPEN");
     MemoCreate();
+    if (check) {
+      startRTCConnection("track1");
+    }
   };
 
   // 메모 작성 내용
@@ -411,11 +416,11 @@ const MainScreen = () => {
         data: {
           content: enteredMemo,
           accessType: openState,
-          // userId: userId,
-          userId: 30, // 쫀듸기
+          userId: userId,
+          // userId: 30, // 쫀듸기
           newFile: uploadedPic,
-          // itemName: pickItem,
-          itemName: "8ef97a8a0be", // 쫀듸기
+          itemName: pickItem,
+          // itemName: "8ef97a8a0be", // 쫀듸기
           taggedUserList: taggedMember,
           taggedTeamList: taggedGroup,
         },
@@ -429,6 +434,9 @@ const MainScreen = () => {
             setTaggedGroup([]);
             setTaggedMemberList([]);
             setTaggedGroupList([]);
+
+            // 메모 카운트 업데이트
+            getObjMemoCount();
           }
         })
         .catch((err) => {
@@ -536,6 +544,22 @@ const MainScreen = () => {
   const [unregisteredNotification, setUnregisteredNotification] =
     useState(false);
 
+  // 물체 등록 후 메모 생성 여부 확인
+  const [confirmMemoCreate, setConfirmMemoCreate] = useState(false);
+
+  // 물체 등록 후 메모 생성 취소
+  const cancelConfirmMemoCreate = () => {
+    startRTCConnection("track1");
+    setConfirmMemoCreate(false);
+  };
+
+  // 물체 등록 후 메모 생성
+  const objMemoCreate = () => {
+    setConfirmMemoCreate(false);
+    openMemoCreateModal();
+    setCheck(true);
+  };
+
   // 물체 등록(현재의 RTC 연결을 종료하고 새 연결(track2)을 시작)
   const objectRegister = async () => {
     try {
@@ -561,6 +585,24 @@ const MainScreen = () => {
   // 미등록 물체 모달 닫기
   const cancelObjectRegister = () => {
     setUnregisteredNotification(false);
+  };
+
+  type ObjMemoCountItem = {
+    itemName: string;
+    countMemo: number;
+  };
+
+  // 물체에 담긴 메모 개수
+  const [objMemoCount, setObjMemoCount] = useState<ObjMemoCountItem[]>([]);
+
+  const getObjMemoCount = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/memos/all/${userId}`);
+
+      setObjMemoCount(response.data);
+    } catch (error) {
+      console.error("물체에 담긴 메모 개수를 가져오지 못하였습니다", error);
+    }
   };
 
   // SDP를 교환하는 함수
@@ -668,11 +710,14 @@ const MainScreen = () => {
 
       if (receivedData.newId && typeof receivedData.newId === "string") {
         // newid 값을 상태에 저장
+        setPickItem(receivedData.newId);
         setNewId(receivedData.newId);
         setIsVisible(false);
         setProgress(0);
         stopRTCConnection();
-        Alert.alert("완료", "물체등록이 완료되었습니다");
+        // Alert.alert("완료", "물체등록이 완료되었습니다");
+        setConfirmMemoCreate(true);
+
         console.log(newId);
       }
 
@@ -688,6 +733,7 @@ const MainScreen = () => {
           y: obj.label_y,
         }));
         setCoordinates(newCoordinates);
+        setIsVisible(true);
       }
     };
 
@@ -699,7 +745,6 @@ const MainScreen = () => {
     await negotiate(trackType); // trackType을 negotiate 함수로 전달
 
     setIsConnected(true);
-    setIsVisible(true);
   };
 
   // WebRTC 연결 종료
@@ -723,6 +768,7 @@ const MainScreen = () => {
 
   useEffect(() => {
     initializeCamera();
+    getObjMemoCount(); // 물체에 담긴 메모 개수 가져옴
     // setUnregisteredNotification(true); // 작업을 위해 true 해놓음 추후 완전 삭제
     return () => {
       stopRTCConnection();
@@ -766,6 +812,7 @@ const MainScreen = () => {
               activeOpacity={0.7}
               onPress={() => {
                 if (coordinate.id !== "0") {
+                  setCheck(false);
                   setIsVisible(false);
                   setPickItem(coordinate.id);
                   setMemoListVisible(true);
@@ -781,7 +828,11 @@ const MainScreen = () => {
                 />
                 <View style={styles.textContainer}>
                   <Text style={styles.ObjCircleText}>
-                    {coordinate.id === "0" ? "+" : "2"}
+                    {coordinate.id === "0"
+                      ? "+"
+                      : objMemoCount.find(
+                          (item) => item.itemName === coordinate.id
+                        )?.countMemo || 0}
                   </Text>
                 </View>
               </View>
@@ -814,6 +865,14 @@ const MainScreen = () => {
             </View>
           </>
         )}
+
+        <AlertModal
+          modalVisible={confirmMemoCreate}
+          closeModal={cancelConfirmMemoCreate}
+          onConfirm={objMemoCreate}
+          contentText={`물체 등록이 완료되었습니다!\n메모를 생성하시겠습니까?`}
+          btnText="확인"
+        />
 
         <AlertModal
           modalVisible={unregisteredNotification}
