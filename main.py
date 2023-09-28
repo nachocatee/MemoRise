@@ -15,19 +15,24 @@ import logging
 import os
 import platform
 
-from aiohttp import ClientSession, web
+from aiohttp import ClientSession, web, FormData
 import cv2
 from aiortc import RTCPeerConnection, RTCSessionDescription, VideoStreamTrack
 from aiortc.contrib.media import MediaPlayer, MediaRelay
 import ssl
 import urllib
 
+from scipy import ndimage
+# os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"]="1,2"
+
 use_cuda = torch.cuda.is_available()
 
 # 특성 벡터 차원 조절
 vector_size=512
 # 몇 개의 객체 탐지할지 조절 - 화면 중앙에서 가까운 순으로
-target_size=1
+target_size=3
+
 
 # MongoDB에 연결
 username = urllib.parse.quote_plus("jylee")
@@ -151,74 +156,73 @@ def send_data(channel, data):
     channel.send(json.dumps(data))
 
 class VideoTransformTrack2(VideoStreamTrack):
+    async def send_post_request(self, url, headers, data):
+        async with ClientSession() as session:
+            async with session.post(url, headers=headers, json=data) as response:
+                return await response.text()
+
+    async def send_file_post_request(self, url, file):
+        data = FormData()
+        data.add_field('file', file, filename='frame.jpeg', content_type='image/jpeg')
+        async with ClientSession() as session:
+            async with session.post(url, data=data) as response:
+                return await response.json()  # 응답이 JSON 형식이라고 가정
+
 
     def __init__(self, track):
         super().__init__()  # don't forget this!
         self.track = track
-        self.frame_counter = 0  # <-- 프레임 카운터 초기화
+        self.frame_counter = 0  # 프레임 카운터 초기화
+        self.first_frame = None  # 첫 번째 프레임을 저장하기 위한 변수를 초기화합니다.
+        self.first_object = None
 
         # FAISS 인덱스 초기화 및 MongoDB 데이터 로드
         self.dimension = vector_size
         self.faiss_index = faiss.IndexFlatL2(self.dimension)
         self.faiss_db_ids = []  # DB ID 및 벡터 인덱스를 저장할 리스트
+        self.vector_list = []  # 벡터를 임시 저장할 리스트
+        self.image_list = []  # 벡터를 임시 저장할 리스트
         
     async def recv(self):
         frame = await self.track.recv()
-        
-        # 프레임 카운터 업데이트 및 출력
         self.frame_counter += 1
-        print(f"Processing frame {self.frame_counter}")  # <-- 현재 프레임 번호 출력
+        print(f"Processing frame {self.frame_counter}")
 
-        uploadimg=frame
+        if self.frame_counter == 1:
+            self.first_frame = frame.to_ndarray(format="bgr24")  # 첫 번째 프레임을 저장합니다.
 
-        # Convert AIORTC frame to numpy array
         img = frame.to_ndarray(format="bgr24")
-        # img = cv2.resize(img, (384, 757))
         img = cv2.resize(img, (352, 640))
+        results = model.predict(img)
 
-        
-        if True:
-            results = model.predict(img)
-            # 화면 중앙 좌표 계산
-            # 화면 중앙 좌표 계산
-            # center_x, center_y = img.shape[1] // 2, img.shape[0] // 2
+        if results:
             center_x, center_y = 192, 378
-
             closest_obj = None
             closest_distance = float('inf')
 
             for i, r in list(enumerate(results)):
-                if r is None:
+                if r is None or r.masks is None:
                     continue
-                if r.masks is None:
-                    continue    
-                
+
                 boxes_data = r.boxes.data.tolist()
                 masks_data = r.masks.data
                 orig_img = r.orig_img
 
-                obj_idx=0
-                obj_mask=[]
+                obj_idx = 0
+                obj_mask = []
 
                 for i, j in enumerate(masks_data):
-
-                    # 객체 중앙 좌표 계산
                     x1, y1, x2, y2, _, _ = boxes_data[i]
                     obj_center_x = (x1 + x2) / 2
                     obj_center_y = (y1 + y2) / 2
-
-                    # 객체와 화면 중앙 사이의 거리 계산
                     distance = np.sqrt((obj_center_x - center_x)**2 + (obj_center_y - center_y)**2)
 
-                    # 현재까지 가장 가운데에 위치한 객체인지 확인
                     if distance < closest_distance:
                         closest_distance = distance
-                        obj_idx=i
-                        obj_mask=j
+                        obj_idx = i
+                        obj_mask = j
 
-                    
                 obj_mask = obj_mask.cpu().numpy()
-
                 # 원시 마스크의 크기를 객체 이미지의 크기에 맞게 조절
                 obj_mask = cv2.resize(obj_mask, (orig_img.shape[1], orig_img.shape[0]))
 
@@ -226,10 +230,10 @@ class VideoTransformTrack2(VideoStreamTrack):
                 object_region = orig_img * obj_mask[:, :, np.newaxis]
 
                 # 전처리 및 특성 추출
-                object_region = cv2.cvtColor(object_region, cv2.COLOR_BGR2RGB)
+                object_region_rgb = cv2.cvtColor(object_region, cv2.COLOR_BGR2RGB)
 
                 # 이미지를 uint8로 변환
-                object_region = (object_region * 255).astype(np.uint8)
+                object_region = (object_region_rgb * 255).astype(np.uint8)
 
                 object_region = transform(object_region).unsqueeze(0).cuda()
                 features_roi = model_siamese.forward_one(object_region)
@@ -237,44 +241,90 @@ class VideoTransformTrack2(VideoStreamTrack):
                 features_roi_np = features_roi.cpu().detach().numpy()
                 features_vector = features_roi_np.tolist()[0]  # 중첩 리스트 제거
 
-                # 실시간 영상에서 감지된 각 객체에 대해 가장 유사한 벡터를 faiss에서 검색
-                D, I = self.faiss_index.search(features_roi_np, k=1)
-                closest_obj_id, vector_idx = self.faiss_db_ids[I[0][0]]  # 벡터의 인덱스도 함께 가져옵니다.
+                # 첫 번째 프레임인 경우 벡터 리스트에 추가
+                if self.frame_counter == 1:
+                    self.vector_list.append(features_roi_np.tolist()[0])
+                    # object_region_rgb를 image_list에 추가합니다.
+                    self.image_list.append(object_region_rgb)  
+                    self.first_object=object_region_rgb
+                else:
+                    # 가장 유사한 벡터와의 유사도 계산
+                    similarities = [get_similarity(torch.tensor(vec).cuda().unsqueeze(0), features_roi, metric='cosine') 
+                                    for vec in self.vector_list]
+                    
+                    # 유사도가 0.70 이상 0.97 이하인 경우 벡터 리스트에 추가
+                    if 0.70 <= max(similarities) <= 0.93:
+                        self.vector_list.append(features_roi_np.tolist()[0])
+                        # object_region_rgb를 image_list에 추가합니다.
+                        self.image_list.append(object_region_rgb)  
+
+                # 벡터 리스트에 100개의 벡터가 저장되면 MongoDB에 insert
+                if len(self.vector_list) == 100:
+                    # 여기서 image_list에 있는 각 이미지를 회전시키고, 벡터를 추출하여 vector_list에 추가합니다.
+                    for image in self.image_list:
+                        for angle in [45, 90, 135, 180, 225, 270]:
+                            rotated_image = ndimage.rotate(image, angle, reshape=False)
+                            rotated_image_uint8 = (rotated_image * 255).astype(np.uint8)
+                            rotated_image_transformed = transform(rotated_image_uint8).unsqueeze(0)
+                            if use_cuda:
+                                rotated_image_transformed = rotated_image_transformed.cuda()
+                            rotated_features_roi = model_siamese.forward_one(rotated_image_transformed)
+                            rotated_features_roi_np = rotated_features_roi.cpu().detach().numpy()
+                            rotated_features_vector = rotated_features_roi_np.tolist()[0]  # 중첩 리스트 제거
+                            self.vector_list.append(rotated_features_vector)  # 회전된 이미지의 벡터를 vector_list에 추가합니다.
+
+                    db_entry = {
+                        "vector": self.vector_list
+                    }
+                    result = collection.insert_one(db_entry)
+                    self.faiss_db_ids.extend([(result.inserted_id, idx) for idx in range(100)])
+                    self.faiss_index.add(np.array(self.vector_list))
+                    
+
+                    # 첫 번째 프레임을 바이트 버퍼로 변환
+                    _, encoded_image = cv2.imencode('.jpeg', self.first_object)
+                    byte_buffer = encoded_image.tobytes()
+
+                    # 지정된 엔드포인트로 파일 전송
+                    file_upload_response = await self.send_file_post_request(
+                        "http://j9b106.p.ssafy.io:8000/items/upload", byte_buffer)
+
+                    # 파일 업로드 응답에서 'savedFileName' 사용
+                    saved_file_name = file_upload_response.get('savedFileName')
+
+                    # 'savedFileName'을 이용하여 이미지 URL 구성
+                    image_url = f"https://b106-memorise.s3.ap-northeast-2.amazonaws.com/{saved_file_name}"
+
+                    # 이미지 URL을 사용하여 JSON POST 요청 전송
+                    json_post_url = "http://j9b106.p.ssafy.io:8000/items"
+                    json_post_headers = {"Content-Type": "application/json"}
+                    json_post_data = {
+                        "itemName": str(result.inserted_id),
+                        "itemImage": image_url  # 여기에 구성된 이미지 URL 사용
+                    }
+                    json_post_response_text = await self.send_post_request(
+                        json_post_url, json_post_headers, json_post_data)
+                    
+                    print(json_post_response_text)
+
+                    data_to_send = {
+                        "count": len(self.vector_list)
+                    }
+                    send_data(data_channel, data_to_send)
+
+                    data_to_send = {
+                        "newId": str(result.inserted_id)
+                    }
+                    send_data(data_channel, data_to_send)
+
+                    # self.vector_list = []
                 
-                # 이미 로드된 objects_in_db에서 해당 객체를 찾습니다.
-                closest_obj = next(obj for obj in self.objects_in_db if obj['_id'] == closest_obj_id)
+                else:
+                    data_to_send = {
+                        "count": len(self.vector_list)
+                    }
+                    send_data(data_channel, data_to_send)
 
-                # 가장 근접한 객체의 특성 벡터로 유사도 계산
-                closest_obj_vector = torch.tensor(closest_obj['vector'][vector_idx]).cuda().unsqueeze(0)  # 해당 인덱스의 벡터를 가져옵니다.
-                similarity = get_similarity(closest_obj_vector, features_roi, metric='cosine')  # 'euclidean' or 'cosine' or 'l1' or 'pearson'
-
-                # 바운딩 박스 정보 가져오기
-                x1, y1, x2, y2, _, _ = boxes_data[obj_idx]
-
-                # 유사도가 0.50 이상, 0.90 이하인 경우에만 벡터 추가
-                if 0.70 <= similarity <= 0.97:
-
-                    # 유사도가 0.90 이상인 경우 해당 문서의 "vector" 필드에 새로운 벡터를 추가
-                    closest_obj['vector'].append(features_roi_np.tolist()[0])
-
-                    # faiss 변수 업데이트
-                    self.faiss_index.add(np.array(features_roi_np))
-                    self.faiss_db_ids.append((closest_obj_id, len(closest_obj['vector']) - 1))
-
-                    if len(self.faiss_db_ids) == 100:
-                        # 데이터베이스에 저장
-                        db_entry = {
-                            "vector": [features_roi_np.tolist()[0] for _ in range(100)]
-                        }
-                        result = collection.insert_one(db_entry)
-                        self.faiss_db_ids = [(result.inserted_id, idx) for idx in range(100)]
-                        self.faiss_index.add(np.array(features_roi_np))
-
-            data_to_send = {
-                "count": len(self.faiss_db_ids)
-            }
-            send_data(data_channel, data_to_send)  # 데이터 채널을 통해 클라이언트로 데이터 전송     
-                        
         return frame
 
 class VideoTransformTrack(VideoStreamTrack):
@@ -309,87 +359,95 @@ class VideoTransformTrack(VideoStreamTrack):
 
         results = model.predict(img)
 
-        # 화면 중앙 좌표 계산
-        # center_x, center_y = img.shape[1] // 2, img.shape[0] // 2
-        center_x, center_y = 192, 378
-        closest_objs = []  # 화면 중앙에서 가장 가까운 객체 저장 리스트
-        closest_distances = []  # 화면 중앙에서 가장 가까운 객체들과의 거리 저장 리스트
+        if self.frame_counter%5==0:
+            # 화면 중앙 좌표 계산
+            # center_x, center_y = img.shape[1] // 2, img.shape[0] // 2
+            center_x, center_y = 192, 378
+            closest_objs = []  # 화면 중앙에서 가장 가까운 객체 저장 리스트
+            closest_distances = []  # 화면 중앙에서 가장 가까운 객체들과의 거리 저장 리스트
 
-        for i, r in list(enumerate(results)):
-            if r is None:
-                # cv2.imshow('YOLOv8 Object Detection', img)
-                continue
-            if r.masks is None:
-                # cv2.imshow('YOLOv8 Object Detection', img)
-                continue
-            
-            boxes_data = r.boxes.data.tolist()
-            masks_data = r.masks.data
-
-            for obj_idx, obj_mask in enumerate(masks_data):
-                obj_mask = obj_mask.cpu().numpy()
-
-                # 객체 중앙 좌표 계산
-                x1, y1, x2, y2, _, _ = boxes_data[obj_idx]
-                obj_center_x = (x1 + x2) / 2
-                obj_center_y = (y1 + y2) / 2
-
-                # 객체와 화면 중앙 사이의 거리 계산
-                distance = np.sqrt((obj_center_x - center_x)**2 + (obj_center_y - center_y)**2)
-
-                # 현재까지 가장 가운데에 위치한 객체인지 확인
-                if len(closest_objs) < target_size:
-                    closest_objs.append((obj_idx, obj_mask))
-                    closest_distances.append(distance)
-                else:
-                    # 현재 객체가 가장 가까운 객체보다 더 가까울 경우, 가장 가까운 객체들 중 가장 먼 객체를 대체
-                    max_distance_idx = np.argmax(closest_distances)
-                    if distance < closest_distances[max_distance_idx]:
-                        closest_objs[max_distance_idx] = (obj_idx, obj_mask)
-                        closest_distances[max_distance_idx] = distance
-
-            for obj_idx, obj_mask in closest_objs:
-                # 원시 마스크의 크기를 객체 이미지의 크기에 맞게 조절
-                features_roi = model_siamese.forward_one(process_object_region(obj_mask, r.orig_img))
-                features_roi_np = features_roi.cpu().detach().numpy()
-
-                # 실시간 영상에서 감지된 각 객체에 대해 가장 유사한 벡터를 faiss에서 검색
-                D, I = self.faiss_index.search(features_roi_np, k=1)
-                closest_obj_id, vector_idx = self.faiss_db_ids[I[0][0]]  # 벡터의 인덱스도 함께 가져옵니다.
+            for i, r in list(enumerate(results)):
+                if r is None:
+                    # cv2.imshow('YOLOv8 Object Detection', img)
+                    continue
+                if r.masks is None:
+                    # cv2.imshow('YOLOv8 Object Detection', img)
+                    continue
                 
-                # 이미 로드된 objects_in_db에서 해당 객체를 찾습니다.
-                closest_obj = next(obj for obj in self.objects_in_db if obj['_id'] == closest_obj_id)
+                boxes_data = r.boxes.data.tolist()
+                masks_data = r.masks.data
 
-                # 가장 근접한 객체의 특성 벡터로 유사도 계산
-                closest_obj_vector = torch.tensor(closest_obj['vector'][vector_idx])  # 해당 인덱스의 벡터를 가져옵니다.
-                if use_cuda:  # 텐서를 GPU로 이동
-                    closest_obj_vector = closest_obj_vector.cuda()
-                closest_obj_vector = closest_obj_vector.unsqueeze(0)
-                similarity = get_similarity(closest_obj_vector, features_roi, metric='cosine')  # 'euclidean' or 'cosine' or 'l1' or 'pearson'
+                for obj_idx, obj_mask in enumerate(masks_data):
+                    obj_mask = obj_mask.cpu().numpy()
 
-                # 바운딩 박스 정보 가져오기
-                x1, y1, x2, y2, _, _ = boxes_data[obj_idx]
+                    # 객체 중앙 좌표 계산
+                    x1, y1, x2, y2, _, _ = boxes_data[obj_idx]
+                    obj_center_x = (x1 + x2) / 2
+                    obj_center_y = (y1 + y2) / 2
+
+                    # 객체와 화면 중앙 사이의 거리 계산
+                    distance = np.sqrt((obj_center_x - center_x)**2 + (obj_center_y - center_y)**2)
+
+                    # 현재까지 가장 가운데에 위치한 객체인지 확인
+                    if len(closest_objs) < target_size:
+                        closest_objs.append((obj_idx, obj_mask))
+                        closest_distances.append(distance)
+                    else:
+                        # 현재 객체가 가장 가까운 객체보다 더 가까울 경우, 가장 가까운 객체들 중 가장 먼 객체를 대체
+                        max_distance_idx = np.argmax(closest_distances)
+                        if distance < closest_distances[max_distance_idx]:
+                            closest_objs[max_distance_idx] = (obj_idx, obj_mask)
+                            closest_distances[max_distance_idx] = distance
+
+                objects_data = []  # 모든 객체의 데이터를 담을 리스트를 초기화합니다.
+                for obj_idx, obj_mask in closest_objs:
+                    # 원시 마스크의 크기를 객체 이미지의 크기에 맞게 조절
+                    features_roi = model_siamese.forward_one(process_object_region(obj_mask, r.orig_img))
+                    features_roi_np = features_roi.cpu().detach().numpy()
+
+                    # 실시간 영상에서 감지된 각 객체에 대해 가장 유사한 벡터를 faiss에서 검색
+                    D, I = self.faiss_index.search(features_roi_np, k=1)
+                    closest_obj_id, vector_idx = self.faiss_db_ids[I[0][0]]  # 벡터의 인덱스도 함께 가져옵니다.
+                    
+                    # 이미 로드된 objects_in_db에서 해당 객체를 찾습니다.
+                    closest_obj = next(obj for obj in self.objects_in_db if obj['_id'] == closest_obj_id)
+
+                    # 가장 근접한 객체의 특성 벡터로 유사도 계산
+                    closest_obj_vector = torch.tensor(closest_obj['vector'][vector_idx])  # 해당 인덱스의 벡터를 가져옵니다.
+                    if use_cuda:  # 텐서를 GPU로 이동
+                        closest_obj_vector = closest_obj_vector.cuda()
+                    closest_obj_vector = closest_obj_vector.unsqueeze(0)
+                    similarity = get_similarity(closest_obj_vector, features_roi, metric='cosine')  # 'euclidean' or 'cosine' or 'l1' or 'pearson'
+
+                    # 바운딩 박스 정보 가져오기
+                    x1, y1, x2, y2, _, _ = boxes_data[obj_idx]
+                    
+                    # 객체 중앙 좌표 구하기
+                    label_x = int((x1 + x2) // 2)
+                    label_y = int((y1 + y2) // 2)
+
+                    # 유사도가 0.50 이상인 경우에만 아이디 전달
+                    if similarity >= 0.80:
+                        object_data = {
+                            "id": str(closest_obj['_id']),  # ObjectId를 문자열로 변환
+                            "label_x": label_x,
+                            "label_y": label_y
+                        }
+                    else:
+                        object_data = {
+                            "id": "0",  # ObjectId를 문자열로 변환
+                            "label_x": label_x,
+                            "label_y": label_y
+                        }
+
+                    objects_data.append(object_data)  # 각 객체의 데이터를 리스트에 추가합니다.
+
+                data_to_send = {
+                    "objects": objects_data  # 객체 데이터의 리스트를 보냅니다.
+                }
+                print(data_to_send)
+                send_data(data_channel, data_to_send)  # 클라이언트로 데이터를 보냅니다.
                 
-                # 라벨을 그리는 위치 조정
-                label_x = int((x1 + x2) // 2)
-                label_y = int((y1 + y2) // 2)
-
-                # 유사도가 0.50 이상인 경우에만 라벨 표시
-                if similarity >= 0.50:
-                    data_to_send = {
-                        "id": str(closest_obj['_id']),  # ObjectId를 문자열로 변환
-                        "label_x": label_x,
-                        "label_y": label_y
-                    }
-                    send_data(data_channel, data_to_send)  # 데이터 채널을 통해 클라이언트로 데이터 전송
-                else:
-                    data_to_send = {
-                        "id": "0",  # ObjectId를 문자열로 변환
-                        "label_x": label_x,
-                        "label_y": label_y
-                    }
-                    send_data(data_channel, data_to_send)  # 데이터 채널을 통해 클라이언트로 데이터 전송
-
         return frame
 
 async def index(request):
