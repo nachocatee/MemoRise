@@ -25,6 +25,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import * as Progress from "react-native-progress";
 
 import MainHeader from "../../components/Header/MainHeader";
 import { styles } from "./MainStyle";
@@ -499,6 +500,34 @@ const MainScreen = () => {
   };
 
   // WebRTC 로직
+  // 인식 된 객체 위치 저장
+  const [coordinates, setCoordinates] = useState<
+    Array<{ id: string; x: number; y: number }>
+  >([]);
+
+  // 선택 된 객체 ID 값 저장
+  const [pickItem, setPickItem] = useState("");
+
+  // 메모 조회 시 객체 표시 가리기
+  const [isVisible, setIsVisible] = useState(true);
+
+  // 물체 학습 화면 표시 여부
+  const [objectRegisterShow, setObjectRegisterShow] = useState(false);
+
+  // 물체 등록 진행 상태
+  const [progress, setProgress] = useState(0);
+
+  // 물체 등록된 ID 값
+  const [newId, setNewId] = useState<string | null>(null);
+
+  // RTC 서버와의 연결 상태
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+
+  // 로컬의 미디어 스트림(앱의 카메라)
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+
+  // RTCPeerConnection 객체 참조
+  const pc = useRef<RTCPeerConnection | null>(null);
 
   // 데이터 전송을 위한 데이터 채널 참조
   const dataChannelRef = useRef<DataChannel | null>(null);
@@ -513,11 +542,17 @@ const MainScreen = () => {
       // 현재의 RTC 연결을 종료
       stopRTCConnection();
 
-      // 새로운 서버에 연결을 시작
-      await startRTCConnection("track2");
-
       // 미등록 물체 모달 닫기
       setUnregisteredNotification(false);
+
+      // 물체 표시 닫기
+      setIsVisible(false);
+
+      // 물체 등록 화면 생성
+      setObjectRegisterShow(true);
+
+      // 새로운 서버에 연결을 시작
+      await startRTCConnection("track2");
     } catch (error) {
       Alert.alert("Error", (error as Error).message);
     }
@@ -527,26 +562,6 @@ const MainScreen = () => {
   const cancelObjectRegister = () => {
     setUnregisteredNotification(false);
   };
-
-  // 인식 된 객체 위치 저장
-  const [coordinates, setCoordinates] = useState<
-    Array<{ id: string; x: number; y: number }>
-  >([]);
-
-  // 선택 된 객체 ID 값 저장
-  const [pickItem, setPickItem] = useState("");
-
-  // 메모 조회 시 객체 표시 가리기
-  const [isVisible, setIsVisible] = useState(true);
-
-  // RTC 서버와의 연결 상태
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-
-  // 로컬의 미디어 스트림(앱의 카메라)
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-
-  // RTCPeerConnection 객체 참조
-  const pc = useRef<RTCPeerConnection | null>(null);
 
   // SDP를 교환하는 함수
   // (비디오의 해상도, 오디오 전송 또는 수신 여부)
@@ -643,23 +658,36 @@ const MainScreen = () => {
     dataChannel.onmessage = (event: any) => {
       // 서버에서 받은 데이터 처리
       const receivedData = JSON.parse(event.data);
+      console.log(receivedData);
 
-      // 'receivedData'의 형식을 확인하고 'objects' 배열이 존재하는지 확인
+      if (receivedData.count && typeof receivedData.count === "number") {
+        // count 값에 따라 progress 업데이트 (1-9를 0.1-0.9로 변환)
+        setIsVisible(false);
+        setProgress(receivedData.count / 10);
+      }
+
+      if (receivedData.newId && typeof receivedData.newId === "string") {
+        // newid 값을 상태에 저장
+        setNewId(receivedData.newId);
+        setIsVisible(false);
+        setProgress(0);
+        stopRTCConnection();
+        Alert.alert("완료", "물체등록이 완료되었습니다");
+        console.log(newId);
+      }
+
+      // 기존의 로직을 유지합니다
       if (
         trackType != "track2" &&
         receivedData.objects &&
         Array.isArray(receivedData.objects)
       ) {
-        // 각 객체의 'id', 'label_x', 'label_y'를 사용하여 'coordinates'를 설정
         const newCoordinates = receivedData.objects.map((obj: any) => ({
           id: obj.id,
           x: obj.label_x,
           y: obj.label_y,
         }));
-        console.log(newCoordinates);
-        setCoordinates(newCoordinates); // 여기에서 setCoordinates를 사용하여 상태를 업데이트
-      } else {
-        console.log(receivedData); // 그 외의 경우 로깅
+        setCoordinates(newCoordinates);
       }
     };
 
@@ -671,11 +699,13 @@ const MainScreen = () => {
     await negotiate(trackType); // trackType을 negotiate 함수로 전달
 
     setIsConnected(true);
+    setIsVisible(true);
   };
 
   // WebRTC 연결 종료
   const stopRTCConnection = (): void => {
     setIsConnected(false);
+    setObjectRegisterShow(false);
 
     if (localStream && pc.current) {
       localStream.getTracks().forEach((track) => {
@@ -688,6 +718,7 @@ const MainScreen = () => {
 
     pc.current?.close();
     setCoordinates([]);
+    setIsVisible(false);
   };
 
   useEffect(() => {
@@ -756,12 +787,34 @@ const MainScreen = () => {
               </View>
             </TouchableOpacity>
           ))}
-        {/* <View style={styles.focusBox}>
-          <Image
-            source={require("../../assets/focus/focus2new.png")}
-            style={styles.focusImg}
-          />
-        </View> */}
+        {/* 물체 학습화면 로직 구현중 */}
+        {objectRegisterShow && (
+          <>
+            <View style={styles.focusBox}>
+              <Image
+                source={require("../../assets/focus/focus2new.png")}
+                style={styles.focusImg}
+              />
+            </View>
+            <View style={styles.descriptionBox}>
+              <Image source={require("../../assets/image/warning.png")} />
+              <Text style={styles.descriptionText}>
+                물체를 다각도로 촬영해주세요!
+              </Text>
+            </View>
+            <View style={styles.progressBox}>
+              <Progress.Bar
+                progress={progress}
+                width={300}
+                height={20}
+                borderRadius={10}
+                borderWidth={3}
+                borderColor="white"
+              />
+            </View>
+          </>
+        )}
+
         <AlertModal
           modalVisible={unregisteredNotification}
           closeModal={cancelObjectRegister}
