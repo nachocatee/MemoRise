@@ -22,18 +22,21 @@ import { BACKEND_URL } from "../../../util/http";
 // 컴포넌트
 import BookMarkBtn from "../../Button/BookMarkBtn";
 import { RootState } from "../../../store/store";
+import LoadingOverlay from "../../LoadingOverlay";
 
 // 메인페이지 상태관리를 위한 타입 지정
 type MemoListProp = {
   onMemoWritePress: () => void;
   onMemoDetailPress: (memoSeq: number) => void;
-  id: string | undefined;
+  id: string | null;
+  memoStatus: string;
 };
 
 const MemoList: React.FC<MemoListProp> = ({
   onMemoWritePress,
   onMemoDetailPress,
   id,
+  memoStatus,
 }) => {
   // 유저ID
   const userId = useSelector((state: RootState) => state.userInfo.id);
@@ -57,17 +60,33 @@ const MemoList: React.FC<MemoListProp> = ({
   // 북마크 상태관리 및 함수
   const [memoData, setMemoData] = useState<MemoTypeProps[]>([]);
 
-  // 사용자가 작성한 or 태그된 메모 AXIOS
+  // 메모 리스트 AXIOS (main이면 MainScreen / 아니면 MenuMemo)
   useEffect(() => {
-    axios
-      .get(BACKEND_URL + `/memos/${id}/list/${userId}`)
-      // .get(BACKEND_URL + `/memos/8ef97a8a0be/list/23`)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        let response;
+        if (memoStatus === "main") {
+          response = await axios.get(
+            BACKEND_URL + `/memos/${id}/list/${userId}`
+          );
+        } else {
+          response = await axios.get(
+            BACKEND_URL +
+              `/user/23/${
+                memoStatus === "saved"
+                  ? "bookmarks"
+                  : memoStatus === "all"
+                  ? "memos"
+                  : "my-memos"
+              }`
+          );
+        }
         setMemoData(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.log(error);
-      });
+      }
+    };
+    fetchData();
   }, []);
 
   // FlatList 사용을 위한 MemoList 정리
@@ -127,21 +146,37 @@ const MemoList: React.FC<MemoListProp> = ({
 
   return (
     <>
-      <View style={styles.mainContainer}>
-        <Pressable style={styles.memoWriteContainer} onPress={onMemoWritePress}>
-          <Image
-            source={require("../../../assets/icons/memo_write.png")}
-            style={styles.memoWrite}
-          />
-        </Pressable>
-        <View style={styles.memoListContainer}>
-          <FlatList
-            data={memoData}
-            renderItem={({ item }) => <MemoList item={item} />}
-            keyExtractor={(item) => item.memoSeq.toString()}
-          />
+      {/* memoStatus에 따라서 메모 작성 버튼 유무 판단 */}
+      {memoStatus === "main" ? (
+        <View style={styles.mainContainer_main}>
+          <Pressable
+            style={styles.memoWriteContainer}
+            onPress={onMemoWritePress}
+          >
+            <Image
+              source={require("../../../assets/icons/memo_write.png")}
+              style={styles.memoWrite}
+            />
+          </Pressable>
+          <View style={styles.memoListContainer_main}>
+            <FlatList
+              data={memoData}
+              renderItem={({ item }) => <MemoList item={item} />}
+              keyExtractor={(item) => item.memoSeq.toString()}
+            />
+          </View>
         </View>
-      </View>
+      ) : (
+        <View style={styles.mainContainer_menu}>
+          <View style={styles.memoListContainer_menu}>
+            <FlatList
+              data={memoData}
+              renderItem={({ item }) => <MemoList item={item} />}
+              keyExtractor={(item) => item.memoSeq.toString()}
+            />
+          </View>
+        </View>
+      )}
     </>
   );
 };
@@ -149,9 +184,19 @@ const MemoList: React.FC<MemoListProp> = ({
 export default MemoList;
 
 const styles = StyleSheet.create({
-  mainContainer: {
+  mainContainer_main: {
     position: "absolute",
     top: "50%",
+    left: "50%",
+    transform: [
+      { translateY: -calculateDynamicWidth(350) / 2 },
+      { translateX: -calculateDynamicWidth(306) / 2 },
+    ],
+  },
+
+  mainContainer_menu: {
+    position: "absolute",
+    top: "43%",
     left: "50%",
     transform: [
       { translateY: -calculateDynamicWidth(350) / 2 },
@@ -169,8 +214,12 @@ const styles = StyleSheet.create({
     height: calculateDynamicWidth(38),
   },
 
-  memoListContainer: {
+  memoListContainer_main: {
     height: calculateDynamicWidth(350),
+  },
+
+  memoListContainer_menu: {
+    height: calculateDynamicWidth(570),
   },
 
   memoContainer: {

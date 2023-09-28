@@ -10,8 +10,8 @@ export const styles = StyleSheet.create({
     fontFamily: "Pretendard-Medium",
     fontSize: calculateDynamicWidth(23),
     color: Colors.text,
-    marginLeft: 30,
-    marginTop: 10,
+    marginLeft: calculateDynamicWidth(30),
+    marginTop: calculateDynamicWidth(10),
   },
   container: {
     justifyContent: "center",

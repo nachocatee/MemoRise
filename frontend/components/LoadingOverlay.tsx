@@ -1,13 +1,23 @@
-import { View, Text, StyleSheet } from "react-native";
+// 라이브러리
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+
+// 스타일
+import Colors from "../constants/colors";
 
 const LoadingOverlay = () => {
   return (
-    <View>
-      <Text>컴포넌트 기본</Text>
+    <View style={styles.Container}>
+      <ActivityIndicator size="large" color={Colors.text} />
     </View>
   );
 };
 
 export default LoadingOverlay;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  Container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

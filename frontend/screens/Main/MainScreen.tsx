@@ -258,7 +258,6 @@ const MainScreen = () => {
     setIsMemoDetailVisible(false);
     setMemoCreateModalVisible(true);
     setIsUpdateMemoTrue(true);
-    setOpenState("OPEN"); // 사용자 메모 정보에 따라 변경 예정.
     setCheckMemoDetailData(data);
     setEnteredMemo(data[0].content);
     setOpenState(data[0].accessType);
@@ -711,6 +710,7 @@ const MainScreen = () => {
             onMemoWritePress={checkMemoHandler}
             onMemoDetailPress={setMemoDetailModal}
             id={pickItem}
+            memoStatus={"main"}
           />
         </>
       )}
