@@ -474,6 +474,11 @@ const MainScreen = () => {
     setTagSearchText("");
     setTaggedMember([]);
     setMyGroupVisible(false);
+    setTaggedMember([]);
+    setTaggedGroup([]);
+    setTaggedMemberList([]);
+    setTaggedGroupList([]);
+
     //물체 표시 생성
     setIsVisible(true);
   };
