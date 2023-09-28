@@ -277,7 +277,7 @@ export const styles = StyleSheet.create({
     height: calculateDynamicWidth(26),
     borderRadius: calculateDynamicWidth(50),
     paddingHorizontal: calculateDynamicWidth(8),
-    marginRight: calculateDynamicWidth(5),
+    marginRight: calculateDynamicWidth(10),
   },
   cancelIcon: {
     width: calculateDynamicWidth(10),

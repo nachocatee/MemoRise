@@ -60,15 +60,12 @@ type DataChannel = {
   };
 };
 
-// 태그된 회원 타입
-type Member = {
-  [name: string]: string;
-};
-
-// 태그된 그룹 타입
-type Group = {
-  teamTaggedList: string[];
-};
+// 태그 시 유저 검색 리스트
+type UserData = {
+  userSeq: number;
+  nickname: string;
+  email: string;
+}[];
 
 // 첨부 이미지 크기
 const MAX_WIDTH = calculateDynamicWidth(286);
@@ -175,33 +172,112 @@ const MainScreen = () => {
   };
 
   // 태그된 회원 리스트
-  // 더미 데이터
-  const [taggedMember, setTaggedMember] = useState<Member[]>([]);
+  const [taggedMember, setTaggedMember] = useState<number[]>([]);
+  const [taggedMemberList, setTaggedMemberList] = useState<
+    { id: number; name: string }[]
+  >([]);
 
   // 태그된 그룹 리스트
-  const [taggedGroup, setTaggedGroup] = useState<Group[]>([]);
+  const [taggedGroup, setTaggedGroup] = useState<number[]>([]);
+  const [taggedGroupList, setTaggedGroupList] = useState<
+    { id: number; name: string }[]
+  >([]);
 
   // 검색 결과에서 태그할 유저 터치 시 실행
-  const addTaggedMember = () => {
-    setTaggedMember((prevData) => [
-      ...prevData,
-      { 권소정: "flfk33@naver.com" },
-    ]);
-    setSearchResultVisible(false);
-    setTagSearchText("");
+  const addTaggedMember = (userSeq: number, userName: string) => {
+    setTaggedMember((prevData) => {
+      if (!prevData.includes(userSeq)) {
+        // userSeq가 prevData에 없을 경우에만 추가
+        return [...prevData, userSeq];
+      }
+      return prevData; // 이미 존재하면 prevData 반환
+    });
+
+    setTaggedMemberList((prevData) => {
+      if (!prevData.some((user) => user.id === userSeq)) {
+        return [...prevData, { id: userSeq, name: userName }];
+      }
+      return prevData; // 이미 존재하면 prevData 반환
+    });
+  };
+
+  // 내 그룹 목록에서 태그할 그룹 터치 시 실행
+  const addTaggedGroup = (teamSeq: number, teamName: string) => {
+    setTaggedGroup((prevData) => {
+      if (!prevData.includes(teamSeq)) {
+        // teamSeq가 prevData에 없을 경우에만 추가
+        return [...prevData, teamSeq];
+      }
+      return prevData; // 이미 존재하면 prevData 반환
+    });
+
+    setTaggedGroupList((prevData) => {
+      // teamSeq가 prevData에 없을 경우에만 추가
+      if (!prevData.some((group) => group.id === teamSeq)) {
+        return [...prevData, { id: teamSeq, name: teamName }];
+      }
+      return prevData; // 이미 존재하면 prevData 반환
+    });
+  };
+
+  // 그룹 태그 삭제
+  const removeTaggedGroup = (groupId: number) => {
+    setTaggedGroup((prevData) => {
+      const newData = prevData.filter((teamSeq) => teamSeq !== groupId);
+      return newData;
+    });
+
+    setTaggedGroupList((prevData) => {
+      const newData = prevData.filter((group) => group.id !== groupId);
+      return newData;
+    });
+  };
+
+  // 유저 태그 삭제
+  const removeTaggedMember = (memberId: number) => {
+    setTaggedMember((prevData) => {
+      const newData = prevData.filter((userSeq) => userSeq !== memberId);
+      return newData;
+    });
+
+    setTaggedMemberList((prevData) => {
+      const newData = prevData.filter((user) => user.id !== memberId);
+      return newData;
+    });
   };
 
   // 태그 검색 기능
   const [tagSearchText, setTagSearchText] = useState("");
   const [isSearchResultVisible, setSearchResultVisible] = useState(false);
 
-  const tagSearchHandler = () => {
-    setSearchResultVisible(true);
-  };
-
   const closeTagSearch = () => {
     setSearchResultVisible(false);
     setTagSearchText("");
+    setMyGroupVisible(false);
+  };
+
+  // 유저 검색
+  const [userList, setUserList] = useState<UserData | null>(null);
+
+  const searchUserHandler = async () => {
+    if (tagSearchText) {
+      try {
+        const res = await axios({
+          method: "GET",
+          url: BACKEND_URL + "/user/list",
+          params: {
+            keyword: tagSearchText,
+          },
+        });
+        console.log(res.data);
+        setUserList(res.data);
+        setSearchResultVisible(true);
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      Alert.alert("닉네임이나 이메일을 입력해 주세요!");
+    }
   };
 
   // 메모 조회 상태관리
@@ -306,7 +382,8 @@ const MainScreen = () => {
     try {
       const res = await axios({
         method: "GET",
-        url: BACKEND_URL + `/user/${userId}/my-teams`,
+        // url: BACKEND_URL + `/user/${userId}/my-teams`,
+        url: BACKEND_URL + `/user/30/my-teams`, // 쫀듸기
       });
       console.log("조회 성공");
       setGroupList(res.data);
@@ -318,14 +395,14 @@ const MainScreen = () => {
   // 메모 생성 axios
   const MemoCreate = async () => {
     if (!enteredMemo) {
-      Alert.alert("내용을 입력해 주세요!"); // 나중에 수정예정
+      Alert.alert("내용을 입력해 주세요!");
     } else if (!coordinates) {
       Alert.alert("객체가 제대로 등록되지 않았습니다.");
     } else {
       console.log(enteredMemo, openState, userId, uploadedPic, pickItem);
       await axios({
         method: "POST",
-        url: BACKEND_URL + `/memos`, // 물체 ID 임시로 1로 설정
+        url: BACKEND_URL + `/memos`,
         // headers: {
         //   "Content-Type": "application/json",
         //   Authorization: "Bearer " + token,
@@ -333,9 +410,13 @@ const MainScreen = () => {
         data: {
           content: enteredMemo,
           accessType: openState,
-          userId: userId,
+          // userId: userId,
+          userId: 30, // 쫀듸기
           newFile: uploadedPic,
-          itemName: pickItem,
+          // itemName: pickItem,
+          itemName: "8ef97a8a0be", // 쫀듸기
+          taggedUserList: taggedMember,
+          taggedTeamList: taggedGroup,
         },
       })
         .then((res) => {
@@ -343,6 +424,10 @@ const MainScreen = () => {
             console.log("메모 생성 성공");
             //물체 표시 생성
             setIsVisible(true);
+            setTaggedMember([]);
+            setTaggedGroup([]);
+            setTaggedMemberList([]);
+            setTaggedGroupList([]);
           }
         })
         .catch((err) => {
@@ -864,13 +949,16 @@ const MainScreen = () => {
                           value={tagSearchText}
                           onChangeText={setTagSearchText}
                           returnKeyType="search"
-                          onSubmitEditing={tagSearchHandler}
+                          onSubmitEditing={searchUserHandler}
                         />
                       </View>
+                      {/* 내 그룹 목록 */}
                       {groupList?.map((group, idx) => (
                         <Pressable
                           style={styles.tagResultInnerContainer}
-                          onPress={addTaggedMember}
+                          onPress={() =>
+                            addTaggedGroup(group.teamSeq, group.teamName)
+                          }
                           key={idx}
                         >
                           <Text style={styles.tagText}>
@@ -899,82 +987,63 @@ const MainScreen = () => {
               </>
             )}
             {/* 유저 태그(결과값 O) */}
-            {/* 더미 데이터 */}
-            {openState === "RESTRICT" && taggedMember[0] && (
+            {openState === "RESTRICT" && (
               <>
                 <ScrollView horizontal style={styles.tagResultBox}>
-                  <View
-                    style={{
-                      justifyContent: "flex-start",
-                      alignItems: "center",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <LinearGradient
-                      colors={["#DDEAFF", "#C2D8FF"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
-                      style={styles.taggedMemberContainer}
+                  {/* 그룹 태그 */}
+                  {taggedGroupList.map((group, idx) => (
+                    <View
+                      style={{
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        flexDirection: "row",
+                      }}
+                      key={idx}
                     >
-                      <Text style={styles.tagText}>
-                        @ {Object.keys(taggedMember[0])[0]}
-                      </Text>
-                      <Pressable>
-                        <Image
-                          source={require("../../assets/icons/cancel_sm.png")}
-                          style={styles.cancelIcon}
-                        />
-                      </Pressable>
-                    </LinearGradient>
-                    <LinearGradient
-                      colors={["#DDEAFF", "#C2D8FF"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
-                      style={styles.taggedMemberContainer}
+                      <LinearGradient
+                        colors={["#DDEAFF", "#C2D8FF"]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={styles.taggedMemberContainer}
+                      >
+                        <Text style={styles.tagText}>@ {group.name}</Text>
+                        <Pressable onPress={() => removeTaggedGroup(group.id)}>
+                          <Image
+                            source={require("../../assets/icons/cancel_sm.png")}
+                            style={styles.cancelIcon}
+                          />
+                        </Pressable>
+                      </LinearGradient>
+                    </View>
+                  ))}
+                  {/* 유저 태그 */}
+                  {taggedMemberList.map((member, idx) => (
+                    <View
+                      style={{
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        flexDirection: "row",
+                      }}
+                      key={idx}
                     >
-                      <Text style={styles.tagText}>
-                        @ {Object.keys(taggedMember[0])[0]}
-                      </Text>
-                      <Pressable>
-                        <Image
-                          source={require("../../assets/icons/cancel_sm.png")}
-                          style={styles.cancelIcon}
-                        />
-                      </Pressable>
-                    </LinearGradient>
-                    <LinearGradient
-                      colors={["#DDEAFF", "#C2D8FF"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
-                      style={styles.taggedMemberContainer}
-                    >
-                      <Text style={styles.tagText}>
-                        @ {Object.keys(taggedMember[0])[0]}
-                      </Text>
-                      <Pressable>
-                        <Image
-                          source={require("../../assets/icons/cancel_sm.png")}
-                          style={styles.cancelIcon}
-                        />
-                      </Pressable>
-                    </LinearGradient>
-                    <LinearGradient
-                      colors={["#DDEAFF", "#C2D8FF"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
-                      style={styles.taggedMemberContainer}
-                    >
-                      <Text style={styles.tagText}>
-                        @ {Object.keys(taggedMember[0])[0]}
-                      </Text>
-                      <Pressable>
-                        <Image
-                          source={require("../../assets/icons/cancel_sm.png")}
-                          style={styles.cancelIcon}
-                        />
-                      </Pressable>
-                    </LinearGradient>
-                  </View>
+                      <LinearGradient
+                        colors={["#DDEAFF", "#C2D8FF"]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={styles.taggedMemberContainer}
+                      >
+                        <Text style={styles.tagText}>@ {member.name}</Text>
+                        <Pressable
+                          onPress={() => removeTaggedMember(member.id)}
+                        >
+                          <Image
+                            source={require("../../assets/icons/cancel_sm.png")}
+                            style={styles.cancelIcon}
+                          />
+                        </Pressable>
+                      </LinearGradient>
+                    </View>
+                  ))}
                 </ScrollView>
               </>
             )}
@@ -1003,24 +1072,30 @@ const MainScreen = () => {
                       value={tagSearchText}
                       onChangeText={setTagSearchText}
                       returnKeyType="search"
-                      onSubmitEditing={tagSearchHandler}
+                      onSubmitEditing={searchUserHandler}
                     />
                   </View>
-                  {/* 더미데이터 */}
-                  <Pressable
-                    style={styles.tagResultInnerContainer}
-                    onPress={addTaggedMember}
-                  >
-                    <Text style={styles.tagText}>
-                      권소정 <Text style={styles.email}> flfk33@naver.com</Text>
-                    </Text>
-                  </Pressable>
-                  <Pressable style={styles.tagResultInnerContainer}>
-                    <Text style={styles.tagText} onPress={addTaggedMember}>
-                      권소정{" "}
-                      <Text style={styles.email}> bijoucastle@naver.com</Text>
-                    </Text>
-                  </Pressable>
+                  {/* 유저 검색 결과 */}
+                  {Array.isArray(userList) && userList[0] ? (
+                    userList?.map((user, idx) => (
+                      <Pressable
+                        style={styles.tagResultInnerContainer}
+                        onPress={() =>
+                          addTaggedMember(user.userSeq, user.nickname)
+                        }
+                        key={idx}
+                      >
+                        <Text style={styles.tagText}>
+                          {user.nickname}{" "}
+                          <Text style={styles.email}> {user.email}</Text>
+                        </Text>
+                      </Pressable>
+                    ))
+                  ) : (
+                    <View style={styles.tagResultInnerContainer}>
+                      <Text style={styles.tagText}>검색 결과가 없습니다.</Text>
+                    </View>
+                  )}
                 </View>
               </>
             )}
