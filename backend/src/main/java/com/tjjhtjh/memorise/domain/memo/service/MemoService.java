@@ -160,10 +160,14 @@ public class MemoService {
 
     public List<MemoResponse> itemMemoView(String itemName, Long userSeq) {
         Item item = itemRepository.findByItemName(itemName).orElseThrow(() -> new NoItemException(NO_FIND_ITEM));
+        User user = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER));
+
         return memoRepository.findWrittenByMeOrOpenMemoOrTaggedMemo(item.getItemSeq(), userSeq);
     }
 
     public MemoDetailResponse detailMemo(Long memoId, Long userSeq) throws MemoException {
+        User user = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER));
+
         MemoDetailResponse memoDetailResponse = memoRepository.detailMemo(memoId, userSeq)
                 .orElseThrow(() -> new MemoException(NO_MEMO));
 
@@ -175,14 +179,17 @@ public class MemoService {
     }
 
     public List<MyMemoResponse> myMemoList(Long userSeq) {
+        User user = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER));
         return memoRepository.findByMyMemoIsDeletedFalse(userSeq);
     }
 
     public List<MyMemoResponse> allMyMemoList(Long userSeq) {
+        User user = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER));
         return memoRepository.findByAllMyMemoIsDeletedFalse(userSeq);
     }
 
     public List<MemoCountResponse> countOfMemoList(Long userSeq) {
+        User user = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER));
         List<MemoCountResponse> resultList = new ArrayList<>();
         List<Long> itemSeqList = itemRepository.itemSeqList();
         for (Long itemSeq : itemSeqList) {
@@ -193,6 +200,7 @@ public class MemoService {
     }
 
     public List<MyMemoResponse> allBookmarkTrueList(Long userSeq) {
+        User user = userRepository.findByUserSeqAndIsDeletedFalse(userSeq).orElseThrow(() -> new NoUserException(NO_USER));
         return bookMarkRepository.isBookmarkTrueList(userSeq);
     }
 }
