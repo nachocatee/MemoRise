@@ -92,7 +92,7 @@ const MainScreen = () => {
   const userId = useSelector((state: RootState) => state.userInfo.id);
 
   // 사진 첨부
-  const [uploadedPic, setUploadedPic] = useState("");
+  const [uploadedPic, setUploadedPic] = useState<string | null>(null);
 
   const selectImageHanlder = () => {
     launchImageLibrary(
@@ -123,10 +123,8 @@ const MainScreen = () => {
             },
           })
           .then((response: any) => {
-            console.log(response);
             // 요청 성공 시, 리덕스 및 상태관리 (사용자 이미지 S3링크로 저장)
             const tempS3URL = S3_URL + response.data.savedFileName;
-            console.log(tempS3URL);
             setUploadedPic(tempS3URL);
           })
           .catch((error) => {
@@ -170,7 +168,7 @@ const MainScreen = () => {
 
   // 사진 삭제
   const deleteUploadedPic = () => {
-    setUploadedPic("");
+    setUploadedPic(null);
     setFullImageVisible(false);
   };
 
@@ -272,7 +270,6 @@ const MainScreen = () => {
             keyword: tagSearchText,
           },
         });
-        console.log(res.data);
         setUserList(res.data);
         setSearchResultVisible(true);
       } catch (err) {
@@ -285,7 +282,7 @@ const MainScreen = () => {
 
   // 메모 조회 상태관리
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
-  const [memoListVisible, setMemoListVisible] = useState(false);
+  const [memoListVisible, setMemoListVisible] = useState(false); //쫀듸기
 
   // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
@@ -332,6 +329,32 @@ const MainScreen = () => {
     MemoDetailProps[]
   >([]);
 
+  // 메모수정을 위한 태그된 팀 & 유저 함수
+  const memoUpdateTaggedHandler = (data: MemoDetailProps[]) => {
+    const userIds: number[] = [];
+    const userNicknamesAndIds: { id: number; name: string }[] = [];
+    const teamIds: number[] = [];
+    const teamNicknamesAndIds: { id: number; name: string }[] = [];
+
+    data[0].taggedUserList.forEach((user) => {
+      userIds.push(user.userSeq);
+      userNicknamesAndIds.push({ id: user.userSeq, name: user.nickname });
+    });
+
+    data[0].taggedTeamList.forEach((team) => {
+      teamIds.push(team.teamSeq);
+      teamNicknamesAndIds.push({ id: team.teamSeq, name: team.name });
+    });
+
+    setTaggedMember(userIds);
+    setTaggedMemberList(userNicknamesAndIds);
+    setTaggedGroup(teamIds);
+    setTaggedGroupList(teamNicknamesAndIds);
+  };
+
+  // 메모수정에 필요한 메모ID 상태관리
+  const [memoId, setMemoId] = useState<number | null>(null);
+
   // 메모 수정
   const setMemoUpdateHandler = (data: MemoDetailProps[]) => {
     setIsMemoDetailVisible(false);
@@ -340,6 +363,8 @@ const MainScreen = () => {
     setCheckMemoDetailData(data);
     setEnteredMemo(data[0].content);
     setOpenState(data[0].accessType);
+    memoUpdateTaggedHandler(data);
+    setMemoId(data[0].memoSeq);
   };
 
   const memoInputHandler = (enteredText: string) => {
@@ -388,10 +413,9 @@ const MainScreen = () => {
     try {
       const res = await axios({
         method: "GET",
-        // url: BACKEND_URL + `/user/${userId}/my-teams`,
-        url: BACKEND_URL + `/user/30/my-teams`, // 쫀듸기
+        url: BACKEND_URL + `/user/${userId}/my-teams`,
+        // url: BACKEND_URL + `/user/30/my-teams`, // 쫀듸기
       });
-      console.log("조회 성공");
       setGroupList(res.data);
     } catch (err) {
       console.log(err);
@@ -405,43 +429,82 @@ const MainScreen = () => {
     } else if (!coordinates) {
       Alert.alert("객체가 제대로 등록되지 않았습니다.");
     } else {
-      console.log(enteredMemo, openState, userId, uploadedPic, pickItem);
-      await axios({
-        method: "POST",
-        url: BACKEND_URL + `/memos`,
-        // headers: {
-        //   "Content-Type": "application/json",
-        //   Authorization: "Bearer " + token,
-        // },
-        data: {
-          content: enteredMemo,
-          accessType: openState,
-          userId: userId,
-          // userId: 30, // 쫀듸기
-          newFile: uploadedPic,
-          itemName: pickItem,
-          // itemName: "8ef97a8a0be", // 쫀듸기
-          taggedUserList: taggedMember,
-          taggedTeamList: taggedGroup,
-        },
-      })
-        .then((res) => {
-          if (res.request.status === 200) {
-            console.log("메모 생성 성공");
-            //물체 표시 생성
-            setIsVisible(true);
-            setTaggedMember([]);
-            setTaggedGroup([]);
-            setTaggedMemberList([]);
-            setTaggedGroupList([]);
-
-            // 메모 카운트 업데이트
-            getObjMemoCount();
-          }
+      if (!isUpdateMemoTrue) {
+        await axios({
+          method: "POST",
+          url: BACKEND_URL + `/memos`,
+          // headers: {
+          //   "Content-Type": "application/json",
+          //   Authorization: "Bearer " + token,
+          // },
+          data: {
+            content: enteredMemo,
+            accessType: openState,
+            userId: userId,
+            // userId: 30, // 쫀듸기
+            newFile: uploadedPic,
+            itemName: pickItem,
+            // itemName: "8ef97a8a0be", // 쫀듸기
+            taggedUserList: taggedMember,
+            taggedTeamList: taggedGroup,
+          },
         })
-        .catch((err) => {
-          console.log(err);
-        });
+          .then((res) => {
+            if (res.request.status === 200) {
+              console.log("메모 생성 성공");
+              //물체 표시 생성
+              setIsVisible(true);
+              setTaggedMember([]);
+              setTaggedGroup([]);
+              setTaggedMemberList([]);
+              setTaggedGroupList([]);
+
+              // 메모 카운트 업데이트
+              getObjMemoCount();
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        await axios({
+          method: "PUT",
+          url: BACKEND_URL + `/memos/${memoId}`,
+          // headers: {
+          //   "Content-Type": "application/json",
+          //   Authorization: "Bearer " + token,
+          // },
+          data: {
+            content: enteredMemo,
+            accessType: openState,
+            userId: userId,
+            // userId: 30, // 쫀듸기
+            newFile: uploadedPic,
+            itemName: pickItem,
+            // itemName: "8ef97a8a0be", // 쫀듸기
+            taggedUserList: taggedMember,
+            taggedTeamList: taggedGroup,
+          },
+        })
+          .then((res) => {
+            if (res.request.status === 200) {
+              console.log("메모 수정 성공");
+              //물체 표시 생성
+              setIsVisible(true);
+              setTaggedMember([]);
+              setTaggedGroup([]);
+              setTaggedMemberList([]);
+              setTaggedGroupList([]);
+              setIsUpdateMemoTrue(false);
+
+              // 메모 카운트 업데이트
+              getObjMemoCount();
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     }
   };
 
@@ -1019,20 +1082,22 @@ const MainScreen = () => {
                   />
                 </Pressable>
                 {/* 첨부 사진 */}
-                <Image
-                  source={{ uri: uploadedPic }}
-                  style={[
-                    styles.uploadedFullImg,
-                    {
-                      width: imageWidth,
-                      height: imageHeight,
-                      transform: [
-                        { translateY: -imageHeight / 2 },
-                        { translateX: -imageWidth / 2 },
-                      ],
-                    },
-                  ]}
-                />
+                {uploadedPic && (
+                  <Image
+                    source={{ uri: uploadedPic }}
+                    style={[
+                      styles.uploadedFullImg,
+                      {
+                        width: imageWidth,
+                        height: imageHeight,
+                        transform: [
+                          { translateY: -imageHeight / 2 },
+                          { translateX: -imageWidth / 2 },
+                        ],
+                      },
+                    ]}
+                  />
+                )}
               </>
             )}
             <Pressable

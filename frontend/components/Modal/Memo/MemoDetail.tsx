@@ -38,22 +38,27 @@ const MAX_HEIGHT = screenHeight / 2;
 export type MemoDetailProps = {
   accessType: string;
   content: string;
-  file: string;
+  file: string | null;
   isBookmarked: boolean;
-  itemImage: string;
+  itemImage: string | null;
   itemName: string;
   nickname: string;
   taggedUserList: [
     {
       nickname: string;
+      taggedUserSeq: number;
+      userSeq: number;
     }
   ];
   taggedTeamList: [
     {
-      nickname: string;
+      name: string;
+      taggedTeamSeq: number;
+      teamSeq: number;
     }
   ];
   updatedAt: string;
+  memoSeq: number;
 };
 
 // 메인페이지 상태관리를 위한 타입 지정
@@ -99,9 +104,15 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
       try {
         const res = await axios.get(
           BACKEND_URL + `/memos/${memoSeq}/${userId}`
+          // BACKEND_URL + `/memos/${memoSeq}/23` // 쫀듸기
         );
-        setMemoDetailData([res.data]);
+        const dataWithMemoSeq = {
+          ...res.data,
+          memoSeq: memoSeq,
+        };
+        setMemoDetailData([dataWithMemoSeq]);
         setMemoPic(res.data.file);
+        setThumbnail(res.data.itemImage);
         setMemoDetailCalendar(formatData(res.data.updatedAt));
       } catch (err) {
         console.log(err);
@@ -111,7 +122,8 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
   }, []);
 
   // 이미지 비율 축소를 위한 상태관리
-  const [memoPic, setMemoPic] = useState("");
+  const [memoPic, setMemoPic] = useState<string | null>(null);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [imageWidth, setImageWidth] = useState(MAX_WIDTH);
   const [imageHeight, setImageHeight] = useState(MAX_HEIGHT);
 
@@ -147,7 +159,24 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
         }
       });
     }
-  }, [memoPic]);
+
+    if (thumbnail) {
+      // 원본 이미지 크기
+      Image.getSize(thumbnail, (width, height) => {
+        // 원본 이미지 비율 계산
+        const aspectRatio = width / height;
+
+        // 비율 유지하면서 크기 조절
+        if (width >= height) {
+          setImageWidth(MAX_WIDTH);
+          setImageHeight(MAX_WIDTH / aspectRatio);
+        } else {
+          setImageHeight(MAX_HEIGHT);
+          setImageWidth(MAX_HEIGHT * aspectRatio);
+        }
+      });
+    }
+  }, [memoPic, thumbnail]);
 
   // 메모 이미지 삭제 함수
   const deleteImage = () => {
@@ -194,6 +223,18 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
     }
   };
 
+  // 썸네일 상태관리
+  const [onThumbnail, setOnThumbnail] = useState(false);
+
+  // 썸네일 보는 함수
+  const fullThumbnail = () => {
+    setOnThumbnail(true);
+  };
+
+  const closeThumbnail = () => {
+    setOnThumbnail(false);
+  };
+
   return (
     <>
       <View style={detailStyle.mainContainer}>
@@ -210,6 +251,14 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
                   <Text style={detailStyle.calendar}>{memoDetailCalendar}</Text>
                 )}
                 <View style={detailStyle.iconContainer}>
+                  {thumbnail && (
+                    <Pressable onPress={fullThumbnail}>
+                      <Image
+                        source={{ uri: thumbnail }}
+                        style={detailStyle.thumbnail}
+                      />
+                    </Pressable>
+                  )}
                   <Pressable onPress={() => onMemoUpdatePress(memoDetailData)}>
                     <Image
                       source={require("../../../assets/icons/update.png")}
@@ -246,7 +295,7 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
                           }
                         >
                           <Text>
-                            {memoDetailData[0].taggedTeamList[0].nickname}
+                            {memoDetailData[0].taggedTeamList[0].name}
                             {memoDetailData[0].taggedTeamList.length - 1 !==
                               0 && (
                               <Text style={detailStyle.plusText}>
@@ -297,7 +346,7 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
                                   fontSize: calculateDynamicWidth(14),
                                 }}
                               >
-                                {team.nickname}
+                                {team.name}
                               </Text>
                             ))}
                         {memoDetailData[0].taggedUserList.length > 0 &&
@@ -323,7 +372,7 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
               </View>
             </View>
             <ScrollView style={detailStyle.contentContainer}>
-              {memoPic !== "" ? (
+              {memoPic ? (
                 <>
                   <Pressable onPress={openFullImage}>
                     <Image
@@ -399,20 +448,22 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
               />
             </Pressable>
             {/* 첨부 사진 */}
-            <Image
-              source={{ uri: memoPic }}
-              style={[
-                styles.uploadedFullImg,
-                {
-                  width: imageWidth,
-                  height: imageHeight,
-                  transform: [
-                    { translateY: -imageHeight / 2 },
-                    { translateX: -imageWidth / 2 },
-                  ],
-                },
-              ]}
-            />
+            {memoPic && (
+              <Image
+                source={{ uri: memoPic }}
+                style={[
+                  styles.uploadedFullImg,
+                  {
+                    width: imageWidth,
+                    height: imageHeight,
+                    transform: [
+                      { translateY: -imageHeight / 2 },
+                      { translateX: -imageWidth / 2 },
+                    ],
+                  },
+                ]}
+              />
+            )}
           </Modal>
         </View>
       )}
@@ -424,6 +475,31 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
           contentText="정말 삭제하시겠습니까?"
           btnText="삭제"
         />
+      )}
+      {onThumbnail && thumbnail && (
+        <>
+          <Pressable
+            style={[
+              detailStyle.uploadedImgBg,
+              { backgroundColor: "transparent", zIndex: 2 },
+            ]}
+            onPress={closeThumbnail}
+          />
+          <Image
+            source={{ uri: thumbnail }}
+            style={[
+              styles.uploadedFullImg,
+              {
+                width: imageWidth,
+                height: imageHeight,
+                transform: [
+                  { translateY: -imageHeight / 2 },
+                  { translateX: -imageWidth / 2 },
+                ],
+              },
+            ]}
+          />
+        </>
       )}
     </>
   );
@@ -482,6 +558,12 @@ const detailStyle = StyleSheet.create({
     marginLeft: calculateDynamicWidth(10),
   },
 
+  thumbnail: {
+    width: calculateDynamicWidth(20),
+    height: calculateDynamicWidth(20),
+    borderRadius: calculateDynamicWidth(20 / 2),
+  },
+
   nickname: {
     color: Colors.blue500,
     fontFamily: "Pretendard-Medium",
@@ -538,5 +620,19 @@ const detailStyle = StyleSheet.create({
   bookmarkSize: {
     width: calculateDynamicWidth(17),
     height: calculateDynamicWidth(23),
+  },
+
+  uploadedImgBg: {
+    flex: 1,
+    backgroundColor: "transparent",
+    zIndex: 1,
+    marginBottom: -screenHeight,
+  },
+
+  binContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    zIndex: 3,
   },
 });
