@@ -376,11 +376,15 @@ const MainScreen = () => {
     if (isUpdateMemoTrue) {
       setIsUpdateMemoTrue(false);
       setMemoListVisible(true);
+      setIsVisible(false);
+    } else {
+      setIsVisible(true);
     }
     setMemoCreateModalVisible(false);
     setEnteredMemo("");
     setOpenState("OPEN");
     MemoCreate();
+
     if (check) {
       startRTCConnection("track1");
     }
@@ -456,7 +460,6 @@ const MainScreen = () => {
             if (res.request.status === 200) {
               console.log("메모 생성 성공");
               //물체 표시 생성
-              setIsVisible(true);
               setTaggedMember([]);
               setTaggedGroup([]);
               setTaggedMemberList([]);
@@ -493,7 +496,6 @@ const MainScreen = () => {
             if (res.request.status === 200) {
               console.log("메모 수정 성공");
               //물체 표시 생성
-              setIsVisible(true);
               setTaggedMember([]);
               setTaggedGroup([]);
               setTaggedMemberList([]);
@@ -580,10 +582,10 @@ const MainScreen = () => {
   >([]);
 
   // 선택 된 객체 ID 값 저장
-  const [pickItem, setPickItem] = useState("");
+  const [pickItem, setPickItem] = useState("65180fb9e5875189022978b2");
 
   // 메모 조회 시 객체 표시 가리기
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   // 물체 학습 화면 표시 여부
   const [objectRegisterShow, setObjectRegisterShow] = useState(false);
@@ -612,6 +614,14 @@ const MainScreen = () => {
 
   // 물체 등록 후 메모 생성 여부 확인
   const [confirmMemoCreate, setConfirmMemoCreate] = useState(false);
+
+  //  memoListVisible 참조
+  const memoListVisibleRef = useRef(memoListVisible);
+
+  // memoListVisible 값이 변경될 때마다 useRef 업데이트
+  useEffect(() => {
+    memoListVisibleRef.current = memoListVisible;
+  }, [memoListVisible]);
 
   // 물체 등록 후 메모 생성 취소
   const cancelConfirmMemoCreate = () => {
@@ -651,6 +661,7 @@ const MainScreen = () => {
   // 미등록 물체 모달 닫기
   const cancelObjectRegister = () => {
     setUnregisteredNotification(false);
+    setIsVisible(true);
   };
 
   type ObjMemoCountItem = {
@@ -744,7 +755,7 @@ const MainScreen = () => {
       Alert.alert("Error", "Please initialize the camera first.");
       return;
     }
-
+    setIsVisible(true);
     const configuration = {
       sdpSemantics: "unified-plan",
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
@@ -781,17 +792,14 @@ const MainScreen = () => {
         setIsVisible(false);
         setProgress(0);
         stopRTCConnection();
-        // Alert.alert("완료", "물체등록이 완료되었습니다");
         setConfirmMemoCreate(true);
-
-        console.log(newId);
       }
 
-      // 기존의 로직을 유지합니다
       if (
         trackType != "track2" &&
         receivedData.objects &&
-        Array.isArray(receivedData.objects)
+        Array.isArray(receivedData.objects) &&
+        !memoListVisibleRef.current
       ) {
         const newCoordinates = receivedData.objects.map((obj: any) => ({
           id: obj.id,
@@ -799,7 +807,6 @@ const MainScreen = () => {
           y: obj.label_y,
         }));
         setCoordinates(newCoordinates);
-        setIsVisible(true);
       }
     };
 
@@ -863,8 +870,8 @@ const MainScreen = () => {
         )}
 
         {/* 인식된 객체에 표시할 오브젝트 */}
-        {coordinates.length > 0 &&
-          isVisible &&
+        {isVisible &&
+          coordinates.length > 0 &&
           coordinates.map((coordinate, index) => (
             <TouchableOpacity
               key={index}
@@ -878,11 +885,12 @@ const MainScreen = () => {
               activeOpacity={0.7}
               onPress={() => {
                 if (coordinate.id !== "0") {
-                  setCheck(false);
                   setIsVisible(false);
+                  setCheck(false);
                   setPickItem(coordinate.id);
                   setMemoListVisible(true);
                 } else {
+                  setIsVisible(false);
                   setUnregisteredNotification(true);
                 }
               }}
@@ -905,6 +913,7 @@ const MainScreen = () => {
             </TouchableOpacity>
           ))}
         {/* 물체 학습화면 로직 구현중 */}
+
         {objectRegisterShow && (
           <>
             <View style={styles.focusBox}>
@@ -927,7 +936,11 @@ const MainScreen = () => {
                 borderRadius={10}
                 borderWidth={3}
                 borderColor="white"
+                style={styles.progressBar}
               />
+              <Text style={styles.progressText}>
+                {Math.round(progress * 100)}%
+              </Text>
             </View>
           </>
         )}
@@ -959,7 +972,7 @@ const MainScreen = () => {
             disabled={!isConnected}
           />
         </View>
-        <Pressable
+        {/* <Pressable
           style={styles.btnContainer}
           onPress={() => setMemoBtnModalVisible(true)}
         >
@@ -967,7 +980,7 @@ const MainScreen = () => {
             source={require("../../assets/image/mainbtn.png")}
             style={styles.addBtn}
           />
-        </Pressable>
+        </Pressable> */}
       </View>
 
       {/* 메모 조회 */}

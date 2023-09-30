@@ -354,6 +354,7 @@ export const styles = StyleSheet.create({
   },
 
   // 물체 학습 시 가운데 포커스 표시
+
   focusBox: {
     position: "absolute",
     top: "50%",
@@ -363,6 +364,7 @@ export const styles = StyleSheet.create({
       { translateX: -calculateDynamicWidth(60) / 2 },
     ],
   },
+
   focusImg: {
     width: calculateDynamicWidth(60),
     height: calculateDynamicWidth(60),
@@ -386,5 +388,16 @@ export const styles = StyleSheet.create({
     bottom: "20%",
     width: "100%",
     alignItems: "center",
+  },
+  progressBar: {
+    position: "absolute",
+    top: 0,
+  },
+  progressText: {
+    width: "100%",
+    height: "100%",
+    textAlign: "center",
+    lineHeight: 25,
+    color: "white",
   },
 });
