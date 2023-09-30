@@ -373,8 +373,11 @@ const MainScreen = () => {
 
   // 메모 작성 및 업데이트 완료 함수
   const memoConfirmHandler = () => {
+    if (isUpdateMemoTrue) {
+      setIsUpdateMemoTrue(false);
+      setMemoListVisible(true);
+    }
     setMemoCreateModalVisible(false);
-    setIsUpdateMemoTrue(false);
     setEnteredMemo("");
     setOpenState("OPEN");
     MemoCreate();
