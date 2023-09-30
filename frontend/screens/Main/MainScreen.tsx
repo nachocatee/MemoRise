@@ -976,6 +976,7 @@ const MainScreen = () => {
             onMemoDetailPress={setMemoDetailModal}
             id={pickItem}
             memoStatus={"main"}
+            memoListStatus={memoListVisible}
           />
         </>
       )}

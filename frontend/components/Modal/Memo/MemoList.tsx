@@ -30,6 +30,7 @@ type MemoListProp = {
   onMemoDetailPress: (memoSeq: number) => void;
   id: string | null;
   memoStatus: string;
+  memoListStatus: boolean;
 };
 
 const MemoList: React.FC<MemoListProp> = ({
@@ -37,6 +38,7 @@ const MemoList: React.FC<MemoListProp> = ({
   onMemoDetailPress,
   id,
   memoStatus,
+  memoListStatus,
 }) => {
   // 유저ID
   const userId = useSelector((state: RootState) => state.userInfo.id);
@@ -98,7 +100,7 @@ const MemoList: React.FC<MemoListProp> = ({
       }
     };
     fetchData();
-  }, []);
+  }, [memoListStatus]);
 
   // FlatList 사용을 위한 MemoList 정리
   const MemoList: React.FC<MemoListItemProps> = ({ item }) => (

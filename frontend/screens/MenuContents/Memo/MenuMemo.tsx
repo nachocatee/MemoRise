@@ -511,6 +511,7 @@ const MemuMemo: React.FC<MenuMemoScreenProps> = ({ route }) => {
     setIsMemoCreate(false);
     setEnteredMemo("");
     setOpenState("OPEN");
+    setIsMemoList(true);
     MemoCreate();
   };
 
@@ -569,6 +570,7 @@ const MemuMemo: React.FC<MenuMemoScreenProps> = ({ route }) => {
                     onMemoDetailPress={onDetailMemoHandler}
                     id={null}
                     memoStatus={menuStatus}
+                    memoListStatus={isMemoList}
                   />
                 </>
               )}
