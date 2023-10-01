@@ -863,6 +863,7 @@ const MainScreen = () => {
 
   const noLengthModalOpenCreate = () => {
     setMemoCreateModalVisible(true);
+    setCheckMemoLengthZero(false);
   };
 
   return (
