@@ -74,11 +74,10 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
 - `Ubuntu` : 20.04 LTS <br/>
 - `Jenkins` : 2.417 <br/>
 - `Docker` : 24.0.5 <br/>
-- `Nginx` : 1.18.0 (Ubuntu) <br/>
 - `Prometheus` : 1.9.13 <br/>
 </details> <br/>
 
-<b>백엔드</b> : <img src="https://img.shields.io/badge/Java-000000?style=flat-square&logo=java&logoColor=744e3b"/> <img src="https://img.shields.io/badge/Spring-000000?style=flat-square&logo=spring&logoColor=6DB33F"/> <img src="https://img.shields.io/badge/Springboot-000000?style=flat-square&logo=springboot&logoColor=6DB33F"/> <img src="https://img.shields.io/badge/Springsecurity-000000?style=flat-square&logo=springsecurity&logoColor=6DB33F"/> <img src="https://img.shields.io/badge/Redis-000000?style=flat-square&logo=redis&logoColor=DC382D"/> <img src="https://img.shields.io/badge/Gradle-000000?style=flat-square&logo=gradle&logoColor=02303A"/> <img src="https://img.shields.io/badge/MySQL-000000?style=flat-square&logo=mysql&logoColor=4479A1"/> <img src="https://img.shields.io/badge/JPA-000000?style=flat-square&logo=JPA&logoColor=DC382D"/>
+<b>백엔드</b> : <img src="https://img.shields.io/badge/Java-000000?style=flat-square&logo=java&logoColor=744e3b"/> <img src="https://img.shields.io/badge/Spring-000000?style=flat-square&logo=spring&logoColor=6DB33F"/> <img src="https://img.shields.io/badge/Springboot-000000?style=flat-square&logo=springboot&logoColor=6DB33F"/> <img src="https://img.shields.io/badge/Springsecurity-000000?style=flat-square&logo=springsecurity&logoColor=6DB33F"/> <img src="https://img.shields.io/badge/Gradle-000000?style=flat-square&logo=gradle&logoColor=02303A"/> <img src="https://img.shields.io/badge/MySQL-000000?style=flat-square&logo=mysql&logoColor=4479A1"/> <img src="https://img.shields.io/badge/JPA-000000?style=flat-square&logo=JPA&logoColor=DC382D"/>
 
 <details>
 <summary>버전 상세 정보</summary>
@@ -89,10 +88,9 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
 - `Spring Security` : 5.7.10 <br/>
 - `MySQL` : 8.0.33 <br/>
 - `Gradle` : 8.1.1 <br/>
-- `Redis` : 3.2 <br/>
 </details> <br/>
 
-<b>프론트엔드</b> : <img src="https://img.shields.io/badge/JavaScript-000000?style=flat-square&logo=javascript&logoColor=F7DF1E"/> <img src="https://img.shields.io/badge/ReactNative-000000?style=flat-square&logo=react&logoColor=61DAFB"/> <img src="https://img.shields.io/badge/Redux-000000?style=flat-square&logo=redux&logoColor=764ABC"/> <img src="https://img.shields.io/badge/npm-000000?style=flat-square&logo=npm&logoColor=CB3837"/> <img src="https://img.shields.io/badge/Axios-000000?style=flat-square&logo=Axios&logoColor=5A29E4"/><br/>
+<b>프론트엔드</b> : <img src="https://img.shields.io/badge/JavaScript-000000?style=flat-square&logo=javascript&logoColor=F7DF1E"/> <img src="https://img.shields.io/badge/ReactNative-000000?style=flat-square&logo=react&logoColor=61DAFB"/> <img src="https://img.shields.io/badge/Redux-000000?style=flat-square&logo=redux&logoColor=764ABC"/> <img src="https://img.shields.io/badge/npm-000000?style=flat-square&logo=npm&logoColor=CB3837"/> <img src="https://img.shields.io/badge/Axios-000000?style=flat-square&logo=Axios&logoColor=5A29E4"/> <img src="https://img.shields.io/badge/WebRTC-000000?style=flat-square&logo=webrtc&logoColor=333333"/><br/>
 
 <details>
 <summary>버전 상세 정보</summary>
@@ -102,6 +100,19 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
 - `Redux` : 8.1.2 <br/>
 - `npm` : 9.5.1 <br/>
 - `Axios` : 1.5.0 <br/>
+- `WebRTC` : 111.0.3 <br/>
+</details> <br/><br/>
+
+<b>인공지능</b> : <img src="https://img.shields.io/badge/Python-000000?style=flat-square&logo=python&logoColor=3776AB"/> <img src="https://img.shields.io/badge/Pytorch-000000?style=flat-square&logo=pytorch&logoColor=EE4C2C"/> <img src="https://img.shields.io/badge/Anaconda-000000?style=flat-square&logo=anaconda&logoColor=44A833"/> <img src="https://img.shields.io/badge/MongoDB-000000?style=flat-square&logo=mongodb&logoColor=47A248"/> <img src="https://img.shields.io/badge/WebRTC-000000?style=flat-square&logo=webrtc&logoColor=333333"/><br/>
+
+<details>
+<summary>버전 상세 정보</summary>
+
+- `Python` : 3.9.16 <br/>
+- `Pytorch` : 수정 <br/>
+- `Anaconda` : 23.7.2 <br/>
+- `MongoDB` : 수정 <br/>
+- `WebRTC` : 수정 <br/>
 </details> <br/><br/>
 
 # 📺 서비스 상세 내용
