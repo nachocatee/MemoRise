@@ -121,7 +121,7 @@ const MemuMemo: React.FC<MenuMemoScreenProps> = ({ route }) => {
         response = await axios.get(
           BACKEND_URL +
             // 쫀디기
-            `/user/23/${
+            `/user/${userId}/${
               menuStatus === "saved"
                 ? "bookmarks"
                 : menuStatus === "all"

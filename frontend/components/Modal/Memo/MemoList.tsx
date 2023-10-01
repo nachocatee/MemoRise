@@ -22,7 +22,6 @@ import { BACKEND_URL } from "../../../util/http";
 // 컴포넌트
 import BookMarkBtn from "../../Button/BookMarkBtn";
 import { RootState } from "../../../store/store";
-import LoadingOverlay from "../../LoadingOverlay";
 
 // 메인페이지 상태관리를 위한 타입 지정
 type MemoListProp = {
@@ -85,7 +84,8 @@ const MemoList: React.FC<MemoListProp> = ({
         } else {
           response = await axios.get(
             BACKEND_URL +
-              `/user/23/${
+              `/user/${userId}/${
+                // 쫀듸기
                 memoStatus === "saved"
                   ? "bookmarks"
                   : memoStatus === "all"
@@ -164,15 +164,17 @@ const MemoList: React.FC<MemoListProp> = ({
       {/* memoStatus에 따라서 메모 작성 버튼 유무 판단 */}
       {memoStatus === "main" ? (
         <View style={styles.mainContainer_main}>
-          <Pressable
-            style={styles.memoWriteContainer}
-            onPress={onMemoWritePress}
-          >
-            <Image
-              source={require("../../../assets/icons/memo_write.png")}
-              style={styles.memoWrite}
-            />
-          </Pressable>
+          {memoData.length !== 0 && (
+            <Pressable
+              style={styles.memoWriteContainer}
+              onPress={onMemoWritePress}
+            >
+              <Image
+                source={require("../../../assets/icons/memo_write.png")}
+                style={styles.memoWrite}
+              />
+            </Pressable>
+          )}
           <View style={styles.memoListContainer_main}>
             <FlatList
               data={memoData}
