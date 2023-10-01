@@ -585,7 +585,7 @@ const MainScreen = () => {
   >([]);
 
   // 선택 된 객체 ID 값 저장
-  const [pickItem, setPickItem] = useState("65180fb9e5875189022978b2");
+  const [pickItem, setPickItem] = useState("");
 
   // 메모 조회 시 객체 표시 가리기
   const [isVisible, setIsVisible] = useState(false);
