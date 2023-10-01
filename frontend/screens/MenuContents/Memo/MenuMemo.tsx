@@ -31,6 +31,7 @@ import MemoDetail, {
 } from "../../../components/Modal/Memo/MemoDetail";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import AlertModal from "../../../components/Modal/AlertModal";
+import GoListHeader from "../../../components/Header/GoListHeader";
 
 // 스타일
 import { styles } from "./MemoStyle";
@@ -65,7 +66,6 @@ type UserData = {
 }[];
 
 // 모바일 사이즈
-const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 // 사진 최대크기 설정
@@ -279,6 +279,7 @@ const MemuMemo: React.FC<MenuMemoScreenProps> = ({ route }) => {
   const closeDetailOpenList = () => {
     setIsMemoDetail(false);
     setIsMemoList(true);
+    console.log("쫀듸기");
   };
 
   // 메모수정을 위한 태그된 팀 & 유저 함수
@@ -581,11 +582,7 @@ const MemuMemo: React.FC<MenuMemoScreenProps> = ({ route }) => {
               )}
               {isMemoDetail && (
                 <>
-                  <GoBackHeader />
-                  <Pressable
-                    onPress={closeDetailOpenList}
-                    style={menumemostyles.back}
-                  />
+                  <GoListHeader onPress={closeDetailOpenList} />
                   <MemoDetail
                     memoSeq={memoId}
                     onMemoUpdatePress={updateMemo}

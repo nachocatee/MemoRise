@@ -8,7 +8,6 @@ import {
   ScrollView,
   Dimensions,
   Alert,
-  Button,
   TouchableOpacity,
 } from "react-native";
 import {
@@ -43,7 +42,7 @@ import { GroupData } from "../MenuContents/Group/MyGroupScreen";
 
 const screenHeight = Dimensions.get("window").height;
 
-type DataChannel = {
+export type DataChannel = {
   current: {
     _bufferedAmount: number;
     _id: number | null;
@@ -915,8 +914,8 @@ const MainScreen = () => {
             >
               <View style={styles.imageContainer}>
                 <Image
-                  source={require("../../assets/focus/star.png")}
-                  style={styles.ObjImg}
+                  source={require("../../assets/focus/memo.png")}
+                  style={[styles.ObjImg, { opacity: 0.7 }]}
                 />
                 <View style={styles.textContainer}>
                   <Text style={styles.ObjCircleText}>
@@ -978,18 +977,24 @@ const MainScreen = () => {
           contentText={`미등록된 물체입니다.\n등록해주세요!`}
           btnText="확인"
         />
-        <View style={styles.rtcButton}>
-          <Button
-            title="Start"
+        {isConnected ? (
+          <Pressable style={styles.btnContainer} onPress={stopRTCConnection}>
+            <Image
+              source={require("../../assets/image/camerabtn_stop.png")}
+              style={styles.addBtn}
+            />
+          </Pressable>
+        ) : (
+          <Pressable
+            style={styles.btnContainer}
             onPress={() => startRTCConnection("track1")}
-            disabled={isConnected}
-          />
-          <Button
-            title="Stop"
-            onPress={stopRTCConnection}
-            disabled={!isConnected}
-          />
-        </View>
+          >
+            <Image
+              source={require("../../assets/image/camerabtn.png")}
+              style={styles.addBtn}
+            />
+          </Pressable>
+        )}
         {/* <Pressable
           style={styles.btnContainer}
           onPress={() => setMemoBtnModalVisible(true)}

@@ -343,9 +343,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   ObjCircleText: {
-    color: "white",
+    color: Colors.text,
+    // color: "white",
     fontSize: 30,
     fontWeight: "bold",
+    opacity: 0.6,
+    fontFamily: "Pretendard-SemiBold",
   },
   memoClose: {
     flex: 1,
