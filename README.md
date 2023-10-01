@@ -11,6 +11,8 @@
 <b> 물체인식 기반 AR 메모 서비스 </b><br>
 MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 AR처럼 볼 수 있게 해주는 물체인식 기반 AR 메모 서비스입니다.
 
+<br/>
+
 ### 📑 주요 기능
 
 - 소셜 로그인
@@ -45,14 +47,30 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
         <td align="center"> <a href="https://github.com/Fizioo0102"> 최경인 </a></td>
     </tr>
     <tr>
-        <td align="center">AOS <br/>Leader </td>
-        <td align="center">AOS <br/>Design </td>
-        <td align="center">AOS <br/>AI </td>
-        <td align="center">Backend <br/>Security </td>
-        <td align="center">Backend <br/>AI  </td>
-        <td align="center">Backend <br/>Infra  </td>
+        <td align="center">AOS</td>
+        <td align="center">AOS</td>
+        <td align="center">AOS</td>
+        <td align="center">Backend</td>
+        <td align="center">Backend</td>
+        <td align="center">Backend</td>
     </tr>
 </table>
+
+<b>AOS</b>
+
+- 김장호 :
+- 권소정 :
+- 김준형 :
+
+<br/>
+
+<b>Backend</b>
+
+- 김수연 :
+- 이준용 :
+- 최경인 :
+
+<br/>
 
 ### 📅 진행 기간
 
@@ -62,6 +80,8 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
 - 개발 : 2023. 08. 28 ~ 2023. 09. 29
 - 버그 수정, 산출물 작성 : 2023. 10. 02 ~ 2023. 10. 06
 ```
+
+<br/>
 
 ### 🛠 개발 환경
 
@@ -164,6 +184,8 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
 <div align="center">
 <img src="https://github.com/Semibro/TIL/assets/71372469/b1d14f8c-92fc-4b03-a2bf-b80ac7b0dd4a"> </div>
 
+<br/>
+
 ### 🔑 Commit Comvention
 
 |   태그   |                 설명                 |               예시                |
@@ -177,11 +199,12 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
 |   Test   |                테스트                |       Test: 회원가입 테스트       |
 |  Chore   |            기타 변경사항             |         Chore: 공백 제거          |
 
+<br/>
+
 ### 🔑 Branch
 
-- develop/be : 백엔드 프로젝트 배포<br>
-- develop/fe : 프론트엔드 프로젝트 배포<br>
-- feature/be/[기능명] : 백엔드 기능 개발
-- feature/fe/[기능명] : 프론트엔드 기능 개발
+- develop : 서비스 배포<br>
+- feature/be/[기능명] : 백엔드 기능 개발<br>
+- feature/fe/[기능명] : 프론트엔드 기능 개발<br>
 - hotfix/be/[기능명] : 급한 백엔드 에러 수정<br>
 - hotfix/fe/[기능명] : 급한 프론트엔드 에러 수정<br>
