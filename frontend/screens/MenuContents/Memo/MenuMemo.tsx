@@ -537,6 +537,10 @@ const MemuMemo: React.FC<MenuMemoScreenProps> = ({ route }) => {
     setIsMemoDetail(true);
   };
 
+  const dummyFunction = (checker: boolean) => {
+    console.log("더미데이터 : " + checker);
+  };
+
   return (
     <>
       {loading ? (
@@ -571,6 +575,7 @@ const MemuMemo: React.FC<MenuMemoScreenProps> = ({ route }) => {
                     id={null}
                     memoStatus={menuStatus}
                     memoListStatus={isMemoList}
+                    onMemoZeroLength={dummyFunction}
                   />
                 </>
               )}

@@ -30,6 +30,7 @@ type MemoListProp = {
   id: string | null;
   memoStatus: string;
   memoListStatus: boolean;
+  onMemoZeroLength: (checker: boolean) => void;
 };
 
 const MemoList: React.FC<MemoListProp> = ({
@@ -38,6 +39,7 @@ const MemoList: React.FC<MemoListProp> = ({
   id,
   memoStatus,
   memoListStatus,
+  onMemoZeroLength,
 }) => {
   // 유저ID
   const userId = useSelector((state: RootState) => state.userInfo.id);
@@ -81,6 +83,9 @@ const MemoList: React.FC<MemoListProp> = ({
             BACKEND_URL + `/memos/${id}/list/${userId}`
             // BACKEND_URL + `/memos/8ef97a8a0be/list/30` // 쫀듸기
           );
+          if (response.data.length === 0) {
+            onMemoZeroLength(true);
+          }
         } else {
           response = await axios.get(
             BACKEND_URL +
