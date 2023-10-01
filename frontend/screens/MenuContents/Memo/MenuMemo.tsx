@@ -1037,13 +1037,13 @@ const MemuMemo: React.FC<MenuMemoScreenProps> = ({ route }) => {
                     </Modal>
                   </View>
 
-                  {/* 메모 작성 중 취소 확인 모달 */}
+                  {/* 메모 수정 중 취소 확인 모달 */}
                   {isMemoCancelModalVisible && (
                     <AlertModal
                       modalVisible={isMemoCancelModalVisible}
                       closeModal={closeMemoCancelModal}
                       onConfirm={memoCancelConfirm}
-                      contentText="메모 작성을 취소하시겠습니까?"
+                      contentText="메모 수정을 취소하시겠습니까?"
                       btnText="확인"
                     />
                   )}
