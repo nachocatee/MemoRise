@@ -82,6 +82,9 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
   // 메모 상세 조회 날짜 상태관리
   const [memoDetailCalendar, setMemoDetailCalendar] = useState("");
 
+  // 메모 작성한 사람의 userID
+  const [writeUserId, setWriteUserId] = useState(0);
+
   // 날짜 변경 함수
   const formatData = (inputData: string) => {
     const date = new Date(inputData);
@@ -114,6 +117,7 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
         setMemoPic(res.data.file);
         setThumbnail(res.data.itemImage);
         setMemoDetailCalendar(formatData(res.data.updatedAt));
+        setWriteUserId(res.data.userSeq);
       } catch (err) {
         console.log(err);
       }
@@ -259,18 +263,24 @@ const MemoDetail: React.FC<MemoDetailProp> = ({
                       />
                     </Pressable>
                   )}
-                  <Pressable onPress={() => onMemoUpdatePress(memoDetailData)}>
-                    <Image
-                      source={require("../../../assets/icons/update.png")}
-                      style={detailStyle.icon}
-                    />
-                  </Pressable>
-                  <Pressable onPress={deleteMemoHandler}>
-                    <Image
-                      source={require("../../../assets/icons/delete.png")}
-                      style={detailStyle.icon}
-                    />
-                  </Pressable>
+                  {userId === writeUserId && (
+                    <>
+                      <Pressable
+                        onPress={() => onMemoUpdatePress(memoDetailData)}
+                      >
+                        <Image
+                          source={require("../../../assets/icons/update.png")}
+                          style={detailStyle.icon}
+                        />
+                      </Pressable>
+                      <Pressable onPress={deleteMemoHandler}>
+                        <Image
+                          source={require("../../../assets/icons/delete.png")}
+                          style={detailStyle.icon}
+                        />
+                      </Pressable>
+                    </>
+                  )}
                 </View>
               </View>
               <View style={detailStyle.rowSpaceBetween2}>
