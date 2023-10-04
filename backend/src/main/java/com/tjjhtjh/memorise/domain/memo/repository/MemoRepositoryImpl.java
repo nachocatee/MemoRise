@@ -63,7 +63,7 @@ public class MemoRepositoryImpl extends QuerydslRepositorySupport implements Mem
     public Optional<MemoDetailResponse> detailMemo(Long memoId, Long userSeq) {
         return queryFactory.select(Projections.fields(MemoDetailResponse.class,
                         memo.user.nickname.as("nickname"), memo.updatedAt, memo.content, memo.file, memo.accessType
-                        ,memo.item.itemName ,memo.item.itemImage))
+                        ,memo.item.itemName ,memo.item.itemImage, memo.user.userSeq))
                 .from(memo)
                 .leftJoin(memo.user)
                 .leftJoin(memo.item)

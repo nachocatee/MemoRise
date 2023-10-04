@@ -18,6 +18,7 @@ import java.util.List;
 @Builder
 public class MemoDetailResponse {
 
+    private Long userSeq;
     private String content;
     private String nickname;
     private LocalDateTime updatedAt;
@@ -32,6 +33,7 @@ public class MemoDetailResponse {
     public MemoDetailResponse detailResponse(
             MemoDetailResponse reponse, Boolean bookmarkCheck, List<TaggedUserResponse> userList, List<TaggedTeamResponse> teamList) {
         return MemoDetailResponse.builder()
+                .userSeq(reponse.getUserSeq())
                 .content(reponse.getContent())
                 .nickname(reponse.getNickname())
                 .itemName(reponse.getItemName())
