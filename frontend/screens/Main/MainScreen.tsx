@@ -383,6 +383,7 @@ const MainScreen = () => {
     setEnteredMemo("");
     setOpenState("OPEN");
     MemoCreate();
+    setUploadedPic("");
 
     if (check) {
       startRTCConnection("track1");
@@ -1406,6 +1407,7 @@ const MainScreen = () => {
                       multiline={true}
                       onChangeText={memoInputHandler}
                       value={enteredMemo}
+                      autoFocus
                     />
                   </ScrollView>
                 </View>

@@ -628,8 +628,8 @@ const detailStyle = StyleSheet.create({
   },
 
   bookmarkSize: {
-    width: calculateDynamicWidth(17),
-    height: calculateDynamicWidth(23),
+    width: calculateDynamicWidth(21),
+    height: calculateDynamicWidth(28.41),
   },
 
   uploadedImgBg: {
