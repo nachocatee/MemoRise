@@ -41,8 +41,8 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
     <tr>
         <td align="center"> <a href="https://github.com/KJH0406"> 👑김장호 </a></td>
         <td align="center"> <a href="https://github.com/nachocatee"> 권소정 </a></td>
-        <td align="center"> <a href="https://github.com/suyeonsu"> 김준형 </a> </td>
-        <td align="center"> <a href="https://github.com/Semibro"> 김수연 </a> </td>
+        <td align="center"> <a href="https://github.com/Semibro"> 김준형 </a> </td>
+        <td align="center"> <a href="https://github.com/suyeonsu"> 김수연 </a> </td>
         <td align="center"> <a href="https://github.com/elle6044"> 이준용 </a></td>
         <td align="center"> <a href="https://github.com/Fizioo0102"> 최경인 </a></td>
     </tr>
