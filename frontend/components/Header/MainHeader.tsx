@@ -26,7 +26,7 @@ const MainHeader: React.FC<HeaderProps> = ({ openModal }) => {
       <Pressable style={styles.notificationContainer} onPress={openModal}>
         <View style={styles.padding}>
           <Image
-            source={require("../../assets/icons/notification_none.png")}
+            source={require("../../assets/icons/help.png")}
             style={styles.notification}
           />
         </View>
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     left: 0,
   },
   notification: {
-    width: 26.25,
-    height: 28.43,
+    width: 30,
+    height: 30,
   },
   menuContainer: {
     position: "absolute",

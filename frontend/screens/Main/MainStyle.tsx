@@ -61,14 +61,29 @@ export const styles = StyleSheet.create({
   },
   modalEmptyContainer: {
     flex: 1,
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     marginTop: -97 / 2,
   },
-  modalEmpty: {
+  helpTitle: {
+    color: "white",
+    fontFamily: "Pretendard-ExtraBold",
+    fontSize: calculateDynamicWidth(24),
+    textAlign: "center",
+  },
+  helpText: {
     color: "white",
     fontFamily: "Pretendard-SemiBold",
     fontSize: calculateDynamicWidth(18),
+    marginVertical: calculateDynamicWidth(5),
+  },
+  helpContent: {
+    color: "white",
+    fontFamily: "Pretendard-Medium",
+    fontSize: calculateDynamicWidth(18),
+  },
+  helpContainer: {
+    marginTop: calculateDynamicWidth(20),
   },
 
   // 메모 모달 관련 스타일

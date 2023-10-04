@@ -60,7 +60,6 @@ export type RootStackParamList = {
     teamName: string;
   };
   GroupSearchResult: { searchResults?: GroupData };
-  Tutorial: undefined;
 };
 
 LogBox.ignoreLogs([
@@ -80,7 +79,6 @@ function App(): JSX.Element {
             <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Tutorial" component={TutorialScreen} />
             {/* 메뉴 */}
             <Stack.Screen name="Menu" component={MenuScreen} />
             <Stack.Screen name="MyGroup" component={MyGroupScreen} />
