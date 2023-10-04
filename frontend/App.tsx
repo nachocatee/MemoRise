@@ -30,7 +30,6 @@ import GroupSettingScreen from "./screens/MenuContents/Group/GroupSettingScreen"
 import InviteUserScreen from "./screens/MenuContents/Group/InviteUserScreen";
 import GroupSearchResultScreen from "./screens/MenuContents/Group/GroupSearchResultScreen";
 import MemuMemo from "./screens/MenuContents/Memo/MenuMemo";
-import TutorialScreen from "./screens/Tutorial/TutorialScreen";
 
 export type RootStackParamList = {
   Landing: undefined;
