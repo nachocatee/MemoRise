@@ -39,6 +39,7 @@ import { RootState } from "../../store/store";
 import MemoDetail from "../../components/Modal/Memo/MemoDetail";
 import { MemoDetailProps } from "../../components/Modal/Memo/MemoDetail";
 import { GroupData } from "../MenuContents/Group/MyGroupScreen";
+import TutorialModal from "../../components/Modal/TutorialModal";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -87,7 +88,6 @@ const MainScreen = () => {
   // 메모 조회에서 생성하는지 학습에서 생성하는지 여부 확인
   const [check, setCheck] = useState(false);
   const isFocused = useIsFocused();
-  // const token = useSelector((state: RootState) => state.userInfo.)
   const userId = useSelector((state: RootState) => state.userInfo.id);
 
   // 사진 첨부
@@ -281,7 +281,7 @@ const MainScreen = () => {
 
   // 메모 조회 상태관리
   // true -> false로 변경할 것!!! <-- 변경했다면? 주석지워~
-  const [memoListVisible, setMemoListVisible] = useState(false); //쫀듸기
+  const [memoListVisible, setMemoListVisible] = useState(false);
 
   // 메모모달 종료 후, 메모 작성창 띄우는 함수
   // 나중에 객체 탐지해서 메모 개수 나오면 함수 적용
@@ -420,7 +420,6 @@ const MainScreen = () => {
       const res = await axios({
         method: "GET",
         url: BACKEND_URL + `/user/${userId}/my-teams`,
-        // url: BACKEND_URL + `/user/30/my-teams`, // 쫀듸기
       });
       setGroupList(res.data);
     } catch (err) {
@@ -439,18 +438,12 @@ const MainScreen = () => {
         await axios({
           method: "POST",
           url: BACKEND_URL + `/memos`,
-          // headers: {
-          //   "Content-Type": "application/json",
-          //   Authorization: "Bearer " + token,
-          // },
           data: {
             content: enteredMemo,
             accessType: openState,
             userId: userId,
-            // userId: 30, // 쫀듸기
             newFile: uploadedPic,
             itemName: pickItem,
-            // itemName: "8ef97a8a0be", // 쫀듸기
             taggedUserList: taggedMember,
             taggedTeamList: taggedGroup,
           },
@@ -475,18 +468,12 @@ const MainScreen = () => {
         await axios({
           method: "PUT",
           url: BACKEND_URL + `/memos/${memoId}`,
-          // headers: {
-          //   "Content-Type": "application/json",
-          //   Authorization: "Bearer " + token,
-          // },
           data: {
             content: enteredMemo,
             accessType: openState,
             userId: userId,
-            // userId: 30, // 쫀듸기
             newFile: uploadedPic,
             itemName: pickItem,
-            // itemName: "8ef97a8a0be", // 쫀듸기
             taggedUserList: taggedMember,
             taggedTeamList: taggedGroup,
           },
@@ -1040,77 +1027,12 @@ const MainScreen = () => {
         </>
       )}
 
-      {/* 알림 모달 */}
+      {/* 튜토리얼 모달 */}
       {isNotificationModalVisible && (
-        <View style={styles.background}>
-          <Modal
-            transparent={true}
-            animationType="slide"
-            visible={isNotificationModalVisible}
-            onRequestClose={closeNotificationModal}
-          >
-            {/* 헤더 */}
-            <View style={styles.header}>
-              <Pressable>
-                <Image
-                  source={require("../../assets/image/logo/logowhite.png")}
-                  style={styles.logo}
-                />
-              </Pressable>
-              <Pressable
-                style={styles.cancelContainer}
-                onPress={closeNotificationModal}
-              >
-                <Image
-                  source={require("../../assets/icons/cancelwhite.png")}
-                  style={styles.cancel}
-                />
-              </Pressable>
-            </View>
-
-            <View style={styles.modalEmptyContainer}>
-              <Text style={styles.helpTitle}>
-                <Text style={{ color: Colors.primary200 }}>MemoRise</Text>는 두
-                가지 단계를 거쳐{`\n`}메모를 등록할 수 있습니다!
-              </Text>
-              <View style={styles.helpContainer}>
-                <Text style={styles.helpText}>1. 물체 등록하기</Text>
-                <View style={{ marginLeft: calculateDynamicWidth(15) }}>
-                  <Text style={styles.helpContent}>
-                    a. 물체 주위의 +버튼{" "}
-                    <Image
-                      source={require("../../assets/focus/memo.png")}
-                      style={{
-                        width: calculateDynamicWidth(20),
-                        height: calculateDynamicWidth(20),
-                      }}
-                    />{" "}
-                    을 누르세요
-                  </Text>
-                  <Text style={styles.helpContent}>
-                    b. 물체를 화면 중앙에 놓고 다각도로{`\n`} 비춰 주세요
-                  </Text>
-                </View>
-                <Text
-                  style={[
-                    styles.helpText,
-                    { marginTop: calculateDynamicWidth(15) },
-                  ]}
-                >
-                  2. 메모 작성하기
-                </Text>
-                <View style={{ marginLeft: calculateDynamicWidth(15) }}>
-                  <Text style={styles.helpContent}>
-                    a. 등록한 물체에 메모를 추가해 주세요
-                  </Text>
-                  <Text style={styles.helpContent}>
-                    b. 메모에 사진을 첨부하고 친구를 태그할{`\n`} 수 있어요!
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </View>
+        <TutorialModal
+          modalVisible={isNotificationModalVisible}
+          closeModal={closeNotificationModal}
+        />
       )}
 
       {/* 메모 버튼 모달 */}
