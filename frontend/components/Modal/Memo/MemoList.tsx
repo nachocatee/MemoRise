@@ -81,7 +81,6 @@ const MemoList: React.FC<MemoListProp> = ({
         if (memoStatus === "main") {
           response = await axios.get(
             BACKEND_URL + `/memos/${id}/list/${userId}`
-            // BACKEND_URL + `/memos/8ef97a8a0be/list/30` // 쫀듸기
           );
           if (response.data.length === 0) {
             onMemoZeroLength(true);

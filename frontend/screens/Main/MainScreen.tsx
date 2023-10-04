@@ -374,11 +374,11 @@ const MainScreen = () => {
   const memoConfirmHandler = () => {
     if (isUpdateMemoTrue) {
       setIsUpdateMemoTrue(false);
-      setMemoListVisible(true);
       setIsVisible(false);
     } else {
       setIsVisible(true);
     }
+    setMemoListVisible(true);
     setMemoCreateModalVisible(false);
     setEnteredMemo("");
     setOpenState("OPEN");
