@@ -16,9 +16,10 @@ type RootStackParamList = {
 
 type HeaderProps = {
   openModal: (event: GestureResponderEvent) => void;
+  stopRTC: () => void;
 };
 
-const MainHeader: React.FC<HeaderProps> = ({ openModal }) => {
+const MainHeader: React.FC<HeaderProps> = ({ openModal, stopRTC }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (

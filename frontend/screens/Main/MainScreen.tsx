@@ -1063,8 +1063,8 @@ const MainScreen = () => {
 
             <View style={styles.modalEmptyContainer}>
               <Text style={styles.helpTitle}>
-                <Text style={{ color: Colors.primary200 }}>MemoRise</Text>는
-                두가지 단계를 거쳐{`\n`}메모를 등록할 수 있습니다!
+                <Text style={{ color: Colors.primary200 }}>MemoRise</Text>는 두
+                가지 단계를 거쳐{`\n`}메모를 등록할 수 있습니다!
               </Text>
               <View style={styles.helpContainer}>
                 <Text style={styles.helpText}>1. 물체 등록하기</Text>
