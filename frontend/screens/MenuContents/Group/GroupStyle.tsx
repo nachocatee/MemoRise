@@ -23,6 +23,7 @@ export const styles = StyleSheet.create({
     fontFamily: "Pretendard-Medium",
     fontSize: calculateDynamicWidth(23),
     color: Colors.text,
+    letterSpacing: -0.5,
   },
   emptyContainer: {
     justifyContent: "center",

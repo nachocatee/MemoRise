@@ -1077,21 +1077,7 @@ const MainScreen = () => {
                 <Text style={styles.helpText}>1. 물체 등록하기</Text>
                 <View style={{ marginLeft: calculateDynamicWidth(15) }}>
                   <Text style={styles.helpContent}>
-                    a. 하단 중앙의 버튼{" "}
-                    <Image
-                      source={require("../../assets/image/camerabtn.png")}
-                      style={{
-                        width: calculateDynamicWidth(20),
-                        height: calculateDynamicWidth(20),
-                      }}
-                    />{" "}
-                    을 누르세요
-                  </Text>
-                  <Text style={styles.helpText}>
-                    b. 물체를 화면 중앙에 위치시켜 주세요
-                  </Text>
-                  <Text style={styles.helpText}>
-                    c. 물체 주위의 +버튼{" "}
+                    a. 물체 주위의 +버튼{" "}
                     <Image
                       source={require("../../assets/focus/memo.png")}
                       style={{
@@ -1101,8 +1087,8 @@ const MainScreen = () => {
                     />{" "}
                     을 누르세요
                   </Text>
-                  <Text style={styles.helpText}>
-                    d. 물체를 다각도로 촬영해 주세요
+                  <Text style={styles.helpContent}>
+                    b. 물체를 화면 중앙에 놓고 다각도로{`\n`} 비춰 주세요
                   </Text>
                 </View>
                 <Text
@@ -1114,11 +1100,11 @@ const MainScreen = () => {
                   2. 메모 작성하기
                 </Text>
                 <View style={{ marginLeft: calculateDynamicWidth(15) }}>
-                  <Text style={styles.helpText}>
+                  <Text style={styles.helpContent}>
                     a. 등록한 물체에 메모를 추가해 주세요
                   </Text>
-                  <Text style={styles.helpText}>
-                    b. 메모에 사진을 첨부하고 친구를 태그할{`\n`}수 있어요!
+                  <Text style={styles.helpContent}>
+                    b. 메모에 사진을 첨부하고 친구를 태그할{`\n`} 수 있어요!
                   </Text>
                 </View>
               </View>

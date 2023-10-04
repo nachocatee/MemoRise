@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: -97 / 2,
+    marginTop: -calculateDynamicWidth(100),
   },
   helpTitle: {
     color: "white",
@@ -81,6 +81,7 @@ export const styles = StyleSheet.create({
     color: "white",
     fontFamily: "Pretendard-Medium",
     fontSize: calculateDynamicWidth(18),
+    marginVertical: calculateDynamicWidth(5),
   },
   helpContainer: {
     marginTop: calculateDynamicWidth(20),
