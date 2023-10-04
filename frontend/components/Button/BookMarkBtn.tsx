@@ -36,14 +36,16 @@ const BookMarkBtn: React.FC<BookMarkProps> = ({
     if (isBookMark) {
       // axios.delete(BACKEND_URL + `/memos/${id}/bookmarks/${userId}`)
       axios
-        .delete(BACKEND_URL + `/memos/${id}/bookmarks/23`) // 쫀듸기
+        // .delete(BACKEND_URL + `/memos/${id}/bookmarks/23`) // 쫀듸기
+        .delete(BACKEND_URL + `/memos/${id}/bookmarks/${userId}`) // 쫀듸기
         .catch((error) => {
           console.error(error);
         });
     } else {
       // axios.post(BACKEND_URL + `/memos/${id}/bookmarks/${userId}`)
       axios
-        .post(BACKEND_URL + `/memos/${id}/bookmarks/23`) // 쫀듸기
+        // .post(BACKEND_URL + `/memos/${id}/bookmarks/23`) // 쫀듸기
+        .post(BACKEND_URL + `/memos/${id}/bookmarks/${userId}`) // 쫀듸기
         .catch((error) => {
           console.error(error);
         });
