@@ -27,7 +27,7 @@ const GoListHeader: React.FC<GoListHeaderProps> = ({ onPress }) => {
           />
         </View>
       </Pressable>
-      <Pressable onPress={() => navigation.navigate("Main")}>
+      <Pressable onPress={() => navigation.replace("Main")}>
         <Image
           source={require("../../assets/image/logo/logoblack.png")}
           style={styles.logo}
