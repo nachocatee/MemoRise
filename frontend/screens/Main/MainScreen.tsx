@@ -451,7 +451,6 @@ const MainScreen = () => {
         })
           .then((res) => {
             if (res.request.status === 200) {
-              console.log("메모 생성 성공");
               //물체 표시 생성
               setTaggedMember([]);
               setTaggedGroup([]);
@@ -481,7 +480,6 @@ const MainScreen = () => {
         })
           .then((res) => {
             if (res.request.status === 200) {
-              console.log("메모 수정 성공");
               //물체 표시 생성
               setTaggedMember([]);
               setTaggedGroup([]);
@@ -556,6 +554,7 @@ const MainScreen = () => {
 
   const closeNotificationModal = () => {
     setNotificationModalVisible(false);
+    startRTCConnection("track2");
   };
 
   // 추가 버튼 모달
@@ -982,7 +981,7 @@ const MainScreen = () => {
         ) : (
           <Pressable
             style={styles.btnContainer}
-            onPress={() => startRTCConnection("track1")}
+            onPress={() => setNotificationModalVisible(true)}
           >
             <Image
               source={require("../../assets/image/camerabtn.png")}

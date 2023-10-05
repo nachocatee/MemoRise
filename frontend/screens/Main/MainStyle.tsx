@@ -419,4 +419,8 @@ export const styles = StyleSheet.create({
     lineHeight: 25,
     color: "white",
   },
+  serviceImage: {
+    width: "100%",
+    height: "100%",
+  },
 });
