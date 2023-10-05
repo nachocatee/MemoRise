@@ -1038,6 +1038,7 @@ const MainScreen = () => {
         <TutorialModal
           modalVisible={isNotificationModalVisible}
           closeModal={closeNotificationModal}
+          onlyCloseModal={() => setNotificationModalVisible(false)}
         />
       )}
 

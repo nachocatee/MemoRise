@@ -11,13 +11,19 @@ import {
 
 import Colors from "../../constants/colors";
 import { calculateDynamicWidth } from "../../constants/dynamicSize";
+import ConfirmBtn from "../Button/ConfirmBtn";
 
 type ModalProps = {
   modalVisible: boolean;
   closeModal: (event: GestureResponderEvent) => void;
+  onlyCloseModal: (event: GestureResponderEvent) => void;
 };
 
-const TutorialModal: React.FC<ModalProps> = ({ modalVisible, closeModal }) => {
+const TutorialModal: React.FC<ModalProps> = ({
+  modalVisible,
+  closeModal,
+  onlyCloseModal,
+}) => {
   return (
     <View style={styles.background}>
       <Modal
@@ -34,7 +40,7 @@ const TutorialModal: React.FC<ModalProps> = ({ modalVisible, closeModal }) => {
               style={styles.logo}
             />
           </Pressable>
-          <Pressable style={styles.cancelContainer} onPress={closeModal}>
+          <Pressable style={styles.cancelContainer} onPress={onlyCloseModal}>
             <Image
               source={require("../../assets/icons/cancelwhite.png")}
               style={styles.cancel}
@@ -82,6 +88,9 @@ const TutorialModal: React.FC<ModalProps> = ({ modalVisible, closeModal }) => {
               </Text>
             </View>
           </View>
+        </View>
+        <View style={styles.btnContainer}>
+          <ConfirmBtn onPress={closeModal}>시작하기</ConfirmBtn>
         </View>
       </Modal>
     </View>
@@ -143,5 +152,9 @@ const styles = StyleSheet.create({
   },
   helpContainer: {
     marginTop: calculateDynamicWidth(20),
+  },
+  btnContainer: {
+    marginBottom: "10%",
+    alignItems: "center",
   },
 });
