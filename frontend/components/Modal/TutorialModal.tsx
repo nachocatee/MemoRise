@@ -57,9 +57,9 @@ const TutorialModal: React.FC<ModalProps> = ({
             <Text style={styles.helpText}>1. 물체 등록하기</Text>
             <View style={{ marginLeft: calculateDynamicWidth(15) }}>
               <Text style={styles.helpContent}>
-                a. 물체 주위의 +버튼{" "}
+                a. 하단 중앙의 버튼{" "}
                 <Image
-                  source={require("../../assets/focus/memo.png")}
+                  source={require("../../assets/image/camerabtn.png")}
                   style={{
                     width: calculateDynamicWidth(20),
                     height: calculateDynamicWidth(20),
