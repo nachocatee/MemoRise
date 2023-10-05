@@ -25,7 +25,7 @@ const GoBackHeader = () => {
           />
         </View>
       </Pressable>
-      <Pressable onPress={() => navigation.replace("Main")}>
+      <Pressable onPress={() => navigation.navigate("Main")}>
         <Image
           source={require("../../assets/image/logo/logoblack.png")}
           style={styles.logo}

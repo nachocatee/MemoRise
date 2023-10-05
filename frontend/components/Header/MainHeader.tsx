@@ -16,10 +16,9 @@ type RootStackParamList = {
 
 type HeaderProps = {
   openModal: (event: GestureResponderEvent) => void;
-  stopRTC: () => void;
 };
 
-const MainHeader: React.FC<HeaderProps> = ({ openModal, stopRTC }) => {
+const MainHeader: React.FC<HeaderProps> = ({ openModal }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
@@ -32,7 +31,7 @@ const MainHeader: React.FC<HeaderProps> = ({ openModal, stopRTC }) => {
           />
         </View>
       </Pressable>
-      <Pressable onPress={() => navigation.replace("Main")}>
+      <Pressable onPress={() => navigation.navigate("Main")}>
         <Image
           source={require("../../assets/image/logo/logowhite.png")}
           style={styles.logo}
@@ -42,7 +41,6 @@ const MainHeader: React.FC<HeaderProps> = ({ openModal, stopRTC }) => {
         style={styles.menuContainer}
         onPress={() => {
           navigation.navigate("Menu");
-          stopRTC();
         }}
       >
         <View style={styles.padding}>

@@ -555,7 +555,7 @@ const MainScreen = () => {
 
   const closeNotificationModal = () => {
     setNotificationModalVisible(false);
-    startRTCConnection("track2");
+    objectRegister();
   };
 
   // 추가 버튼 모달
@@ -872,7 +872,6 @@ const MainScreen = () => {
               setTutorialVisible(!isTutorialVisible);
               setPage(1);
             }}
-            stopRTC={() => stopRTCConnection()}
           />
         </View>
       )}
