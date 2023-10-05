@@ -376,10 +376,10 @@ const MainScreen = () => {
     if (isUpdateMemoTrue) {
       setIsUpdateMemoTrue(false);
       setIsVisible(false);
+      setMemoListVisible(true);
     } else {
       setIsVisible(true);
     }
-    setMemoListVisible(true);
     setMemoCreateModalVisible(false);
     setEnteredMemo("");
     setOpenState("OPEN");
