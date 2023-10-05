@@ -139,20 +139,36 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
 # 📺 서비스 상세 내용
 
 <details>
-<summary> 📲주요 기능(수정 예정!)</summary>
+<summary> 📲주요 기능</summary>
 <br/>
-<div align="center"> <img src="https://github.com/PEEKPICK/PEEKPICK/assets/70866410/7910c4c8-7ef2-4f23-a044-add6efdae963"> </div>
+<div align="center"> <img src="https://github.com/Semibro/Semibro/assets/71372469/c0b1116f-0364-4245-9206-6eae9ae47d12"> </div>
 
-- <b> 익명 채팅 </b>
-  - 현재 위치를 기반으로 타인(이하 `피커`)과 일대일 채팅을 할 수 있습니다. 이 때, 채팅방은 `10분간` 유지되는 휘발성 채팅방입니다. <br/> <br/>
+- <b> 메모 조회 / 작성 </b>
+  - `객체 인식`을 통해 저장된 물체인지를 인식하고, 해당 물체에 남겨진 메모를 `조회` 및 새로운 `메모를 작성`할 수 있습니다. <br/> <br/>
 
-<div align="center"> <img src="https://github.com/PEEKPICK/PEEKPICK/assets/70866410/7910c4c8-7ef2-4f23-a044-add6efdae963"> </div>
+<div align="center"> <img src="https://github.com/Semibro/Semibro/assets/71372469/d2d52d0b-094c-44d7-96e4-328664b87ab2"> </div>
 
-- <b> 익명 메시지 </b>
-  - 현재 위치를 기반으로 메시지(이하 `피크`)를 남길 수 있습니다
-  - 기본적으로 1시간 후 사라지는 휘발성을 가지고 있으며, 다른 피커가 관심을 표현할 경우 (좋아요, 싫어요) 10분 씩 지속시간이 늘어납니다.
-  - 지속시간은 최대 `24시간` 입니다.
-  - 지속시간이 일정 시간 이상일 경우, 특수한 이모지로 표시됩니다.
+- <b> 객체 인식 </b>
+  - 사용자에게 객체 인식 방법에 대해서 간단한 `설명을 제공`합니다.
+  - `Progress Bar`를 통해 사용자에게 객체 인식의 진행도를 `시각적`으로 제공합니다. <br/> <br/>
+
+<div align="center"> <img src="https://github.com/Semibro/Semibro/assets/71372469/29c001fa-4b4a-4cd9-b43d-b268df5b1c11"> </div>
+
+- <b> 마이페이지 </b>
+  - 전체메모 / 태그된 메모 / 내 메모로 사용자가 작성 혹은 태그된 메모를 모와서 볼 수 있습니다.
+  - 내가 포함된 그룹 혹은 그룹 찾기를 통해 그룹에 참여할 수 있습니다.
+  - 사용자의 정보를 수정할 수 있습니다. <br/> <br/>
+
+<div align="center"> <img src="https://github.com/Semibro/Semibro/assets/71372469/0f6d15ef-d718-40f3-b067-f86d5cce7172"> </div>
+
+- <b> 그룹 </b>
+  - 그룹에 참여하면 해당 그룹에게만 공개된 메모를 볼 수 있습니다.
+  - 그룹 `공개/비공개` 여부를 통해 원하는 사용자만 그룹에 받을 수 있습니다. <br/> <br/>
+
+<div align="center"> <img src="https://github.com/Semibro/Semibro/assets/71372469/c5de65cf-6398-4549-95be-127bec4335ff"> </div>
+
+- <b> 튜토리얼 </b>
+  - 사용자에게 서비스 사용방법이 적힌 튜토리얼을 제공해 서비스의 `접근성`을 높였습니다.
 
 </details>
 
@@ -163,7 +179,7 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
 ### 📗 시스템 구성도
 
 <div align="center">
-<img src="https://github.com/Semibro/Semibro/assets/71372469/5749c6c1-bf62-4636-829f-63a78059bd23"> </div> <br/>
+<img src="https://github.com/Semibro/Semibro/assets/71372469/987291e2-315e-424a-9bd8-ef1710f6cf94"> </div> <br/>
 
 ### 📘 ER Diagram
 
@@ -209,8 +225,8 @@ MemoRise 는 `물체인식` 기반을 바탕으로 물체에 `메모`를 남겨 
 
 ### 🔑 Branch
 
-- develop : 서비스 배포<br>
-- feature/be/[기능명] : 백엔드 기능 개발<br>
-- feature/fe/[기능명] : 프론트엔드 기능 개발<br>
-- hotfix/be/[기능명] : 급한 백엔드 에러 수정<br>
-- hotfix/fe/[기능명] : 급한 프론트엔드 에러 수정<br>
+- develop : 서비스 배포<br/>
+- back/be/feat000-[기능명] : 백엔드 기능 개발<br/>
+- front/fe/feat000-[기능명] : 프론트엔드 기능 개발<br/>
+- back/be/hotfix : 백엔드 에러 수정<br/>
+- front/fe/hotfix: 프론트엔드 에러 수정<br/>
