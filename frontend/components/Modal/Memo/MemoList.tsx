@@ -89,7 +89,6 @@ const MemoList: React.FC<MemoListProp> = ({
           response = await axios.get(
             BACKEND_URL +
               `/user/${userId}/${
-                // 쫀듸기
                 memoStatus === "saved"
                   ? "bookmarks"
                   : memoStatus === "all"

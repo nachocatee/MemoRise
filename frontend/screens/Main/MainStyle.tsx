@@ -423,4 +423,76 @@ export const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+
+  // 튜토리얼
+  first: {
+    width: calculateDynamicWidth(222),
+    height: calculateDynamicWidth(65.75),
+  },
+  firstContainer: {
+    position: "absolute",
+    top: -calculateDynamicWidth(60),
+    left: -calculateDynamicWidth(100),
+  },
+  second: {
+    width: calculateDynamicWidth(218),
+    height: calculateDynamicWidth(97),
+  },
+  secondContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [
+      { translateY: -calculateDynamicWidth(97) / 2 },
+      { translateX: -calculateDynamicWidth(218) / 2 },
+    ],
+  },
+  third: {
+    width: calculateDynamicWidth(306),
+    height: calculateDynamicWidth(256),
+  },
+  thirdContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [
+      { translateX: -calculateDynamicWidth(306) / 2 },
+      { translateY: -calculateDynamicWidth(256) / 2 },
+    ],
+  },
+  fourth: {
+    width: calculateDynamicWidth(306),
+    height: calculateDynamicWidth(424),
+  },
+  fourthContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [
+      { translateX: -calculateDynamicWidth(306) / 2 },
+      { translateY: -calculateDynamicWidth(424) / 2 },
+    ],
+  },
+  fifth: {
+    width: calculateDynamicWidth(218),
+    height: calculateDynamicWidth(74),
+  },
+  fifthContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [
+      { translateX: -calculateDynamicWidth(218) / 2 },
+      { translateY: -calculateDynamicWidth(74) / 2 },
+    ],
+  },
+  startBtnContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: "50%",
+    transform: [
+      { translateX: -calculateDynamicWidth(270) / 2 },
+      { translateY: -calculateDynamicWidth(66) / 2 },
+    ],
+  },
 });

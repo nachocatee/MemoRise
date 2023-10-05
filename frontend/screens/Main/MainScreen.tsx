@@ -40,6 +40,7 @@ import MemoDetail from "../../components/Modal/Memo/MemoDetail";
 import { MemoDetailProps } from "../../components/Modal/Memo/MemoDetail";
 import { GroupData } from "../MenuContents/Group/MyGroupScreen";
 import TutorialModal from "../../components/Modal/TutorialModal";
+import ConfirmBtn from "../../components/Button/ConfirmBtn";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -858,13 +859,18 @@ const MainScreen = () => {
     setCheckMemoLengthZero(false);
   };
 
+  // 튜토리얼
+  const [isTutorialVisible, setTutorialVisible] = useState(false);
+  const [page, setPage] = useState(1);
+
   return (
     <View style={{ flex: 1 }}>
       {!isNotificationModalVisible && (
         <View style={styles.headerContainer}>
           <MainHeader
             openModal={() => {
-              setNotificationModalVisible(true);
+              setTutorialVisible(!isTutorialVisible);
+              setPage(1);
             }}
             stopRTC={() => stopRTCConnection()}
           />
@@ -1445,6 +1451,79 @@ const MainScreen = () => {
           contentText={`물체에 저장된 메모가 없습니다.\n메모를 작성하시겠습니까?`}
           btnText="확인"
         />
+      )}
+
+      {/* 튜토리얼 */}
+      {isTutorialVisible && page === 1 && (
+        <Pressable style={styles.background} onPress={() => setPage(2)}>
+          <View style={styles.secondContainer}>
+            <Image
+              style={styles.second}
+              source={require("../../assets/image/tutorial/2.png")}
+            />
+          </View>
+          <View style={styles.btnContainer}>
+            <View style={styles.firstContainer}>
+              <Image
+                style={styles.first}
+                source={require("../../assets/image/tutorial/1.png")}
+              />
+            </View>
+            <Image
+              source={require("../../assets/image/camerabtn.png")}
+              style={styles.addBtn}
+            />
+          </View>
+        </Pressable>
+      )}
+
+      {isTutorialVisible && page === 2 && (
+        <Pressable style={styles.background} onPress={() => setPage(3)}>
+          <View style={styles.thirdContainer}>
+            <Image
+              style={styles.third}
+              source={require("../../assets/image/tutorial/3.png")}
+            />
+          </View>
+        </Pressable>
+      )}
+
+      {isTutorialVisible && page === 3 && (
+        <Pressable style={styles.background} onPress={() => setPage(4)}>
+          <View style={styles.fourthContainer}>
+            <Image
+              style={styles.fourth}
+              source={require("../../assets/image/tutorial/4.png")}
+            />
+          </View>
+        </Pressable>
+      )}
+
+      {isTutorialVisible && page === 4 && (
+        <Pressable
+          style={styles.background}
+          onPress={() => {
+            setTutorialVisible(false);
+            setPage(1);
+          }}
+        >
+          <View style={styles.fifthContainer}>
+            <Image
+              style={styles.fifth}
+              source={require("../../assets/image/tutorial/5.png")}
+            />
+          </View>
+          <View style={styles.startBtnContainer}>
+            <ConfirmBtn
+              onPress={() => {
+                setTutorialVisible(false);
+                setPage(1);
+              }}
+            >
+              시작하기
+            </ConfirmBtn>
+          </View>
+        </Pressable>
       )}
     </View>
   );
