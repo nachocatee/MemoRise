@@ -976,24 +976,28 @@ const MainScreen = () => {
           contentText={`미등록된 물체입니다.\n등록해주세요!`}
           btnText="확인"
         />
-        {isConnected ? (
-          <Pressable style={styles.btnContainer} onPress={stopRTCConnection}>
-            <Image
-              source={require("../../assets/image/camerabtn_stop.png")}
-              style={styles.addBtn}
-            />
-          </Pressable>
-        ) : (
-          <Pressable
-            style={styles.btnContainer}
-            onPress={() => setNotificationModalVisible(true)}
-          >
-            <Image
-              source={require("../../assets/image/camerabtn.png")}
-              style={styles.addBtn}
-            />
-          </Pressable>
-        )}
+        {
+          isConnected && !objectRegisterShow ? (
+            <Pressable
+              style={styles.btnContainer}
+              onPress={() => setNotificationModalVisible(true)}
+            >
+              <Image
+                source={require("../../assets/image/camerabtn.png")}
+                style={styles.addBtn}
+              />
+            </Pressable>
+          ) : null
+          // <Pressable
+          //   style={styles.btnContainer}
+          //   onPress={() => setNotificationModalVisible(true)}
+          // >
+          //   <Image
+          //     source={require("../../assets/image/camerabtn.png")}
+          //     style={styles.addBtn}
+          //   />
+          // </Pressable>
+        }
         {/* <Pressable
           style={styles.btnContainer}
           onPress={() => setMemoBtnModalVisible(true)}
