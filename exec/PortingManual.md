@@ -101,7 +101,7 @@ spring:
       max-request-size: 50MB
   jwt:
     prefix: 'Bearer '
-    secret: 2BBE0C48B91A7D1B8A6753A8B9CBE1DB16B84379F3F91FE115621284DF7A48F1CD71E9BEB90EA614C7BD924250AA9E446A866725E685A65DF5D139A5CD180DC9 # test -> sha512
+    secret: 
     token:
       access-expiration-time: ${ACCESS_EXPIRATION}
       test-access-expiration-time: 5000
